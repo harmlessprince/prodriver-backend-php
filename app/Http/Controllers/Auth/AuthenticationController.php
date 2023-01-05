@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Events\UserRegisteredEvent;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
+use App\Repositories\Eloquent\Repository\UserRepository;
+use App\Services\AppTokenService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
+
+class AuthenticationController extends Controller
+{
+
+    public function __construct(private readonly UserRepository $userRepository, private readonly AppTokenService $appTokenService)
+    {
+    }
+
+    public function register(RegisterRequest $request): JsonResponse
+    {
+        /** @var User $user */
+        $data = $request->validated();
+        unset($data['confirm_password']);
+        $data['password'] = Hash::make($data['password']);
+        $user = $this->userRepository->create($data);
+        $emailToken = $this->appTokenService->generateUserEmailToken($user);
+        event(new UserRegisteredEvent($user, $emailToken->token));
+        $token =  $user->createToken('register-token')->plainTextToken;
+        return $this->respondSuccess([ 'user' => new UserResource($user), 'token' => $token], 'Registration successful');
+    }
+
+    public function login(LoginRequest $request): JsonResponse
+    {
+        /** @var  User $user */
+        $user = $this->userRepository->findByEmail($request->email);
+        if (!$user || !Hash::check($request->password, $user->password)){
+         return $this->respondError('Provided credentials is invalid', Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $token =  $user->createToken('login-token')->plainTextToken;
+        return $this->respondSuccess([ 'user' => new UserResource($user), 'token' => $token], 'Login successful');
+    }
+    public function user(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        return $this->respondWithResource(new UserResource($user), 'User Profile fetched successfully');
+    }
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->tokens()->delete();
+        return $this->respondSuccess([], 'Successfully logged out');
+    }
+}

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('cargo_owner_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('truck_owner_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('way_bill_picture_id')->nullable()->constrained('files');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

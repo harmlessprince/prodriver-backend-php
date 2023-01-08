@@ -15,14 +15,18 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->integer('tonnage');
-            $table->float('willing_to_pay')->nullable();
-            $table->text('product_description');
+            $table->foreignId('tonnage_id')->constrained('tonnages');
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('created_by')->constrained('users');
+            $table->float('amount_willing_to_pay')->nullable();
+            $table->boolean('display_amount_willing_to_pay')->default(true);
+            $table->text('description');
             $table->string('pickup_address');
-            $table->string('destination');
+            $table->string('destination_address');
             $table->date('date_needed');
             $table->string('financial_status');
             $table->string('status');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

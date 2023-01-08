@@ -31,6 +31,9 @@ class File extends Model
 
     public const OWNER_TYPE_USER = User::MORPH_NAME;
     public const OWNER_TYPE_GUARANTOR = Guarantor::MORPH_NAME;
+    public const OWNER_TYPE_COMPANY = Company::MORPH_NAME;
+
+    public const OWNER_TYPE_DOCUMENT = Document::MORPH_NAME;
     public const TYPE_IMAGE = 'image';
     public const TYPE_VIDEO = 'video';
     public const TYPE_AUDIO = 'audio';

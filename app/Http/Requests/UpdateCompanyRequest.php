@@ -2,10 +2,24 @@
 
 namespace App\Http\Requests;
 
+use App\Models\File;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
+/**
+ * @property string $name
+ * @property string email
+ * @property string phone_number
+ * @property string rc_number
+ * @property string description
+ * @property int goods_in_transit_insurance_id
+ * @property int cac_document_id
+ * @property int fidelity_insurance_id
+*/
 class UpdateCompanyRequest extends FormRequest
 {
+
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -13,7 +27,7 @@ class UpdateCompanyRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +37,18 @@ class UpdateCompanyRequest extends FormRequest
      */
     public function rules()
     {
+        $user = request()->user();
+        $fileExists = Rule::exists(File::class, 'id')
+        ->where('type', File::TYPE_IMAGE)
+        ->where('creator_id', $user->id);
         return [
-            //
+            'name' => ['required', 'string', 'max:200'],
+            'email' => ['required', 'email'],
+            'phone_number' => ['required', 'string', 'min:11'],
+            'rc_number' => ['sometimes', 'string', 'max:200'],
+            'cac_document_id' => ['sometimes', 'integer', $fileExists],
+            'goods_in_transit_insurance_id' => ['sometimes', 'integer', $fileExists],
+            'fidelity_insurance_id' => ['sometimes', 'integer', $fileExists],
         ];
     }
 }

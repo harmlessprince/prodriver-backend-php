@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Trip extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     const MORPH_NAME = 'trip';
     const STATUS_ONGOING = 'ongoing';
     const STATUS_COMPLETED = 'completed';

@@ -3,11 +3,15 @@
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\BankController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GuarantorController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StateController;
+use App\Http\Controllers\TonnageController;
+use App\Http\Controllers\TruckTypeController;
 use App\Http\Controllers\UpdateProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,9 +57,20 @@ Route::middleware('auth:sanctum')->group(function (){
     //state
     Route::get('states', [StateController::class, 'index']);
 
+    //utils
+    Route::get('banks', [BankController::class, 'index']);
     //Onboarding
     Route::patch('update/profile', [UpdateProfileController::class, 'update']);
     Route::patch('update/company', [CompanyController::class, 'update']);
+    Route::post('store/company', [CompanyController::class, 'store']);
     Route::post('store/guarantor', [GuarantorController::class, 'store']);
     Route::patch('update/guarantor/{guarantor}', [GuarantorController::class, 'update']);
+
+    //Truck requests
+    Route::apiResource('requests', OrderController::class);
+
+
+    //truck types
+    Route::apiResource('truckTypes', TruckTypeController::class)->only(['store', 'index', 'destroy', 'update']);
+    Route::apiResource('tonnages', TonnageController::class)->only(['store', 'index', 'destroy', 'update']);
 });

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateGuarantorRequest;
+use App\Models\Document;
 use App\Models\File;
 use App\Models\Guarantor;
 use App\Models\User;
 use App\Services\CloudinaryFileService;
+use App\Utils\DocumentType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +40,7 @@ class GuarantorController extends Controller
             $guarantor->idCard()->create([
                 'user_id' => $guarantor->user_id,
                 'file_id' => $id_card_id,
-                'document_type' => 'guarantor_id_card',
+                'document_type' => DocumentType::GUARANTOR_ID_CARD['key'],
                 'status' => 'submitted'
             ]);
             DB::commit();
@@ -52,6 +54,7 @@ class GuarantorController extends Controller
 
     public function update(UpdateGuarantorRequest $request, Guarantor $guarantor): JsonResponse
     {
+
         /** @var  User $user */
         $user = $request->user();
         if ($user->id != $guarantor->user_id) {
@@ -75,8 +78,8 @@ class GuarantorController extends Controller
             //create document for verification
             $guarantor->idCard()->update([
                 'file_id' => $id_card_id,
-                'document_type' => 'guarantor_id_card',
-                'status' => 'submitted'
+                'document_type' => DocumentType::GUARANTOR_ID_CARD['key'],
+                'status' => Document::PENDING,
             ]);
             DB::commit();
         } catch (\Exception $exception) {

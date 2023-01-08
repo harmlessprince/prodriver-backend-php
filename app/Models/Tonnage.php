@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Truck extends Model
+class Tonnage extends Model
 {
     use HasFactory, SoftDeletes;
-    const MORPH_NAME = 'truck';
+    protected $guarded = [];
+
 }

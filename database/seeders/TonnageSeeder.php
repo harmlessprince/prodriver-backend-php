@@ -24,6 +24,6 @@ class TonnageSeeder extends Seeder
             $initialValue = $nextValue;
             $nextValue += 5;
         }
-        dd($tonnages);
+//        dd($tonnages);
     }
 }

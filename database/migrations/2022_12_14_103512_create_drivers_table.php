@@ -20,8 +20,9 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('phone_number');
-            $table->string('license_number');
+            $table->string('license_number')->nullable();
             $table->foreignId('picture_id')->nullable()->constrained('files')->cascadeOnDelete();
+            $table->foreignId('license_picture_id')->nullable()->constrained('files')->cascadeOnDelete();
             $table->timestamps();
         });
     }

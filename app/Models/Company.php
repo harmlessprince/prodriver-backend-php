@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Utils\DocumentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,16 +41,16 @@ class Company extends Model
      */
     public function cacDocument(): MorphOne
     {
-        return $this->morphOne(Document::class, 'documentable');
+        return $this->morphOne(Document::class, 'documentable')->where('document_type', DocumentType::CAC_DOCUMENT['key']);
     }
 
     public function goodsInTransitInsurance(): MorphOne
     {
-        return $this->morphOne(Document::class, 'documentable');
+        return $this->morphOne(Document::class, 'documentable')->where('document_type', DocumentType::GOODS_IN_TRANSIT_INSURANCE['key']);
     }
 
     public function fidelityInsurance(): MorphOne
     {
-        return $this->morphOne(Document::class, 'documentable');
+        return $this->morphOne(Document::class, 'documentable')->where('document_type', DocumentType::FIDELITY_INSURANCE['key']);
     }
 }

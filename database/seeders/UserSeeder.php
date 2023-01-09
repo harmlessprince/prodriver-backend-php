@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
                 'last_name' => 'User',
                 'phone_number' => '09086442311',
                 'password' => Hash::make('password'),
-                'user_type' => User::USER_TYPE_TRUCK_OWNER,
+                'user_type' => User::USER_TYPE_TRANSPORTER,
             ]
         );
         User::query()->updateOrCreate(

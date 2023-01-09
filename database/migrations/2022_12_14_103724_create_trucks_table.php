@@ -16,17 +16,17 @@ return new class extends Migration
         Schema::create('trucks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('truck_owner_id')->constrained('users')->cascadeOnDelete();
-            $table->string('type');
+            $table->foreignId('truck_type_id')->constrained('truck_types');
             $table->string('registration_number')->nullable();
-            $table->string('tonnage')->nullable();
+            $table->string('tonnage_id')->nullable();
             $table->string('chassis_number');
             $table->string('maker')->nullable();
             $table->string('model')->nullable();
-            $table->foreignId('picture_id')->nullable()->constrained('files')->cascadeOnDelete();
-            $table->foreignId('proof_of_ownership_id')->nullable()->constrained('files')->cascadeOnDelete();
-            $table->foreignId('road_worthiness_id')->nullable()->constrained('files')->cascadeOnDelete();
-            $table->foreignId('license_id')->nullable()->constrained('files')->cascadeOnDelete();
-            $table->foreignId('insurance_id')->nullable()->constrained('files')->cascadeOnDelete();
+//            $table->foreignId('picture_id')->nullable()->constrained('files')->cascadeOnDelete();
+//            $table->foreignId('proof_of_ownership_id')->nullable()->constrained('files')->cascadeOnDelete();
+//            $table->foreignId('road_worthiness_id')->nullable()->constrained('files')->cascadeOnDelete();
+//            $table->foreignId('license_id')->nullable()->constrained('files')->cascadeOnDelete();
+//            $table->foreignId('insurance_id')->nullable()->constrained('files')->cascadeOnDelete();
             $table->timestamps();
         });
     }

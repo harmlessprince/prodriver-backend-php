@@ -34,6 +34,7 @@ use Laravel\Sanctum\HasApiTokens;
  *
  * @property UserSpouse $userSpouse
  * @property UserNextOfkin $nextOfKin
+ * @property Company $company
  */
 class User extends Authenticatable
 {
@@ -43,12 +44,15 @@ class User extends Authenticatable
     public const GENDER_MALE = 'male';
     public const GENDER_FEMALE = 'female';
     const USER_TYPE_CARGO_OWNER = 'cargo-owner';
-    const USER_TYPE_TRUCK_OWNER = 'transporter';
+    const USER_TYPE_TRANSPORTER = 'transporter';
     const USER_TYPE_ADMIN = 'admin';
 
-    const REGULAR_USER_TYPES = [self::USER_TYPE_TRUCK_OWNER, self::USER_TYPE_CARGO_OWNER];
-    const ALL_USER_TYPES = [self::USER_TYPE_ADMIN, self::USER_TYPE_TRUCK_OWNER, self::USER_TYPE_CARGO_OWNER];
+    const REGULAR_USER_TYPES = [self::USER_TYPE_TRANSPORTER, self::USER_TYPE_CARGO_OWNER];
+    const ALL_USER_TYPES = [self::USER_TYPE_ADMIN, self::USER_TYPE_TRANSPORTER, self::USER_TYPE_CARGO_OWNER];
 
+    const CARGO_OWNER_PROFILE = ['spouse', 'nextOfKin', 'company'];
+    const TRANSPORTER_PROFILE = ['spouse', 'nextOfKin', 'bankAccount', 'guarantors', 'company'];
+    const RELATIONS = [''];
     public const GENDERS = [
         self::GENDER_MALE, self::GENDER_FEMALE,
     ];
@@ -88,24 +92,35 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserNextOfKin::class);
     }
+
     public function bankAccount(): HasOne
     {
         return $this->hasOne(BankAccount::class);
     }
+
     public function guarantors(): HasMany
     {
         return $this->hasMany(Guarantor::class);
     }
+
     public function company(): HasOne
     {
         return $this->hasOne(Company::class);
     }
+
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class);
     }
 
-//    public function idCard(){
-//
-//    }
+    public function myRelations($user_type): array
+    {
+        if ($user_type == self::USER_TYPE_TRANSPORTER) {
+            return self::TRANSPORTER_PROFILE;
+        }
+        if ($user_type == self::USER_TYPE_CARGO_OWNER) {
+             return self::CARGO_OWNER_PROFILE;
+        }
+        return [];
+    }
 }

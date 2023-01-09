@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Document;
+use App\Models\Driver;
 use App\Models\Guarantor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             User::MORPH_NAME => User::class,
             Guarantor::MORPH_NAME => Guarantor::class,
+            Driver::MORPH_NAME => Driver::class,
+            Document::MORPH_NAME => Document::class,
         ]);
         $app_name = Config::get('app.name');
         $client_url = Config::get('app.client_url');

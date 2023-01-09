@@ -41,6 +41,7 @@ class GuarantorController extends Controller
                 'user_id' => $guarantor->user_id,
                 'file_id' => $id_card_id,
                 'document_type' => DocumentType::GUARANTOR_ID_CARD['key'],
+                'document_name' => DocumentType::GUARANTOR_ID_CARD['name'],
                 'status' => 'submitted'
             ]);
             DB::commit();
@@ -79,6 +80,7 @@ class GuarantorController extends Controller
             $guarantor->idCard()->update([
                 'file_id' => $id_card_id,
                 'document_type' => DocumentType::GUARANTOR_ID_CARD['key'],
+                'document_name' => DocumentType::GUARANTOR_ID_CARD['name'],
                 'status' => Document::PENDING,
             ]);
             DB::commit();

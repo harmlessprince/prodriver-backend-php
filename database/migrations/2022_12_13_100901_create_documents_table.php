@@ -20,7 +20,8 @@ return new class extends Migration
             $table->foreignId('declined_by')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignId('file_id')->nullable()->constrained('files');
             $table->morphs('documentable');
-            $table->string('document_type')->nullable(); // \App\Utils\DocumentType::class,
+            $table->string('document_type')->index()->nullable(); // \App\Utils\DocumentType::class,
+            $table->string('document_name')->nullable(); // \App\Utils\DocumentType::class,
             $table->string('status')->nullable(); //submitted, accepted, declined
             $table->text('reason')->nullable(); //reason for declining id
             $table->softDeletes();

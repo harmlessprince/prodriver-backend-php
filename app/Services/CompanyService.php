@@ -23,7 +23,8 @@ class CompanyService
     public function createCompany(string $name,
                                   string $email,
                                   string $phone_number,
-                                  string $rc_number, int $user_id,
+                                  int $user_id,
+                                  string $rc_number = null,
                                   string $description = null,
                                   int    $cac_document_id = null,
                                   int    $goods_in_transit_insurance_id = null,
@@ -63,6 +64,7 @@ class CompanyService
             'user_id' => $company->user_id,
             'file_id' => $file_id,
             'document_type' => DocumentType::FIDELITY_INSURANCE['key'],
+            'document_name' => DocumentType::FIDELITY_INSURANCE['name'],
             'status' => 'submitted'
         ]);
         $this->cloudinaryFileService->takeOwnerShip(
@@ -78,6 +80,7 @@ class CompanyService
             'user_id' => $company->user_id,
             'file_id' => $file_id,
             'document_type' => DocumentType::GOODS_IN_TRANSIT_INSURANCE['key'],
+            'document_name' => DocumentType::GOODS_IN_TRANSIT_INSURANCE['name'],
             'status' => 'submitted'
         ]);
         $this->cloudinaryFileService->takeOwnerShip(
@@ -94,6 +97,7 @@ class CompanyService
             'user_id' => $company->user_id,
             'file_id' => $fileId,
             'document_type' => DocumentType::CAC_DOCUMENT['key'],
+            'document_name' => DocumentType::CAC_DOCUMENT['name'],
             'status' => 'submitted'
         ]);
         $this->cloudinaryFileService->takeOwnerShip(

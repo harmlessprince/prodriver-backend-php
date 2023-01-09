@@ -18,8 +18,12 @@ return new class extends Migration
             $table->foreignId('tonnage_id')->constrained('tonnages');
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('approved_by')->nullable()->constrained('users');
+            $table->foreignId('matched_by')->nullable()->constrained('users');
+            $table->foreignId('declined_by')->nullable()->constrained('users');
             $table->float('amount_willing_to_pay')->nullable();
             $table->boolean('display_amount_willing_to_pay')->default(true);
+            $table->integer('number_of_trucks')->default(1);
             $table->text('description');
             $table->string('pickup_address');
             $table->string('destination_address');

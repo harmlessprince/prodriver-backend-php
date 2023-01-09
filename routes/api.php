@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GuarantorController;
 use App\Http\Controllers\OrderController;
@@ -67,7 +68,8 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::patch('update/guarantor/{guarantor}', [GuarantorController::class, 'update']);
 
     //Truck requests
-    Route::apiResource('requests', OrderController::class);
+    Route::apiResource('truckRequests', OrderController::class);
+    Route::apiResource('drivers', DriverController::class);
 
 
     //truck types

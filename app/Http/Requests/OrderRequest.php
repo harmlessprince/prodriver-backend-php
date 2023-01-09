@@ -9,6 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @property int tonnage_id
  * @property int truck_type_id
  * @property float amount_willing_to_pay
+ * @property int number_trucks
  * @property boolean display_amount_willing_to_pay
  * @property string description
  * @property string pickup_address
@@ -24,7 +25,7 @@ class OrderRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -47,13 +48,14 @@ class OrderRequest extends FormRequest
                 'description' => ['required', 'string'],
                 'pickup_address' => ['required', 'string'],
                 'destination_address' => ['required', 'string'],
+                'number_trucks' => ['sometimes', 'integer', 'min:1'],
                 'date_needed' => ['required', 'date', 'after:'. Carbon::now()],
             ];
         }
 
         if (request()->method() == 'PATCH') {
             return [
-                'tonnage_id' => ['sometimes', 'integer', 'exists:tonnages,id'],
+                'tonnage_id' => ['required', 'integer', 'exists:tonnages,id'],
                 'truck_type_ids' => ['sometimes', 'array'],
                 'tuck_type_ids.*' => ['integer', 'exists:truck_types,id'],
                 'amount_willing_to_pay' => ['sometimes', 'numeric', 'min:1'],
@@ -61,7 +63,8 @@ class OrderRequest extends FormRequest
                 'description' => ['sometimes', 'string'],
                 'pickup_address' => ['sometimes', 'string'],
                 'destination_address' => ['sometimes', 'string'],
-                'date_needed' => ['sometimes', 'date'],
+                'number_trucks' => ['sometimes', 'integer', 'min:1'],
+                'date_needed' => ['required', 'date', 'after:'. Carbon::now()],
             ];
         }
         return [];

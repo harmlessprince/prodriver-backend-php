@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Tonnage;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class TonnageSeeder extends Seeder
 {
@@ -18,12 +20,12 @@ class TonnageSeeder extends Seeder
         $initialValue = 1;
         $nextValue = 5;
         $total = 100;
-        $tonnages = [];
+        $tonnage = '';
         while ($nextValue <= 100) {
-            $tonnages[] = $initialValue . '-' . $nextValue . ' ton';
+            $tonnage = $initialValue . '-' . $nextValue . ' ton';
+            Tonnage::query()->updateOrCreate(['name' => $tonnage]);
             $initialValue = $nextValue;
             $nextValue += 5;
         }
-//        dd($tonnages);
     }
 }

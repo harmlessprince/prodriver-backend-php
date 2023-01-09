@@ -43,12 +43,15 @@ class AuthenticationController extends Controller
          return $this->respondError('Provided credentials is invalid', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         $token =  $user->createToken('login-token')->plainTextToken;
-        return $this->respondSuccess([ 'user' => new UserResource($user), 'token' => $token], 'Login successful');
+        $relations = $user->myRelations($user->user_type);
+        return $this->respondSuccess([ 'user' => new UserResource($user->load($relations)), 'token' => $token], 'Login successful');
     }
     public function user(Request $request): JsonResponse
     {
+        /** @var  User $user */
         $user = $request->user();
-        return $this->respondWithResource(new UserResource($user), 'User Profile fetched successfully');
+        $relations = $user->myRelations($user->user_type);
+        return $this->respondWithResource(new UserResource($user->load($relations)), 'User Profile fetched successfully');
     }
     public function logout(Request $request): JsonResponse
     {

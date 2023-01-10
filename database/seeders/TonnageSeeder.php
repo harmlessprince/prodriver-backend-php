@@ -21,11 +21,31 @@ class TonnageSeeder extends Seeder
         $nextValue = 5;
         $total = 100;
         $tonnage = '';
-        while ($nextValue <= 100) {
-            $tonnage = $initialValue . '-' . $nextValue . ' ton';
-            Tonnage::query()->updateOrCreate(['name' => $tonnage]);
-            $initialValue = $nextValue;
-            $nextValue += 5;
+        $tonnages = [
+            '3 TONS',
+            '5 TONS',
+            '10 TONS',
+            '14 TONS',
+            '15 TONS',
+            '20 TONS',
+            '25 TONS',
+            '28 TONS',
+            '30 TONS',
+            '35 TONS',
+            '40 TONS',
+            '45 TONS',
+            '50 TONS',
+            '55 TONS',
+            '60 TONS',
+        ];
+        foreach ($tonnages as $key => $value) {
+            Tonnage::query()->updateOrCreate(['name' => $value]);
         }
+        // while ($nextValue <= 100) {
+        //     $tonnage = $initialValue . '-' . $nextValue . ' ton';
+        //     Tonnage::query()->updateOrCreate(['name' => $tonnage]);
+        //     $initialValue = $nextValue;
+        //     $nextValue += 5;
+        // }
     }
 }

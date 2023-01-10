@@ -21,6 +21,8 @@ return new class extends Migration
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->foreignId('matched_by')->nullable()->constrained('users');
             $table->foreignId('declined_by')->nullable()->constrained('users');
+            $table->foreignId('cancelled_by')->nullable()->constrained('users');
+            $table->foreignId('accepted_by')->nullable()->constrained('users');
             $table->float('amount_willing_to_pay')->nullable();
             $table->boolean('display_amount_willing_to_pay')->default(true);
             $table->integer('number_of_trucks')->default(1);

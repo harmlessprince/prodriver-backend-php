@@ -9,6 +9,25 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read int id
+ * @property int truck_owner_id
+ * @property int company_id
+ * @property int truck_type_id
+ * @property int registration_number
+ * @property int tonnage_id
+ * @property string chassis_number
+ * @property string maker
+ * @property string model
+ * @property Carbon created_at
+ * @property Carbon updated_at
+ * @property Collection<Document> pictures
+ * @property Document proofOfOwnership
+ * @property Document roadWorthiness
+ * @property Document license
+ * @property Document insurance
+ */
+
 class Truck extends Model
 {
     use HasFactory, SoftDeletes;

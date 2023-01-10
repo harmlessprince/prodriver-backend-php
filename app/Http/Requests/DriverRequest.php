@@ -51,7 +51,7 @@ class DriverRequest extends FormRequest
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'license_picture_id' => ['sometimes', 'integer', $fileExists],
                 "user_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
-                'company_id' => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:companies,id'],
+                // 'company_id' => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:companies,id'],
             ];
         }
         if (request()->method() == 'PATCH') {

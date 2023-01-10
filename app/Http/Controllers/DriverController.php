@@ -56,7 +56,7 @@ class DriverController extends Controller
         if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
             if ($user->company()->exists()) {
                 $data['user_id'] = $user->id;
-                $data['company_id'] = $user->company->id;
+                // $data['company_id'] = $user->company->id;
             } else {
                 return $this->respondError('You are not allowed to create a driver until you create a company profile');
             }
@@ -72,7 +72,7 @@ class DriverController extends Controller
             $this->cloudinaryFileService->takeOwnerShip([$request->picture_id], Driver::MORPH_NAME, $driver->id);
         }
         if ($request->has('license_picture_id')) {
-            $this->cloudinaryFileService->takeOwnerShip([$request->picture_id], Driver::MORPH_NAME, $driver->id);
+            $this->cloudinaryFileService->takeOwnerShip([$request->license_picture_id], Driver::MORPH_NAME, $driver->id);
         }
         return $this->respondSuccess([], 'Driver created successfully');
     }

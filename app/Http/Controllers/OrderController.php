@@ -107,4 +107,52 @@ class OrderController extends Controller
         $truckRequest->delete();
         return  $this->respondSuccess([], 'Request updated successfully');
     }
+
+    public function cancelRequest(Request $request, Order $order)
+    {
+        //TODO Authorize user
+        /** @var User $user */
+        $user = $request->user();
+        $order->status = Order::CANCELLED;
+        $order->cancelled_by = $user->id;
+        $order->save();
+    }
+
+    public function approveRequest(Request $request, Order $order)
+    {
+        //TODO Authorize user
+        /** @var User $user */
+        $user = $request->user();
+        $order->status = Order::APPROVED;
+        $order->approved_by = $user->id;
+        $order->save();
+    }
+    public function declineRequest(Request $request, Order $order)
+    {
+        //TODO Authorize user
+        /** @var User $user */
+        $user = $request->user();
+        $order->status = Order::DECLINED;
+        $order->declined_by = $user->id;
+        $order->save();
+    }
+    public function acceptRequest(Request $request, Order $order)
+    {
+        //TODO Authorize user
+        /** @var User $user */
+        $user = $request->user();
+        $order->status = Order::ACCEPTED;
+        $order->accepted_by = $user->id;
+        $order->save();
+    }
+
+    public function matchRequest(Request $request, Order $order)
+    {
+        //TODO Authorize user
+        /** @var User $user */
+        $user = $request->user();
+        $order->status = Order::MATCHED;
+        $order->matched_by = $user->id;
+        $order->save();
+    }
 }

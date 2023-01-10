@@ -113,6 +113,15 @@ class User extends Authenticatable
         return $this->hasMany(Document::class);
     }
 
+    public function drivers(): HasMany
+    {
+        return $this->hasMany(Driver::class);
+    }
+    public function trucks(): HasMany
+    {
+        return $this->hasMany(Truck::class, 'truck_owner_id');
+    }
+
     public function myRelations($user_type): array
     {
         if ($user_type == self::USER_TYPE_TRANSPORTER) {

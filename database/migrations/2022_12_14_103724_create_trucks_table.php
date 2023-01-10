@@ -16,10 +16,11 @@ return new class extends Migration
         Schema::create('trucks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('truck_owner_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('truck_type_id')->constrained('truck_types');
+            $table->foreignId('truck_type_id')->nullable()->constrained('truck_types')->nullOnDelete();
+            $table->foreignId('driver_id')->nullable()->constrained('drivers')->nullOnDelete();
             $table->string('registration_number')->nullable();
             $table->string('tonnage_id')->nullable();
-            $table->string('chassis_number');
+            $table->string('chassis_number')->nullable()->unique();
             $table->string('maker')->nullable();
             $table->string('model')->nullable();
 //            $table->foreignId('picture_id')->nullable()->constrained('files')->cascadeOnDelete();

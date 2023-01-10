@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users');
-            $table->foreignId('company_id')->nullable()->constrained('companies');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('phone_number');

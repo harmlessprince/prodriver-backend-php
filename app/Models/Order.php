@@ -9,10 +9,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 /**
  * @property-read int id
  * @property int tonnage_id
  * @property int truck_type_id
+ * @property int user_id
+ * @property int created_by
+ * @property int approved_by
+ * @property int matched_by
+ * @property int declined_by
+ * @property int cancelled_by
+ * @property int accepted_by
  * @property float amount_willing_to_pay
  * @property boolean display_amount_willing_to_pay
  * @property string description
@@ -23,7 +31,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string status
  *
  * @property Collection<TruckType> $truckTypes
-*/
+ * @property User $user
+ * @property User createdBy
+ * @property User approvedBy
+ * @property User matchedBy
+ * @property User declinedBy
+ * @property User cancelledBy
+ * @property User AcceptedBy
+ * @property Tonnage tonnage
+ * @property User
+ */
 class Order extends Model
 {
     use HasFactory, SoftDeletes;
@@ -38,9 +55,12 @@ class Order extends Model
     const PAID = 'paid';
     const PENDING = 'pending';
     const CANCELLED = 'cancelled';
+    const DECLINED = 'declined';
     const ACCEPTED = 'accepted';
     const COMPLETED = 'completed';
-    const  ORDER_STATUSES = [self::CANCELLED, self::PENDING, self::ACCEPTED, self::COMPLETED];
+    const APPROVED = 'approved';
+    const MATCHED = 'matched';
+    const  ORDER_STATUSES = [self::CANCELLED, self::PENDING, self::ACCEPTED, self::COMPLETED, self::DECLINED];
     const FINANCIAL_STATUSES = [self::PAID, self::PENDING];
 
     const RELATIONS = ['truckTypes', 'tonnage'];
@@ -52,6 +72,10 @@ class Order extends Model
     public  function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+    public  function cancelledBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
     public  function approvedBy(): BelongsTo
     {
@@ -65,6 +89,10 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'declined_by');
     }
+    public  function acceptedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'accepted_by');
+    }
     public function truckTypes(): BelongsToMany
     {
         return $this->belongsToMany(TruckType::class, 'order_trucks', 'order_id', 'truck_type_id');
@@ -73,5 +101,4 @@ class Order extends Model
     {
         return $this->belongsTo(Tonnage::class, 'tonnage_id');
     }
-
 }

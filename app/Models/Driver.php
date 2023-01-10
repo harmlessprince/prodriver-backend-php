@@ -39,7 +39,7 @@ class Driver extends Model
 
     public function licensePicture(): BelongsTo
     {
-        return $this->belongsTo(File::class, 'picture_id');
+        return $this->belongsTo(File::class, 'license_picture_id');
     }
 
     public function user(): BelongsTo

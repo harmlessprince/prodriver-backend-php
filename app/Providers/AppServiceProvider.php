@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Company;
 use App\Models\Document;
 use App\Models\Driver;
 use App\Models\Guarantor;
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
             Guarantor::MORPH_NAME => Guarantor::class,
             Driver::MORPH_NAME => Driver::class,
             Document::MORPH_NAME => Document::class,
+            Company::MORPH_NAME => Company::class,
         ]);
         $app_name = Config::get('app.name');
         $client_url = Config::get('app.client_url');

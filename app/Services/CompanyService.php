@@ -9,6 +9,8 @@ use App\Models\File;
 use App\Models\User;
 use App\Services\CloudinaryFileService;
 use App\Utils\DocumentType;
+use Error;
+use Illuminate\Support\Facades\DB;
 
 class CompanyService
 {
@@ -20,41 +22,49 @@ class CompanyService
     /**
      * @throws CompanyProfileExistsException
      */
-    public function createCompany(string $name,
-                                  string $email,
-                                  string $phone_number,
-                                  int $user_id,
-                                  string $rc_number = null,
-                                  string $description = null,
-                                  int    $cac_document_id = null,
-                                  int    $goods_in_transit_insurance_id = null,
-                                  int    $fidelity_insurance_id = null
-    ): Company
-    {
-        /** @var  User $user */
-        $user = User::query()->findOrFail($user_id);
-        if ($user->company()->exists()) {
-            throw new CompanyProfileExistsException(CompanyProfileExistsException::MESSAGE);
+    public function createCompany(
+        string $name,
+        string $email,
+        string $phone_number,
+        int $user_id,
+        string $rc_number = null,
+        string $description = null,
+        int    $cac_document_id = null,
+        int    $goods_in_transit_insurance_id = null,
+        int    $fidelity_insurance_id = null
+    ): Company {
+
+        try {
+            DB::transaction();
+            /** @var  User $user */
+            $user = User::query()->findOrFail($user_id);
+            if ($user->company()->exists()) {
+                throw new CompanyProfileExistsException(CompanyProfileExistsException::MESSAGE);
+            }
+            /** @var  Company $company */
+            $company = $user->company()->create([
+                'name' => $name,
+                'email' => $email,
+                'phone_number' => $phone_number,
+                'rc_number' => $rc_number,
+                'description' => $description
+            ]);
+            if ($cac_document_id) {
+                $this->createCacDocument($company, $cac_document_id);
+            }
+            if ($goods_in_transit_insurance_id) {
+                $this->createGoodsInTransitInsuranceDoc($company, $goods_in_transit_insurance_id);
+            }
+            if ($fidelity_insurance_id) {
+                /** @var Document $document */
+                $this->createFidelityInsurance($company, $fidelity_insurance_id);
+            }
+            DB::commit();
+            return $company;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw new Error($th->getMessage());
         }
-        /** @var  Company $company */
-        $company = $user->company()->create([
-            'name' => $name,
-            'email' => $email,
-            'phone_number' => $phone_number,
-            'rc_number' => $rc_number,
-            'description' => $description
-        ]);
-        if ($cac_document_id) {
-            $this->createCacDocument($company, $cac_document_id);
-        }
-        if ($goods_in_transit_insurance_id) {
-            $this->createGoodsInTransitInsuranceDoc($company, $goods_in_transit_insurance_id);
-        }
-        if ($fidelity_insurance_id) {
-            /** @var Document $document */
-            $this->createFidelityInsurance($company, $fidelity_insurance_id);
-        }
-        return $company;
     }
 
     public function createFidelityInsurance(Company $company, $file_id): void
@@ -69,7 +79,8 @@ class CompanyService
         ]);
         $this->cloudinaryFileService->takeOwnerShip(
             [$file_id],
-            File::OWNER_TYPE_DOCUMENT, $document->id
+            File::OWNER_TYPE_DOCUMENT,
+            $document->id
         );
     }
 

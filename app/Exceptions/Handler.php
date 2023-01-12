@@ -166,7 +166,7 @@ class Handler extends ExceptionHandler
                     'message' => 'Route not found',
                     'exception' => $e
                 ],
-                500
+                404
             );
         }
 

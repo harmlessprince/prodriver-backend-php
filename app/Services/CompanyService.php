@@ -35,7 +35,7 @@ class CompanyService
     ): Company {
 
         try {
-            DB::transaction();
+            DB::beginTransaction();
             /** @var  User $user */
             $user = User::query()->findOrFail($user_id);
             if ($user->company()->exists()) {

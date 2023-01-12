@@ -35,6 +35,7 @@ class Document extends Model
     const  MORPH_NAME = 'document';
 
     protected $guarded = [];
+    protected $with = ['file'];
 
     public function user(): BelongsTo
     {

@@ -51,6 +51,7 @@ class AuthenticationController extends Controller
         /** @var  User $user */
         $user = $request->user();
         $relations = $user->myRelations($user->user_type);
+       
         return $this->respondWithResource(new UserResource($user->load($relations)), 'User Profile fetched successfully');
     }
     public function logout(Request $request): JsonResponse

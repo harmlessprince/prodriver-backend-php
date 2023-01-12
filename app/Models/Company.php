@@ -27,7 +27,8 @@ class Company extends Model
 
     const MORPH_NAME = 'company';
 
-    const RELATIONS = ['user', 'cacDocument', 'goodsInTransitInsurance', 'fidelityInsurance'];
+    const RELATIONS = ['cacDocument', 'goodsInTransitInsurance', 'fidelityInsurance'];
+    protected $with = [...self::RELATIONS];
 
     protected $guarded = [];
 

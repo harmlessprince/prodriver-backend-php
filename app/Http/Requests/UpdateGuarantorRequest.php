@@ -42,13 +42,13 @@ class UpdateGuarantorRequest extends FormRequest
             ->where('type', File::TYPE_IMAGE)
             ->where('creator_id', $user->id);
         return [
-            'first_name' => ['sometimes', 'string', 'max:200'],
-            'last_name' => ['sometimes', 'string', 'max:200'],
+            'first_name' => ['required', 'string', 'max:200'],
+            'last_name' => ['required', 'string', 'max:200'],
             'email' => ['sometimes', 'email', 'max:200'],
             'home_address' => ['sometimes', 'string', 'max:200'],
             'work_address' => ['sometimes', 'string', 'max:200'],
-            'phone_number' => ['sometimes', 'string', 'max:14'],
-            'gender' => ['sometimes', 'string', Rule::in(['male', 'female'])],
+            'phone_number' => ['required', 'string', 'max:14'],
+            'gender' => ['required', 'string', Rule::in(['male', 'female'])],
             'relationship' => ['sometimes', 'string'],
             'occupation' => ['sometimes', 'string'],
             'id_card_id' => ['sometimes', 'integer',  $fileExists]

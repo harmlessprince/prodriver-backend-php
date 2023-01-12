@@ -2,38 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTransferObjects\TruckDto;
 use App\Http\Requests\TruckRequest;
 use App\Models\Document;
 use App\Models\Truck;
 use App\Models\User;
 use App\Services\CloudinaryFileService;
+use App\Services\TruckService;
 use App\Utils\DocumentType;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class TruckController extends Controller
 {
-    public function __construct(private readonly CloudinaryFileService $cloudinaryFileService)
+    public function __construct(
+        private readonly CloudinaryFileService $cloudinaryFileService,
+        private readonly TruckService          $truckService
+    )
     {
     }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
+     * @throws AuthorizationException
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
+        $this->authorize('viewAny', Truck::class);
+
+        $truckQuery = Truck::query()->with(Truck::NON_DOCUMENT_RELATIONS);
+        $user = $request->user();
+        if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
+            $truckQuery = $truckQuery->where('truck_owner_id', $user->id);
+        }
+        $trucks = $truckQuery->simplePaginate();
+        return $this->respondSuccess(['trucks' => $trucks], 'All trucks fetched successfully');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param TruckRequest $request
+     * @return JsonResponse
+     * @throws AuthorizationException
      */
-    public function store(TruckRequest $request)
+    public function store(TruckRequest $request): JsonResponse
     {
-
-        // $data = $request->validated();
+        $this->authorize('create', Truck::class);
         $user = $request->user();
         $driver_id = $request->driver_id;
         if ($request->has('truck_owner_id')) {
@@ -45,101 +68,99 @@ class TruckController extends Controller
             $query->where('id', $driver_id);
         })->where('id', $truck_owner_id)->exists();
         if (!$driverExists) {
-           $this->respondError('The supplied driver doest not belong to the supplied truck owner');
+            $this->respondError('The supplied driver doest not belong to the supplied truck owner');
         }
-        $truck = Truck::query()->create([
-            'truck_owner_id' => $truck_owner_id,
-            'driver_id' => $driver_id,
-            'truck_type_id' => $request->truck_type_id,
-            'registration_number' => $request->registration_number,
-            'tonnage_id' => $request->tonnage_id,
-            'chassis_number' => $request->chassis_number,
-            'maker' => $request->maker,
-            'model' => $request->model,
-        ]);
-        if ($request->has('picture_id')) {
-           $pictureDoc = $truck->pictures()->create([
-                'user_id' => $truck->truck_owner_id,
-                'file_id' => $request->picture_id,
-                'document_type' => DocumentType::TRUCK_PICTURE['key'],
-                'document_name' => DocumentType::TRUCK_PICTURE['name'],
-                'status' => 'submitted'
-            ]);
-            $this->cloudinaryFileService->takeOwnerShip([$request->picture_id], Document::MORPH_NAME, $pictureDoc->id);
-        }
-        if ($request->has('proof_of_ownership_id')) {
-            $proofDoc = $truck->proofOfOwnership()->create([
-                'user_id' => $truck->truck_owner_id,
-                'file_id' => $request->proof_of_ownership_id,
-                'document_type' => DocumentType::TRUCK_PROOF_OF_OWNERSHIP['key'],
-                'document_name' => DocumentType::TRUCK_PROOF_OF_OWNERSHIP['name'],
-                'status' => 'submitted'
-            ]);
-            $this->cloudinaryFileService->takeOwnerShip([$request->proof_of_ownership_id], Document::MORPH_NAME, $proofDoc->id);
-        }
-        if ($request->has('road_worthiness_id')) {
-            $roadDoc = $truck->roadWorthiness()->create([
-                'user_id' => $truck->truck_owner_id,
-                'file_id' => $request->road_worthiness_id,
-                'document_type' => DocumentType::TRUCK_ROAD_WORTHINESS['key'],
-                'document_name' => DocumentType::TRUCK_ROAD_WORTHINESS['name'],
-                'status' => 'submitted'
-            ]);
-            $this->cloudinaryFileService->takeOwnerShip([$request->road_worthiness_id], Document::MORPH_NAME, $roadDoc->id);
-        }
-        if ($request->has('license_id')) {
-            $licenseDoc = $truck->license()->create([
-                'user_id' => $truck->truck_owner_id,
-                'file_id' => $request->license_id,
-                'document_type' => DocumentType::TRUCK_LICENSE['key'],
-                'document_name' => DocumentType::TRUCK_LICENSE['name'],
-                'status' => 'submitted'
-            ]);
-            $this->cloudinaryFileService->takeOwnerShip([$request->license_id], Document::MORPH_NAME, $licenseDoc->id);
-        }
-        if ($request->has('insurance_id')) {
-            $insuranceDoc = $truck->insurance()->create([
-                'user_id' => $truck->truck_owner_id,
-                'file_id' => $request->insurance_id,
-                'document_type' => DocumentType::TRUCK_INSURANCE['key'],
-                'document_name' => DocumentType::TRUCK_INSURANCE['name'],
-                'status' => 'submitted'
-            ]);
-            $this->cloudinaryFileService->takeOwnerShip([$request->license_id], Document::MORPH_NAME, $insuranceDoc->id);
-        }
+        $truckDto = TruckDto::fromApiRequest($request, $truck_owner_id, $driver_id);
+        $truck = $this->truckService->createTruck($truckDto);
+        $this->createTruckDocs($truckDto, $truck);
+        return $this->respondSuccess(['truck' => $truck], 'Truck created successfully');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Truck  $truck
-     * @return \Illuminate\Http\Response
+     * @param Truck $truck
+     * @return JsonResponse
+     * @throws AuthorizationException
      */
-    public function show(Truck $truck)
+    public function show(Truck $truck): JsonResponse
     {
-        //
+        $this->authorize('view', $truck);
+        $user = request()->user();
+        $relations = [...Truck::DOCUMENT_RELATIONS, ...Truck::NON_DOCUMENT_RELATIONS];
+        if ($user->id === $truck->truck_owner_id) {
+            unset($relations['truckOwner']);
+        }
+        $truck = $truck->load($relations);
+        return $this->respondSuccess(['truck' => $truck], 'Truck fetched successfully');
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Truck  $truck
-     * @return \Illuminate\Http\Response
+     * @param TruckRequest $request
+     * @param Truck $truck
+     * @return JsonResponse
+     * @throws AuthorizationException
      */
-    public function update(Request $request, Truck $truck)
+    public function update(TruckRequest $request, Truck $truck): JsonResponse
     {
-        //
+        $this->authorize('update', $truck);
+        $user = $request->user();
+        $truckDto = TruckDto::fromApiRequest($request, $truck->truck_owner_id, $truck->driver_id);
+        $attributes = $request->validated();
+        $truckTableColumns = $this->getTruckTableColumns();
+        $truckData = [];
+        foreach ($attributes as $key => $value) {
+            if (!is_null($value)) {
+                if (in_array($key, $truckTableColumns)) {
+                    $truckData[$key] = $value;
+                }
+            }
+        }
+        $truck->update($truckData);
+        $this->createTruckDocs($truckDto, $truck);
+        return $this->respondSuccess([], 'Truck updated successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Truck  $truck
-     * @return \Illuminate\Http\Response
+     * @param Truck $truck
+     * @return JsonResponse
+     * @throws AuthorizationException
      */
-    public function destroy(Truck $truck)
+    public function destroy(Truck $truck): JsonResponse
     {
-        //
+        $this->authorize('delete', $truck);
+        $truck->delete();
+        return $this->respondSuccess([], 'Truck deleted');
+    }
+
+    private function getTruckTableColumns(): array
+    {
+        //cache the columns for 6hrs
+        return Cache::remember('truck_table_columns', 21600, function () {
+            $truck = new Truck();
+            $tableName = $truck->getTable();
+            return Schema::getColumnListing($tableName);
+        });
+    }
+    public function createTruckDocs(TruckDto $truckDto, Truck $truck) {
+        if ($truckDto->picture_id) {
+            $this->truckService->syncTruckPictures($truck, $truckDto->picture_id);
+        }
+        if ($truckDto->proof_of_ownership_id) {
+            $this->truckService->syncTruckProofOfOwnerShipDoc($truck, $truckDto->proof_of_ownership_id);
+        }
+        if ($truckDto->road_worthiness_id) {
+            $this->truckService->syncTruckRoadWorthinessDoc($truck, $truckDto->road_worthiness_id);
+        }
+        if ($truckDto->license_id) {
+            $this->truckService->syncTruckLicenseDoc($truck, $truckDto->license_id);
+        }
+        if ($truckDto->license_id) {
+            $this->truckService->syncTruckInsuranceDoc($truck, $truckDto->insurance_id);
+        }
     }
 }

@@ -62,6 +62,9 @@ class DriverController extends Controller
             }
         } else {
             $user = User::query()->findOrFail($request->user_id);
+            if ($user->user_type != User::USER_TYPE_TRANSPORTER) {
+                return  $this->respondError('The supplied user id does not belong to a transporter', 403);
+            }
             $company = Company::query()->findOrFail($request->company_id);
             if ($user->id != $company->user_id) {
                 return $this->respondError('The provided company does not belong to the supplied user id');

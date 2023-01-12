@@ -31,7 +31,7 @@ class TruckRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -51,7 +51,7 @@ class TruckRequest extends FormRequest
             return [
                 'chassis_number' => ['required', 'string', 'max:200', 'unique:trucks,chassis_number'],
                 'model' => ['required', 'string', 'max:200'],
-                'maker' => ['required', 'string', 'min:11', 'max:200'],
+                'maker' => ['required', 'string', 'max:200'],
                 'registration_number' => ['sometimes', 'string', 'max:200'],
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'proof_of_ownership_id' => ['sometimes', 'integer', $fileExists],
@@ -68,7 +68,7 @@ class TruckRequest extends FormRequest
             return [
                 'chassis_number' => ['sometimes', 'string', 'max:200', Rule::unique('trucks', 'chassis_number')->ignore($this->truck)],
                 'model' => ['sometimes', 'string', 'max:200'],
-                'maker' => ['sometimes', 'string', 'min:11', 'max:200'],
+                'maker' => ['sometimes', 'string', 'max:200'],
                 'registration_number' => ['sometimes', 'string', 'max:200'],
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'proof_of_ownership_id' => ['sometimes', 'integer', $fileExists],

@@ -70,13 +70,17 @@ class CompanyService
     public function createFidelityInsurance(Company $company, $file_id): void
     {
         /** @var Document $document */
-        $document = $company->fidelityInsurance()->create([
-            'user_id' => $company->user_id,
-            'file_id' => $file_id,
-            'document_type' => DocumentType::FIDELITY_INSURANCE['key'],
-            'document_name' => DocumentType::FIDELITY_INSURANCE['name'],
-            'status' => 'submitted'
-        ]);
+        $document = $company->fidelityInsurance()->updateOrCreate(
+            [
+                'user_id' => $company->user_id,
+                'document_type' => DocumentType::FIDELITY_INSURANCE['key'],
+                'document_name' => DocumentType::FIDELITY_INSURANCE['name'],
+            ],
+            [
+                'file_id' => $file_id,
+                'status' => 'submitted'
+            ]
+        );
         $this->cloudinaryFileService->takeOwnerShip(
             [$file_id],
             File::OWNER_TYPE_DOCUMENT,
@@ -87,13 +91,18 @@ class CompanyService
     public function createGoodsInTransitInsuranceDoc(Company $company, $file_id): void
     {
         /** @var Document $document */
-        $document = $company->goodsInTransitInsurance()->create([
-            'user_id' => $company->user_id,
-            'file_id' => $file_id,
-            'document_type' => DocumentType::GOODS_IN_TRANSIT_INSURANCE['key'],
-            'document_name' => DocumentType::GOODS_IN_TRANSIT_INSURANCE['name'],
-            'status' => 'submitted'
-        ]);
+        $document = $company->goodsInTransitInsurance()->updateOrCreate(
+            [
+                'user_id' => $company->user_id,
+                'document_type' => DocumentType::GOODS_IN_TRANSIT_INSURANCE['key'],
+                'document_name' => DocumentType::GOODS_IN_TRANSIT_INSURANCE['name'],
+            ],
+            [
+
+                'file_id' => $file_id,
+                'status' => Document::PENDING
+            ]
+        );
         $this->cloudinaryFileService->takeOwnerShip(
             [$file_id],
             File::OWNER_TYPE_DOCUMENT,
@@ -104,13 +113,18 @@ class CompanyService
     public function createCacDocument(Company $company, $fileId): void
     {
         /** @var Document $document */
-        $document = $company->cacDocument()->create([
-            'user_id' => $company->user_id,
-            'file_id' => $fileId,
-            'document_type' => DocumentType::CAC_DOCUMENT['key'],
-            'document_name' => DocumentType::CAC_DOCUMENT['name'],
-            'status' => 'submitted'
-        ]);
+        $document = $company->cacDocument()->create(
+            [
+                'user_id' => $company->user_id,
+                'document_type' => DocumentType::CAC_DOCUMENT['key'],
+                'document_name' => DocumentType::CAC_DOCUMENT['name'],
+            ],
+            [
+
+                'file_id' => $fileId,
+                'status' => Document::PENDING
+            ]
+        );
         $this->cloudinaryFileService->takeOwnerShip(
             [$fileId],
             File::OWNER_TYPE_DOCUMENT,

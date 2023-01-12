@@ -6,6 +6,7 @@ use App\Models\Company;
 use App\Models\Document;
 use App\Models\Driver;
 use App\Models\Guarantor;
+use App\Models\Truck;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -39,6 +40,7 @@ class AppServiceProvider extends ServiceProvider
             Driver::MORPH_NAME => Driver::class,
             Document::MORPH_NAME => Document::class,
             Company::MORPH_NAME => Company::class,
+            Truck::MORPH_NAME => Truck::class,
         ]);
         $app_name = Config::get('app.name');
         $client_url = Config::get('app.client_url');

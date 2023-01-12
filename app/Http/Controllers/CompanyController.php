@@ -37,9 +37,10 @@ class CompanyController extends Controller
         return $this->respondSuccess(['company' => $company->load(Company::RELATIONS)]);
     }
 
-    public function update(Request $request, Company $company)
+    public function update(UpdateCompanyRequest $request, Company $company)
     {
-
+        $data = $request->validated();
+        
     }
 
 

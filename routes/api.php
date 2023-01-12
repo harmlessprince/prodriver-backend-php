@@ -12,6 +12,7 @@ use App\Http\Controllers\GuarantorController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TonnageController;
+use App\Http\Controllers\TruckController;
 use App\Http\Controllers\TruckTypeController;
 use App\Http\Controllers\UpdateProfileController;
 use Illuminate\Http\Request;
@@ -70,7 +71,7 @@ Route::middleware('auth:sanctum')->group(function (){
     //Truck requests
     Route::apiResource('truckRequests', OrderController::class);
     Route::apiResource('drivers', DriverController::class);
-
+    Route::apiResource('trucks', TruckController::class);
 
     //truck types
     Route::apiResource('truckTypes', TruckTypeController::class)->only(['store', 'index', 'destroy', 'update']);

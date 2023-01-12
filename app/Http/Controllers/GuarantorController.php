@@ -29,21 +29,26 @@ class GuarantorController extends Controller
         }
         try {
             $data = $request->validated();
-            $id_card_id = $request->id_card_id;
-            unset($data['id_card_id']);
             DB::beginTransaction();
+            if ($request->has('id_card_id')) {
+                $id_card_id = $request->id_card_id;
+                unset($data['id_card_id']);
+            }
             /** @var Guarantor $guarantor */
             $guarantor = $user->guarantors()->create($data);
-            //claim file ownership;
-            $this->cloudinaryFileService->takeOwnerShip([$id_card_id], File::OWNER_TYPE_GUARANTOR, $guarantor->id);
-            //create document for verification
-            $guarantor->idCard()->create([
-                'user_id' => $guarantor->user_id,
-                'file_id' => $id_card_id,
-                'document_type' => DocumentType::GUARANTOR_ID_CARD['key'],
-                'document_name' => DocumentType::GUARANTOR_ID_CARD['name'],
-                'status' => 'submitted'
-            ]);
+            if ($request->has('id_card_id')) {
+                //claim file ownership;
+                $this->cloudinaryFileService->takeOwnerShip([$id_card_id], File::OWNER_TYPE_GUARANTOR, $guarantor->id);
+                //create document for verification
+                $guarantor->idCard()->create([
+                    'user_id' => $guarantor->user_id,
+                    'file_id' => $id_card_id,
+                    'document_type' => DocumentType::GUARANTOR_ID_CARD['key'],
+                    'document_name' => DocumentType::GUARANTOR_ID_CARD['name'],
+                    'status' => Document::PENDING
+                ]);
+            }
+
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();
@@ -63,26 +68,29 @@ class GuarantorController extends Controller
         }
         try {
             $data = $request->validated();
-            $id_card_id = $request->id_card_id;
-            unset($data['id_card_id']);
             DB::beginTransaction();
-            $guarantor->update($data);
             $guarantor = $guarantor->load('idCard');
             //claim file ownership;
-            if ($guarantor->idCard && $guarantor->idCard->file_id && $guarantor->idCard->file_id != $id_card_id) {
-                $file_id = (int)$guarantor->idCard->file_id;
-                /** @var File $file */
-                $file = File::query()->where('id',$file_id)->first();
-                $this->cloudinaryFileService->deleteFile($file);
-                $this->cloudinaryFileService->takeOwnerShip([$id_card_id], File::OWNER_TYPE_GUARANTOR, $guarantor->id);
+            if ($request->has('id_card_id')) {
+                $id_card_id = $request->id_card_id;
+                unset($data['id_card_id']);
+                if ($guarantor->idCard && $guarantor->idCard->file_id && ($guarantor->idCard->file_id != $id_card_id)) {
+                    $file_id = (int)$guarantor->idCard->file_id;
+                    /** @var File $file */
+                    $file = File::query()->where('id', $file_id)->first();
+                    $this->cloudinaryFileService->deleteFile($file);
+                    $this->cloudinaryFileService->takeOwnerShip([$id_card_id], File::OWNER_TYPE_GUARANTOR, $guarantor->id);
+                    //create document for verification
+                    $guarantor->idCard()->update([
+                        'file_id' => $id_card_id,
+                        'document_type' => DocumentType::GUARANTOR_ID_CARD['key'],
+                        'document_name' => DocumentType::GUARANTOR_ID_CARD['name'],
+                        'status' => Document::PENDING,
+                    ]);
+                }
             }
-            //create document for verification
-            $guarantor->idCard()->update([
-                'file_id' => $id_card_id,
-                'document_type' => DocumentType::GUARANTOR_ID_CARD['key'],
-                'document_name' => DocumentType::GUARANTOR_ID_CARD['name'],
-                'status' => Document::PENDING,
-            ]);
+            $guarantor->update($data);
+
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();

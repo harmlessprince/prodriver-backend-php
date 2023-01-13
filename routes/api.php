@@ -50,6 +50,7 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function (){
     //file upload
     Route::post('upload/file', [FileController::class, 'uploadFile']);
+    Route::post('upload/multiple/files', [FileController::class, 'uploadFiles']);
     Route::delete('delete/file/{file}', [FileController::class, 'deleteFile']);
 
     //country

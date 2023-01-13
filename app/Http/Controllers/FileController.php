@@ -40,7 +40,7 @@ class FileController extends Controller
     public function uploadFiles(Request $request): JsonResponse
     {
         $this->validate($request, [
-           'files' => ['require', 'array'],
+           'files' => ['required', 'array'],
            'files.*' => $this->fileService->getFileValidationRules(),
         ]);
         /** @var  User $user */

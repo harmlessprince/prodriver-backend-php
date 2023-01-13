@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -52,7 +53,8 @@ class User extends Authenticatable
 
     const CARGO_OWNER_PROFILE = ['spouse', 'nextOfKin', 'company'];
     const TRANSPORTER_PROFILE = ['spouse', 'nextOfKin', 'bankAccount', 'guarantors', 'company'];
-    const RELATIONS = [''];
+
+
     public const GENDERS = [
         self::GENDER_MALE, self::GENDER_FEMALE,
     ];
@@ -82,6 +84,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $with = ['profileImage'];
+
+    public function profileImage(): BelongsTo
+    {
+        return $this->belongsTo(File::class, 'profile_image_id');
+    }
 
     public function spouse(): HasOne
     {
@@ -128,7 +137,7 @@ class User extends Authenticatable
             return self::TRANSPORTER_PROFILE;
         }
         if ($user_type == self::USER_TYPE_CARGO_OWNER) {
-             return self::CARGO_OWNER_PROFILE;
+            return self::CARGO_OWNER_PROFILE;
         }
         return [];
     }

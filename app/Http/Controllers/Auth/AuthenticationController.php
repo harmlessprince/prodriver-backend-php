@@ -32,27 +32,28 @@ class AuthenticationController extends Controller
         $emailToken = $this->appTokenService->generateUserEmailToken($user);
         event(new UserRegisteredEvent($user, $emailToken->token));
         $token =  $user->createToken('register-token')->plainTextToken;
-        return $this->respondSuccess([ 'user' => new UserResource($user), 'token' => $token], 'Registration successful');
+        return $this->respondSuccess(['user' => new UserResource($user), 'token' => $token], 'Registration successful');
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
         /** @var  User $user */
         $user = $this->userRepository->findByEmail($request->email);
-        if (!$user || !Hash::check($request->password, $user->password)){
-         return $this->respondError('Provided credentials is invalid', Response::HTTP_UNPROCESSABLE_ENTITY);
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return $this->respondError('Provided credentials is invalid', Response::HTTP_UNPROCESSABLE_ENTITY);
         }
         $token =  $user->createToken('login-token')->plainTextToken;
         $relations = $user->myRelations($user->user_type);
-        return $this->respondSuccess([ 'user' => new UserResource($user->load($relations)), 'token' => $token], 'Login successful');
+        $user = $user->load($relations);
+        return $this->respondSuccess(['user' => new UserResource($user), 'token' => $token], 'Login successful');
     }
     public function user(Request $request): JsonResponse
     {
         /** @var  User $user */
         $user = $request->user();
         $relations = $user->myRelations($user->user_type);
-       
-        return $this->respondWithResource(new UserResource($user->load($relations)), 'User Profile fetched successfully');
+        $user = $user->load($relations);
+        return $this->respondWithResource(new UserResource($user), 'User Profile fetched successfully');
     }
     public function logout(Request $request): JsonResponse
     {

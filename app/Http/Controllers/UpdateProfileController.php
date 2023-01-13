@@ -42,7 +42,8 @@ class UpdateProfileController extends Controller
             $user->nextOfKin()->updateOrCreate(['user_id' => $user->id], $nextOfKinData);
         }
         $relations = $user->myRelations($user->user_type);
-        return $this->respondWithResource(new UserResource($user->load($relations)), 'Profile updated successfully');
+        $user = $user->fresh($relations);
+        return $this->respondWithResource(new UserResource($user), 'Profile updated successfully');
     }
 
     private function getUserTableColumns(): array

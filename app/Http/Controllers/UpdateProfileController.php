@@ -35,11 +35,14 @@ class UpdateProfileController extends Controller
             }
         }
         $user->update($profileData);
-        if ($user->marital_status == 'married') {
+        if ($user->marital_status == 'married' && $spouseData) {
             $user->spouse()->updateOrCreate(['user_id' => $user->id], $spouseData);
         }
-        $user->nextOfKin()->updateOrCreate(['user_id' => $user->id], $nextOfKinData);
-        return $this->respondWithResource(new UserResource($user->load('nextOfKin', 'spouse')), 'Profile updated successfully');
+        if (count($nextOfKinData) > 0) {
+            $user->nextOfKin()->updateOrCreate(['user_id' => $user->id], $nextOfKinData);
+        }
+        $relations = $user->myRelations($user->user_type);
+        return $this->respondWithResource(new UserResource($user->load($relations)), 'Profile updated successfully');
     }
 
     private function getUserTableColumns(): array

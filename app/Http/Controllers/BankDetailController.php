@@ -25,8 +25,8 @@ class BankDetailController extends Controller
         if ($user->bankAccount()->exists()) {
             return $this->respondError('You are now allowed to create more than one bank_account');
         }
-        $user->bankAccount()->create($request->validated());
-        return $this->respondSuccess([], 'Bank detail created successfully');
+        $bankAccount =   $user->bankAccount()->create($request->validated());
+        return $this->respondSuccess(['bank_account' => $bankAccount], 'Bank detail created successfully');
     }
 
     /**

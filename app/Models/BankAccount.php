@@ -12,6 +12,7 @@ class BankAccount extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $with = ['bank'];
 
     public function user(): BelongsTo
     {

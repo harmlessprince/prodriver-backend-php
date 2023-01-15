@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\RequiredIf;
 
 class BankRequest extends FormRequest
 {
@@ -24,8 +26,9 @@ class BankRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
             'bank_id' => ['required', 'integer', 'exists:banks,id'],
-            'account_name' => ['required', 'string', '200'],
+            'account_name' => ['required', 'string', 'max:100'],
             'account_number' => ['required', 'string', 'min:10']
         ];
     }

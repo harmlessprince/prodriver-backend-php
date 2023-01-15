@@ -3,7 +3,10 @@
 namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
+
+use App\Models\BankAccount;
 use App\Models\Order;
+use App\Policies\BankAccountPolicy;
 use App\Policies\OrderPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -17,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
         Order::class => OrderPolicy::class,
+        BankAccount::class => BankAccountPolicy::class,
     ];
 
     /**

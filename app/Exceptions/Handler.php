@@ -211,6 +211,16 @@ class Handler extends ExceptionHandler
                 500
             );
         }
+        if ($e instanceof CompanyProfileExistsException) {
+            return $this->apiResponse(
+                [
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                    'exception' => $e
+                ],
+                409
+            );
+        }
         if ($e instanceof \Error) {
             return $this->apiResponse(
                 [

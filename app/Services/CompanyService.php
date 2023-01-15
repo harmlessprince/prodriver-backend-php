@@ -38,11 +38,11 @@ class CompanyService
             DB::beginTransaction();
             /** @var  User $user */
             $user = User::query()->findOrFail($user_id);
-            if ($user->company()->exists()) {
-                throw new CompanyProfileExistsException(CompanyProfileExistsException::MESSAGE);
-            }
+            // if ($user->company()->exists()) {
+            //     throw new CompanyProfileExistsException(CompanyProfileExistsException::MESSAGE, 403);
+            // }
             /** @var  Company $company */
-            $company = $user->company()->create([
+            $company = $user->company()->updateOrCreate(['user_id' => $user->id], [
                 'name' => $name,
                 'email' => $email,
                 'phone_number' => $phone_number,
@@ -78,7 +78,7 @@ class CompanyService
             ],
             [
                 'file_id' => $file_id,
-                'status' => 'submitted'
+                'status' => Document::PENDING
             ]
         );
         $this->cloudinaryFileService->takeOwnerShip(

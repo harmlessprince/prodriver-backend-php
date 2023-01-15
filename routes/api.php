@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\BankDetailController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\DriverController;
@@ -68,6 +69,8 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('store/company', [CompanyController::class, 'store']);
     Route::post('store/guarantor', [GuarantorController::class, 'store']);
     Route::patch('update/guarantor/{guarantor}', [GuarantorController::class, 'update']);
+    Route::post('store/banks/', [BankDetailController::class, 'store']);
+    Route::patch('update/banks/{bankAccount}', [BankDetailController::class, 'update']);
 
     //Truck requests
     Route::apiResource('truckRequests', OrderController::class);

@@ -139,6 +139,9 @@ class User extends Authenticatable
         if ($user_type == self::USER_TYPE_CARGO_OWNER) {
             return self::CARGO_OWNER_PROFILE;
         }
+        if ($user_type == self::USER_TYPE_ADMIN) {
+            return [...self::CARGO_OWNER_PROFILE, ...self::TRANSPORTER_PROFILE];
+        }
         return [];
     }
 }

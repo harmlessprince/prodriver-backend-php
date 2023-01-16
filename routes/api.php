@@ -13,9 +13,11 @@ use App\Http\Controllers\GuarantorController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TonnageController;
+use App\Http\Controllers\TransporterDriverController;
 use App\Http\Controllers\TruckController;
 use App\Http\Controllers\TruckTypeController;
 use App\Http\Controllers\UpdateProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -76,6 +78,12 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::apiResource('truckRequests', OrderController::class);
     Route::apiResource('drivers', DriverController::class);
     Route::apiResource('trucks', TruckController::class);
+
+    //users
+    Route::apiResource('users', UserController::class);
+    Route::get('/cargo-owners', [UserController::class, 'getAllCargoOwners']);
+    Route::get('/transporters', [UserController::class, 'getAllTransporters']);
+    Route::get('transporters/{transporter}/driver', [TransporterDriverController::class, 'index']);
 
     //truck types
     Route::apiResource('truckTypes', TruckTypeController::class)->only(['store', 'index', 'destroy', 'update']);

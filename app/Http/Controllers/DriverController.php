@@ -54,21 +54,21 @@ class DriverController extends Controller
         $user = $request->user();
         $data = $request->validated();
         if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
-            if ($user->company()->exists()) {
-                $data['user_id'] = $user->id;
-                // $data['company_id'] = $user->company->id;
-            } else {
-                return $this->respondError('You are not allowed to create a driver until you create a company profile');
-            }
+            // if ($user->company()->exists()) {
+            $data['user_id'] = $user->id;
+            // $data['company_id'] = $user->company->id;
+            // } else {
+            //     return $this->respondError('You are not allowed to create a driver until you create a company profile');
+            // }
         } else {
             $user = User::query()->findOrFail($request->user_id);
             if ($user->user_type != User::USER_TYPE_TRANSPORTER) {
                 return  $this->respondError('The supplied user id does not belong to a transporter', 403);
             }
-            $company = Company::query()->findOrFail($request->company_id);
-            if ($user->id != $company->user_id) {
-                return $this->respondError('The provided company does not belong to the supplied user id');
-            }
+            // $company = Company::query()->findOrFail($request->company_id);
+            // if ($user->id != $company->user_id) {
+            //     return $this->respondError('The provided company does not belong to the supplied user id');
+            // }
         }
         $driver = Driver::query()->create($data);
         if ($request->has('picture_id')) {
@@ -109,7 +109,6 @@ class DriverController extends Controller
                     $file = $driver->picture;
                     $this->cloudinaryFileService->deleteFile($file);
                 }
-
             }
             $this->cloudinaryFileService->takeOwnerShip([$request->picture_id], Driver::MORPH_NAME, $driver->id);
         }

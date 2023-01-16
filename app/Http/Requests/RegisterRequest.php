@@ -33,15 +33,27 @@ class RegisterRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'first_name' => ['required', 'string', 'max:200'],
-            'last_name' => ['required', 'string', 'max:200'],
-            'email' => ['required', 'email', 'max:200', 'unique:users,email'],
-            'phone_number' => ['required', 'string', 'max:11', 'unique:users,phone_number'],
-            'password' => ['required', 'string'],
-            'confirm_password' => ['required', 'same:password'],
-            'user_type' => ['required', 'string', Rule::in(User::REGULAR_USER_TYPES)],
+        if (request()->method() == 'POST') {
+            return [
+                'first_name' => ['required', 'string', 'max:200'],
+                'last_name' => ['required', 'string', 'max:200'],
+                'email' => ['required', 'email', 'max:200', 'unique:users,email'],
+                'phone_number' => ['required', 'string', 'max:11', 'unique:users,phone_number'],
+                'password' => ['required', 'string'],
+                'confirm_password' => ['required', 'same:password'],
+                'user_type' => ['required', 'string', Rule::in(User::REGULAR_USER_TYPES)],
 
-        ];
+            ];
+        }
+        if (request()->method() == 'PATCH') {
+            return [
+                'first_name' => ['sometimes', 'string', 'max:200'],
+                'last_name' => ['sometimes', 'string', 'max:200'],
+                'email' => ['sometimes', 'email', 'max:200', 'unique:users,email'],
+                'phone_number' => ['sometimes', 'string', 'max:11', 'unique:users,phone_number'],
+                'user_type' => ['sometimes', 'string', Rule::in(User::REGULAR_USER_TYPES)],
+            ];
+        }
+        return [];
     }
 }

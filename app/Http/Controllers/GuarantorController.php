@@ -47,6 +47,7 @@ class GuarantorController extends Controller
                     'document_name' => DocumentType::GUARANTOR_ID_CARD['name'],
                     'status' => Document::PENDING
                 ]);
+                $guarantor = $guarantor->load('idCard');
             }
 
             DB::commit();
@@ -55,7 +56,7 @@ class GuarantorController extends Controller
             Log::error($exception);
             return $this->respondError('An error occurred while creating your guarantor, please try again later', 500);
         }
-        return $this->respondSuccess([], 'Guarantor create successfully');
+        return $this->respondSuccess(['guarantor' => $guarantor], 'Guarantor create successfully');
     }
 
     public function update(UpdateGuarantorRequest $request, Guarantor $guarantor): JsonResponse

@@ -32,7 +32,7 @@ class DriverPolicy
     public function view(User $user, Driver $driver): Response|bool
     {
         return $user->user_type === User::USER_TYPE_ADMIN ||
-            ($user->user_type === User::USER_TYPE_TRANSPORTER && $user->id === $driver->user_id && $user->company->id === $driver->company_id);
+            ($user->user_type === User::USER_TYPE_TRANSPORTER && $user->id === $driver->user_id);
     }
 
     /**
@@ -56,7 +56,7 @@ class DriverPolicy
     public function update(User $user, Driver $driver): Response|bool
     {
         return $user->user_type === User::USER_TYPE_ADMIN ||
-            ($user->user_type === User::USER_TYPE_TRANSPORTER && $user->id === $driver->user_id && $user->company->id === $driver->company_id);
+            ($user->user_type === User::USER_TYPE_TRANSPORTER && $user->id === $driver->user_id);
     }
 
     /**

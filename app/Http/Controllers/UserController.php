@@ -16,21 +16,24 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', User::class);
         $userTypes = User::ALL_USER_TYPES;
         if (!in_array($request->query('user_type'), $userTypes)) {
             return $this->respondError('Please provide a valid user type in params');
         }
-        $users = User::query()->select('')->where('user_type', $request->query('user_type'))->get();
+        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type')->where('user_type', $request->query('user_type'))->get();
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
 
     public function getAllTransporters()
     {
+        $this->authorize('viewAny', User::class);
         $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type')->where('user_type', User::USER_TYPE_TRANSPORTER)->get();
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
     public function getAllCargoOwners()
     {
+        $this->authorize('viewAny', User::class);
         $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type')->where('user_type', User::USER_TYPE_CARGO_OWNER)->get();
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
@@ -42,6 +45,7 @@ class UserController extends Controller
      */
     public function store(RegisterRequest $request, UserService $userService)
     {
+        $this->authorize('create', User::class);
        $user = $userService->createUser((object)$request->validated());
        return $this->respondSuccess(['user' => $user], 'User created successfully');
     }
@@ -54,6 +58,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $this->authorize('view', $user);
         $user = $user->load($user->myRelations($user->user_type));
         return $this->respondSuccess(['user' => $user], 'User fetched successfully');
     }
@@ -67,6 +72,7 @@ class UserController extends Controller
      */
     public function update(RegisterRequest $request, User $user)
     {
+        $this->authorize('update', $user);
         $user->update($request->validated());
         return $this->respondSuccess([], 'User profile updated');
     }

@@ -24,7 +24,7 @@ class OrderController extends Controller
         $this->authorize('viewAny', Order::class);
         /** @var User $user */
         $user = $request->user();
-        $ordersQuery = Order::query()->with(['tonnage', 'truckTypes', 'user']);
+        $ordersQuery = Order::query()->with(['tonnage', 'truckTypes', 'user:id,first_name,last_name,middle_name,phone_number,email']);
         if ($user->user_type == User::USER_TYPE_CARGO_OWNER){
             $ordersQuery = $ordersQuery->where('user_id', $user->id);
         }

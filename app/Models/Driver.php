@@ -51,4 +51,9 @@ class Driver extends Model
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
+
+    public function truck()
+    {
+        return $this->hasOne(Truck::class, 'driver_id');
+    }
 }

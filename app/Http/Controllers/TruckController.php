@@ -71,7 +71,6 @@ class TruckController extends Controller
             $this->respondError('The supplied driver doest not belong to the supplied truck owner');
         }
         $truckDto = TruckDto::fromApiRequest($request, $truck_owner_id, $driver_id);
-
         $truck = $this->truckService->createTruck($truckDto);
         $this->createTruckDocs($truckDto, $truck);
         return $this->respondSuccess(['truck' => $truck], 'Truck created successfully');

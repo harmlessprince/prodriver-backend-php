@@ -12,7 +12,7 @@ class TransporterDriverController extends Controller
         if ($transporter->user_type !== User::USER_TYPE_TRANSPORTER) {
            return $this->respondSuccess([], 'Invalid transporter id supplied');
         }
-        $drivers = $transporter->drivers;
+        $drivers = $transporter->drivers()->doesntHave('truck')->get();
         return $this->respondSuccess(['drivers' => $drivers], 'Transporter drivers fetched successfully');
     }
 }

@@ -53,6 +53,7 @@ class TruckRequest extends FormRequest
                 'model' => ['required', 'string', 'max:200'],
                 'maker' => ['required', 'string', 'max:200'],
                 'registration_number' => ['sometimes', 'string', 'max:200'],
+                'plate_number' => ['required', 'string', 'unique:trucks,plate_number'],
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'proof_of_ownership_id' => ['sometimes', 'integer', $fileExists],
                 'road_worthiness_id' => ['sometimes', 'integer', $fileExists],

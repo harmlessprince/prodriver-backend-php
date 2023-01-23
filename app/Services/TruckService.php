@@ -25,6 +25,7 @@ class TruckService
             'registration_number' => $truckDto->registration_number,
             'tonnage_id' => $truckDto->tonnage_id,
             'chassis_number' => $truckDto->chassis_number,
+            'plate_number' => $truckDto->plate_number,
             'maker' => $truckDto->maker,
             'model' => $truckDto->model,
         ]);

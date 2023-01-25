@@ -12,8 +12,13 @@ class TruckType extends Model
     use HasFactory, SoftDeletes;
     protected $guarded = [];
 
-    public function truckTypes(): BelongsToMany
+    // public function requests(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(Order::class, 'order_trucks', 'truck_type_id', 'order_id');
+    // }
+
+    public function trucks()
     {
-        return $this->belongsToMany(Order::class, 'order_trucks', 'truck_type_id', 'order_id');
+        return $this->belongsToMany(Truck::class, 'truck_type_id');
     }
 }

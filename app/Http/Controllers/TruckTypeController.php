@@ -23,8 +23,8 @@ class TruckTypeController extends Controller
     public function store(Request $request): JsonResponse
     {
         $this->validate($request, ['name' => ['required', 'string']]);
-        TruckType::query()->create(['name' => $request->input('name')]);
-        return $this->respondSuccess([], 'Truck type created');
+        $truckType = TruckType::query()->create(['name' => $request->input('name')]);
+        return $this->respondSuccess(['truckType' => $truckType], 'Truck type created');
     }
 
     /**

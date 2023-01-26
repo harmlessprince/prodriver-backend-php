@@ -21,8 +21,8 @@ class TonnageController extends Controller
     public  function  store(Request $request): JsonResponse
     {
         $this->validate($request, ['name' => ['required', 'string']]);
-        Tonnage::query()->create(['name' => $request->input('name')]);
-        return $this->respondSuccess([], 'Tonnage created');
+        $tonnage =  Tonnage::query()->create(['name' => $request->input('name')]);
+        return $this->respondSuccess(['tonnage' => $tonnage], 'Tonnage created');
     }
     /**
      * @throws ValidationException

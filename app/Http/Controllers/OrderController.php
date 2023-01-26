@@ -9,6 +9,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -25,17 +26,17 @@ class OrderController extends Controller
         /** @var User $user */
         $user = $request->user();
         $ordersQuery = Order::query()->with(['tonnage', 'truckTypes', 'user:id,first_name,last_name,middle_name,phone_number,email']);
-        if ($user->user_type == User::USER_TYPE_CARGO_OWNER){
+        if ($user->user_type == User::USER_TYPE_CARGO_OWNER) {
             $ordersQuery = $ordersQuery->where('user_id', $user->id);
         }
-        if ($user->user_type == User::USER_TYPE_TRANSPORTER){
+        if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
             $ordersQuery = $ordersQuery->where('declined_by', null)
                 ->where('approved_by', null)
                 ->where('matched_by', null)
                 ->where('status', Order::PENDING);
         }
         $orders = $ordersQuery->simplePaginate();
-        return  $this->respondSuccess(['requests' => $orders ], 'Truck requests fetched');
+        return  $this->respondSuccess(['requests' => $orders], 'Truck requests fetched');
     }
 
     /**
@@ -49,12 +50,22 @@ class OrderController extends Controller
     {
         $this->authorize('create', Order::class);
         $data = $request->validated();
-        $truckTypeIds = $data['truck_type_ids'];
-        unset($data['truck_type_ids']);
-        $data = $data + [
-                'created_by' => $request->user()->id,
-            ];
+        $user = $request->user();
+        if (array_key_exists('product_pictures', $data)) {
+            $productPictures = $data['product_pictures'];
+            unset($data['product_pictures']);
+        }
+        if (array_key_exists('truck_type_ids', $data)) {
+            $truckTypeIds = $data['truck_type_ids'];
+            unset($data['truck_type_ids']);
+        }
+
+        $data['created_by'] = $user->id;
+        if ($user->user_type !== User::USER_TYPE_ADMIN) {
+            $data['user_id'] = $user->id;
+        }
         /** @var  Order $truckRequests */
+        Log::info($data);
         $truckRequests = Order::query()->create($data);
         $truckRequests->truckTypes()->sync($truckTypeIds);
         return $this->respondSuccess(['order' => $truckRequests->load(['tonnage', 'truckTypes'])], 'Truck request created successfully');
@@ -70,8 +81,8 @@ class OrderController extends Controller
     public function show(Order $truckRequest): JsonResponse
     {
         $this->authorize('view', $truckRequest);
-        $order =$truckRequest->load(Order::RELATIONS);
-        return $this->respondSuccess(['order' => $order ], 'Truck request fetched successfully');
+        $order = $truckRequest->load(Order::RELATIONS);
+        return $this->respondSuccess(['order' => $order], 'Truck request fetched successfully');
     }
 
     /**

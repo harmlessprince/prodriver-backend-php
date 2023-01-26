@@ -3,7 +3,11 @@
 namespace App\Http\Requests;
 
 use Carbon\Carbon;
+use App\Models\File;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\RequiredIf;
 
 /**
  * @property int tonnage_id
@@ -37,9 +41,13 @@ class OrderRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = request()->user();
+        $fileExists = Rule::exists(File::class, 'id')
+            ->where('type', File::TYPE_IMAGE)
+            ->where('creator_id', $user->id);
         if (request()->method() == 'POST') {
             return [
-                'user_id' => ['required', 'integer', 'exists:users,id'],
+                "user_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
                 'tonnage_id' => ['required', 'integer', 'exists:tonnages,id'],
                 'truck_type_ids' => ['required', 'array'],
                 'tuck_type_ids.*' => ['integer', 'exists:truck_types,id'],
@@ -49,7 +57,9 @@ class OrderRequest extends FormRequest
                 'pickup_address' => ['required', 'string'],
                 'destination_address' => ['required', 'string'],
                 'number_trucks' => ['sometimes', 'integer', 'min:1'],
-                'date_needed' => ['required', 'date', 'after:'. Carbon::now()],
+                'date_needed' => ['required', 'date', 'after:' . Carbon::now()],
+                'product_pictures' => ['nullable', 'array', 'min:1'],
+                'product_pictures.*' => ['integer', $fileExists],
             ];
         }
 
@@ -64,7 +74,7 @@ class OrderRequest extends FormRequest
                 'pickup_address' => ['sometimes', 'string'],
                 'destination_address' => ['sometimes', 'string'],
                 'number_trucks' => ['sometimes', 'integer', 'min:1'],
-                'date_needed' => ['required', 'date', 'after:'. Carbon::now()],
+                'date_needed' => ['required', 'date', 'after:' . Carbon::now()],
             ];
         }
         return [];

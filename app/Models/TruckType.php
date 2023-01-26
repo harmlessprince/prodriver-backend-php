@@ -19,6 +19,6 @@ class TruckType extends Model
 
     public function trucks()
     {
-        return $this->belongsToMany(Truck::class, 'truck_type_id');
+        return $this->hasMany(Truck::class, 'truck_type_id');
     }
 }

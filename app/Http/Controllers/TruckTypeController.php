@@ -12,7 +12,9 @@ class TruckTypeController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        return $this->respondSuccess(['truck_types' => TruckType::query()->get()], 'Truck types fetched');
+        $truckTypeQuery = TruckType::query()->withCount('trucks');
+        $truckTypes = $truckTypeQuery->get();
+        return $this->respondSuccess(['truck_types' => $truckTypes], 'Truck types fetched');
     }
 
     /**

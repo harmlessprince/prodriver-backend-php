@@ -63,7 +63,7 @@ class Order extends Model
     const  ORDER_STATUSES = [self::CANCELLED, self::PENDING, self::ACCEPTED, self::COMPLETED, self::DECLINED];
     const FINANCIAL_STATUSES = [self::PAID, self::PENDING];
 
-    const RELATIONS = ['truckTypes', 'tonnage'];
+    const RELATIONS = ['truckTypes', 'tonnage', ];
 
     public function user(): BelongsTo
     {

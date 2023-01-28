@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
+use App\Models\Truck;
 use App\Models\User;
+use App\Services\CloudinaryFileService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,6 +15,11 @@ use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
+
+    public function __construct(private readonly CloudinaryFileService $cloudinaryFileService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -36,7 +43,7 @@ class OrderController extends Controller
                 ->where('status', Order::PENDING);
         }
         $orders = $ordersQuery->simplePaginate();
-        return  $this->respondSuccess(['requests' => $orders], 'Truck requests fetched');
+        return $this->respondSuccess(['requests' => $orders], 'Truck requests fetched');
     }
 
     /**
@@ -51,6 +58,8 @@ class OrderController extends Controller
         $this->authorize('create', Order::class);
         $data = $request->validated();
         $user = $request->user();
+        $truckTypeIds = [];
+        $productPictures = [];
         if (array_key_exists('product_pictures', $data)) {
             $productPictures = $data['product_pictures'];
             unset($data['product_pictures']);
@@ -64,11 +73,17 @@ class OrderController extends Controller
         if ($user->user_type !== User::USER_TYPE_ADMIN) {
             $data['user_id'] = $user->id;
         }
-        /** @var  Order $truckRequests */
+        /** @var  Order $truckRequest */
         Log::info($data);
-        $truckRequests = Order::query()->create($data);
-        $truckRequests->truckTypes()->sync($truckTypeIds);
-        return $this->respondSuccess(['order' => $truckRequests->load(['tonnage', 'truckTypes'])], 'Truck request created successfully');
+        $truckRequest = Order::query()->create($data);
+        if (count($truckTypeIds) > 0) {
+            $truckRequest->truckTypes()->sync($truckTypeIds);
+        }
+        if (count($productPictures) > 0) {
+            $this->cloudinaryFileService->takeOwnerShip($productPictures, Truck::MORPH_NAME, $truckRequest->id);
+        }
+        $truckRequest = $truckRequest->load(['tonnage', 'truckTypes']);
+        return $this->respondSuccess(['order' => $truckRequest], 'Truck request created successfully');
     }
 
     /**
@@ -97,12 +112,15 @@ class OrderController extends Controller
     {
         $this->authorize('update', $truckRequest);
         $data = $request->validated();
-        $truckTypeIds = $data['truck_type_ids']  ?? [];
-        unset($data['truck_type_ids']);
+        if (array_key_exists('truck_type_ids', $data)) {
+            $truckTypeIds = $data['truck_type_ids'];
+            $truckRequest->truckTypes()->sync($truckTypeIds);
+            unset($data['truck_type_ids']);
+        }
         /** @var  Order $newOrder */
         $truckRequest->update($data);
-        $truckRequest->truckTypes()->sync($truckTypeIds);
-        return  $this->respondSuccess([], 'Request updated successfully');
+
+        return $this->respondSuccess([], 'Request updated successfully');
     }
 
     /**
@@ -116,7 +134,7 @@ class OrderController extends Controller
     {
         $this->authorize('delete', $truckRequest);
         $truckRequest->delete();
-        return  $this->respondSuccess([], 'Request updated successfully');
+        return $this->respondSuccess([], 'Request deleted successfully');
     }
 
     public function cancelRequest(Request $request, Order $order)
@@ -138,6 +156,7 @@ class OrderController extends Controller
         $order->approved_by = $user->id;
         $order->save();
     }
+
     public function declineRequest(Request $request, Order $order)
     {
         //TODO Authorize user
@@ -147,6 +166,7 @@ class OrderController extends Controller
         $order->declined_by = $user->id;
         $order->save();
     }
+
     public function acceptRequest(Request $request, Order $order)
     {
         //TODO Authorize user

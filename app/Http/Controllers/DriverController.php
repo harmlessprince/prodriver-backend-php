@@ -32,7 +32,7 @@ class DriverController extends Controller
         $this->authorize('viewAny', Driver::class);
         /** @var User $user */
         $user = $request->user();
-        $driversQuery = Driver::query();
+        $driversQuery = Driver::query()->with(['picture', 'licensePicture', 'user']);
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
             $driversQuery = $driversQuery->where('user_id', $user->id);
         }
@@ -90,7 +90,8 @@ class DriverController extends Controller
     public function show(Driver $driver): JsonResponse
     {
         $this->authorize('view', $driver);
-        return $this->respondSuccess(['driver' => $driver->load('picture', 'licensePicture')], 'Driver fetched');
+        $driver = $driver->load('picture', 'licensePicture', 'user');
+        return $this->respondSuccess(['driver' => $driver], 'Driver fetched');
     }
 
     /**
@@ -135,6 +136,7 @@ class DriverController extends Controller
     public function destroy(Driver $driver): JsonResponse
     {
         $this->authorize('delete', $driver);
+        $driver->delete();
         return $this->respondSuccess([],  'Driver deleted');
     }
 }

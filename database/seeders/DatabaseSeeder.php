@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             TruckTypeSeeder::class,
             StateCountrySeeder::class,
             BankSeeder::class,
+            TripStatusesSeeeder::class,
+            WaybillStatusSeeeder::class,
             UserSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();

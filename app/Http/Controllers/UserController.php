@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use App\Services\UserService;
@@ -43,7 +44,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RegisterRequest $request, UserService $userService)
+    public function store(CreateUserRequest $request, UserService $userService)
     {
         $this->authorize('create', User::class);
        $user = $userService->createUser((object)$request->validated());

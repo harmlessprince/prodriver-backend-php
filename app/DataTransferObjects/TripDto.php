@@ -33,25 +33,25 @@ class TripDto
     {
     }
 
-     public static function fromApiRequest(TripRequest $request, int $truckOwnerId, int $driver_id): TripDto
-     {
-//         return new self (
-             // truck_owner_id: $truckOwnerId,
-             // driver_id: $driver_id,
-             // truck_type_id: $request->truck_type_id,
-             // tonnage_id: $request->tonnage_id,
-             // chassis_number: $request->chassis_number,
-             // plate_number: $request->plate_number,
-             // maker: $request->maker,
-             // model: $request->model,
-             // registration_number: $request->registration_number,
-             // picture_id: $request->picture_id,
-             // proof_of_ownership_id: $request->proof_of_ownership_id,
-             // road_worthiness_id: $request->road_worthiness_id,
-             // license_id: $request->validated('license_id'),
-             // insurance_id: $request->insurance_id
-//         );
-     }
+//      public static function fromApiRequest(TripRequest $request, int $truckOwnerId, int $driver_id): TripDto
+//      {
+// //         return new self (
+//              // truck_owner_id: $truckOwnerId,
+//              // driver_id: $driver_id,
+//              // truck_type_id: $request->truck_type_id,
+//              // tonnage_id: $request->tonnage_id,
+//              // chassis_number: $request->chassis_number,
+//              // plate_number: $request->plate_number,
+//              // maker: $request->maker,
+//              // model: $request->model,
+//              // registration_number: $request->registration_number,
+//              // picture_id: $request->picture_id,
+//              // proof_of_ownership_id: $request->proof_of_ownership_id,
+//              // road_worthiness_id: $request->road_worthiness_id,
+//              // license_id: $request->validated('license_id'),
+//              // insurance_id: $request->insurance_id
+// //         );
+//      }
 //    public static function cleanRequest(TruckRequest $request, int $truckOwnerId, int $driver_id)
 //    {
 //        $object  =  new self (

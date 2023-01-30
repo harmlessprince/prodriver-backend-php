@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
                 'phone_number' => '09086442311',
                 'password' => Hash::make('password'),
                 'user_type' => User::USER_TYPE_TRANSPORTER,
+                'email_verified_at' => now(),
             ]
         );
         User::query()->updateOrCreate(
@@ -31,9 +32,10 @@ class UserSeeder extends Seeder
             [
                 'first_name' => 'Cargo',
                 'last_name' => 'User',
-                'phone_number' => '09086442315',
+                'phone_number' => '09086442312',
                 'password' => Hash::make('password'),
                 'user_type' => User::USER_TYPE_CARGO_OWNER,
+                'email_verified_at' => now(),
             ]
         );
         User::query()->updateOrCreate(
@@ -41,9 +43,20 @@ class UserSeeder extends Seeder
             [
                 'first_name' => 'Admin',
                 'last_name' => 'User',
-                'phone_number' => '09086442314',
+                'phone_number' => '09086442313',
                 'password' => Hash::make('password'),
                 'user_type' => User::USER_TYPE_ADMIN,
+                'email_verified_at' => now(),
+            ]
+        );
+        User::query()->updateOrCreate(
+            ['email' => 'admin@test.com'],
+            [
+                'first_name' => 'Account',
+                'last_name' => 'Manager User',
+                'phone_number' => '09086442314',
+                'password' => Hash::make('password'),
+                'user_type' => User::USER_TYPE_ACCOUNT_MANAGER,
                 'email_verified_at' => now(),
             ]
         );

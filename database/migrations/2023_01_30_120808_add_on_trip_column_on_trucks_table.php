@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('truck', function (Blueprint $table) {
-            $table->boolean('on_trip');
-            $table->softDeletes();
+        Schema::table('trucks', function (Blueprint $table) {
+            $table->boolean('on_trip')->default(false);
         });
     }
 

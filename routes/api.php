@@ -46,11 +46,11 @@ Route::prefix('auth')->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/user', [AuthenticationController::class, 'user']);
         Route::get('/logout', [AuthenticationController::class, 'logout']);
-        Route::get('/email/verify/{token}', [VerificationController::class,'verify'])->name('verification.verify'); // Make sure to keep this as your route name
+        Route::get('/email/verify/{token}', [VerificationController::class, 'verify'])->name('verification.verify'); // Make sure to keep this as your route name
         Route::get('/email/resend/token', [VerificationController::class, 'resend'])->name('verification.resend');
     });
 });
-Route::middleware('auth:sanctum')->group(function (){
+Route::middleware('auth:sanctum')->group(function () {
     //file upload
     Route::post('upload/file', [FileController::class, 'uploadFile']);
     Route::post('upload/multiple/files', [FileController::class, 'uploadFiles']);
@@ -77,7 +77,11 @@ Route::middleware('auth:sanctum')->group(function (){
 
     //Truck requests
     Route::apiResource('truckRequests', OrderController::class);
+    //driver endpoints
     Route::apiResource('drivers', DriverController::class);
+    Route::patch('change/driver/picture/{driver}', [DriverController::class, 'changeDriverPicture']);
+    Route::patch('change/driver/license/picture/{driver}', [DriverController::class, 'changeDriverLicensePicture']);
+    Route::patch('change/driver/owner/{driver}', [DriverController::class, 'changeDriverOwner']);
     Route::apiResource('trucks', TruckController::class);
 
     //users

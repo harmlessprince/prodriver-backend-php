@@ -104,7 +104,7 @@ class DriverController extends Controller
      */
     public function update(DriverRequest $request, Driver $driver): JsonResponse
     {
-
+        $this->authorize('update', $driver);
         if ($request->has('picture_id')) {
             if ($driver->picture()->exists()) {
                 if (($driver->picture->id != $request->picture_id)) {
@@ -125,6 +125,56 @@ class DriverController extends Controller
         }
         $driver->update($request->validated());
         return $this->respondSuccess([], 'Driver updated successfully');
+    }
+
+    public function changeDriverPicture(DriverRequest $request, Driver $driver)
+    {
+        $this->authorize('update', $driver);
+        if ($request->has('picture_id')) {
+            if ($driver->picture()->exists()) {
+                if (($driver->picture->id != $request->picture_id)) {
+                    $file = $driver->picture;
+                    $this->cloudinaryFileService->deleteFile($file);
+                }
+            }
+            $driver->picture_id = $request->picture_id;
+            $driver->save();
+            $this->cloudinaryFileService->takeOwnerShip([$request->picture_id], Driver::MORPH_NAME, $driver->id);
+        }
+        return $this->respondSuccess([], 'Driver picture updated successfully');
+    }
+
+    public function changeDriverLicensePicture(DriverRequest $request, Driver $driver)
+    {
+        $this->authorize('update', $driver);
+        if ($request->has('license_picture_id')) {
+            if ($driver->licensePicture()->exists()) {
+                if (($driver->licensePicture->id != $request->license_picture_id)) {
+                    $file = $driver->licensePicture;
+                    $this->cloudinaryFileService->deleteFile($file);
+                }
+            }
+            $driver->license_picture_id = $request->license_picture_id;
+            $driver->save();
+            $this->cloudinaryFileService->takeOwnerShip([$request->license_picture_id], Driver::MORPH_NAME, $driver->id);
+        }
+
+        return $this->respondSuccess([], 'Driver license picture updated successfully');
+    }
+
+    public function changeDriverOwner(Request $request, Driver $driver)
+    {
+        $this->authorize('update', $driver);
+        $this->validate($request, [
+            'transporter_id' => ['required', 'integer', 'exists:users,id'],
+        ]);
+        $transporterUser = User::query()->findOrFail($request->transporter_id);
+        if ($transporterUser->user_type != User::USER_TYPE_TRANSPORTER) {
+            return  $this->respondError('The supplied transported id does not belong to a transporter', 403);
+        }
+        $driver->user_id = $request->transporter_id;
+        $driver->save();
+        return $this->respondSuccess([], 'Driver owner updated successfully');
     }
 
     /**

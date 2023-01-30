@@ -19,11 +19,10 @@ class UserService
         $user->first_name = $data->first_name;
         $user->last_name = $data->last_name;
         $user->email = $data->email;
-        $user->password = Hash::make($data->password);
+        $user->password = strlen($data->password) > 0  ?  Hash::make($data->password) : Hash::make(random_bytes(8));
         $user->phone_number = $data->phone_number;
         $user->user_type = $data->user_type;
         $user->save();
-
         return $user;
     }
 
@@ -34,7 +33,7 @@ class UserService
 
     public function sendWelcomeNotification(User $user): void
     {
-//        Notification::send($user, new ());
+        //        Notification::send($user, new ());
     }
 
     public function sendPhoneNumberVerificationNotification(User $user, AppToken $appToken): void

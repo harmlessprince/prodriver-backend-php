@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('drivers', function (Blueprint $table) {
-            $table->boolean('on_trip')->default(false);
-            $table->softDeletes();
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('access')->default(false);
         });
     }
 
@@ -26,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('drivers', function (Blueprint $table) {
-            //
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('access');
         });
     }
 };

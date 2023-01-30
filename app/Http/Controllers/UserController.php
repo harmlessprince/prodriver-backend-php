@@ -47,8 +47,8 @@ class UserController extends Controller
     public function store(CreateUserRequest $request, UserService $userService)
     {
         $this->authorize('create', User::class);
-       $user = $userService->createUser((object)$request->validated());
-       return $this->respondSuccess(['user' => $user], 'User created successfully');
+        $user = $userService->createUser((object)$request->validated());
+        return $this->respondSuccess(['user' => $user], 'User created successfully');
     }
 
     /**
@@ -71,7 +71,7 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(RegisterRequest $request, User $user)
+    public function update(CreateUserRequest $request, User $user)
     {
         $this->authorize('update', $user);
         $user->update($request->validated());
@@ -86,6 +86,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        
     }
 }

@@ -31,8 +31,8 @@ class CreateUserRequest extends FormRequest
                 'last_name' => ['required', 'string', 'max:200'],
                 'email' => ['required', 'email', 'max:200', 'unique:users,email'],
                 'phone_number' => ['required', 'string', 'max:11', 'unique:users,phone_number'],
-                'password' => ['required', 'string'],
-                'confirm_password' => ['required', 'same:password'],
+                'password' => ['nullable', 'string'],
+                'confirm_password' => ['nullable', 'same:password'],
                 'user_type' => ['required', 'string', Rule::in(User::ALL_USER_TYPES)],
 
             ];

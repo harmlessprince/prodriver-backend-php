@@ -47,7 +47,7 @@ class OrderRequest extends FormRequest
             ->where('creator_id', $user->id);
         if (request()->method() == 'POST') {
             return [
-                "user_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
+                "cargo_owner_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
                 'tonnage_id' => ['required', 'integer', 'exists:tonnages,id'],
                 'truck_type_ids' => ['required', 'array'],
                 'tuck_type_ids.*' => ['integer', 'exists:truck_types,id'],

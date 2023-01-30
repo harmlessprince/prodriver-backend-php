@@ -71,10 +71,11 @@ class OrderController extends Controller
 
         $data['created_by'] = $user->id;
         if ($user->user_type !== User::USER_TYPE_ADMIN) {
-            $data['user_id'] = $user->id;
+            $data['cargo_owner_id'] = $user->id;
         }
+        $data['potential_payout'] = $data['amount_willing_to_pay'] - ((10 / 100) *  $data['amount_willing_to_pay']);
         /** @var  Order $truckRequest */
-        Log::info($data);
+        // Log::info($data);
         $truckRequest = Order::query()->create($data);
         if (count($truckTypeIds) > 0) {
             $truckRequest->truckTypes()->sync($truckTypeIds);
@@ -167,14 +168,14 @@ class OrderController extends Controller
         $order->save();
     }
 
-    public function acceptRequest(Request $request, Order $order)
+    public function acceptOrder(Request $request, Order $order)
     {
+        $this->validate($request, [
+            // 'amount' => ['nullable', '']
+        ]);
         //TODO Authorize user
         /** @var User $user */
         $user = $request->user();
-        $order->status = Order::ACCEPTED;
-        $order->accepted_by = $user->id;
-        $order->save();
     }
 
     public function matchRequest(Request $request, Order $order)

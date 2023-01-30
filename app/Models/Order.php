@@ -65,9 +65,9 @@ class Order extends Model
 
     const RELATIONS = ['truckTypes', 'tonnage', ];
 
-    public function user(): BelongsTo
+    public function cargoOwner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'cargo_owner_id');
     }
     public  function createdBy(): BelongsTo
     {

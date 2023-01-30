@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tonnage_id')->constrained('tonnages');
-            $table->foreignId('transporter_id')->constrained('users');
+            $table->foreignId('cargo_owner_id')->constrained('users');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->foreignId('matched_by')->nullable()->constrained('users');

@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $owner_type Type of model that owns file
  * @property int $owner_id ID of model that owns file
  * @property int $creator_id ID of user that created file
- * @property array $meta_data File metadata
+ * @property string $meta_data File metadata
  *
  * @property User $creator
  * @property Model $owner

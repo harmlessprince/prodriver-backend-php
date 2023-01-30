@@ -16,6 +16,7 @@ class TripStatusesSeeeder extends Seeder
     public function run()
     {
         $statuses = [
+            'pending',
             'in-transit',
             'accident',
             'awaiting-offloading',
@@ -23,6 +24,7 @@ class TripStatusesSeeeder extends Seeder
             'delivered',
             'canceled'
         ];
+        
 
         foreach ($statuses as $key => $status) {
             TripStatus::query()->updateOrCreate([

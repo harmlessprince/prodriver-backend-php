@@ -46,8 +46,8 @@ class DriverRequest extends FormRequest
             return [
                 'first_name' => ['required', 'string', 'max:200'],
                 'last_name' => ['required', 'string', 'max:200'],
-                'phone_number' => ['required', 'string', 'min:11', 'max:200'],
-                'license_number' => ['sometimes', 'string', 'max:200'],
+                'phone_number' => ['required', 'string', 'min:11', 'max:200', Rule::unique('drivers', 'phone_number')],
+                'license_number' => ['sometimes', 'string', 'max:200',  Rule::unique('drivers', 'license_number')],
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'license_picture_id' => ['sometimes', 'integer', $fileExists],
                 "user_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
@@ -58,8 +58,8 @@ class DriverRequest extends FormRequest
             return [
                 'first_name' => ['sometimes', 'string', 'max:200'],
                 'last_name' => ['sometimes', 'string', 'max:200'],
-                'phone_number' => ['sometimes', 'string', 'min:11', 'max:200'],
-                'license_number' => ['sometimes', 'string', 'max:200'],
+                'phone_number' => ['sometimes', 'string', 'min:11', 'max:200', Rule::unique('drivers', 'phone_number')->ignore($this->driver)],
+                'license_number' => ['sometimes', 'string', 'max:200',  Rule::unique('drivers', 'license_number')->ignore($this->driver)],
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'license_picture_id' => ['sometimes', 'integer', $fileExists],
             ];

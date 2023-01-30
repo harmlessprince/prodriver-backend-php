@@ -56,4 +56,14 @@ class Driver extends Model
     {
         return $this->hasOne(Truck::class, 'driver_id');
     }
+
+    // public function activeTrip()
+    // {
+    //     return $this->tr
+    // }
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class, 'driver_id');
+    }
 }

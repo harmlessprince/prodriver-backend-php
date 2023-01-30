@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateUserRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class CreateUserRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +25,27 @@ class CreateUserRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        if (request()->method() == 'POST') {
+            return [
+                'first_name' => ['required', 'string', 'max:200'],
+                'last_name' => ['required', 'string', 'max:200'],
+                'email' => ['required', 'email', 'max:200', 'unique:users,email'],
+                'phone_number' => ['required', 'string', 'max:11', 'unique:users,phone_number'],
+                'password' => ['required', 'string'],
+                'confirm_password' => ['required', 'same:password'],
+                'user_type' => ['required', 'string', Rule::in(User::ALL_USER_TYPES)],
+
+            ];
+        }
+        if (request()->method() == 'PATCH') {
+            return [
+                'first_name' => ['sometimes', 'string', 'max:200'],
+                'last_name' => ['sometimes', 'string', 'max:200'],
+                'email' => ['sometimes', 'email', 'max:200', Rule::unique('users', 'email')->ignore($this->user)],
+                'phone_number' => ['sometimes', 'string', 'max:11', Rule::unique('users', 'phone_number')->ignore($this->user)],
+                'user_type' => ['sometimes', 'string', Rule::in(User::ALL_USER_TYPES)],
+            ];
+        }
+        return [];
     }
 }

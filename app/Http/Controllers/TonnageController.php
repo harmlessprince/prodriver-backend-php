@@ -6,6 +6,7 @@ use App\Models\Tonnage;
 use App\Models\TruckType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class TonnageController extends Controller
@@ -20,7 +21,7 @@ class TonnageController extends Controller
      */
     public  function  store(Request $request): JsonResponse
     {
-        $this->validate($request, ['name' => ['required', 'string']]);
+        $this->validate($request, ['name' => ['required', 'string', Rule::unique('tonnages', 'name')]]);
         $tonnage =  Tonnage::query()->create(['name' => $request->input('name')]);
         return $this->respondSuccess(['tonnage' => $tonnage], 'Tonnage created');
     }
@@ -29,7 +30,7 @@ class TonnageController extends Controller
      */
     public  function  update(Request $request, Tonnage $tonnage): JsonResponse
     {
-        $this->validate($request, ['name' => ['required', 'string']]);
+        $this->validate($request, ['name' => ['required', 'string', Rule::unique('tonnages', 'name')->ignore($tonnage->id)]]);
         $tonnage->update(['name' => $request->input('name')]);
         return $this->respondSuccess([], 'Tonnage updated');
     }

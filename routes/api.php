@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('upload/file', [FileController::class, 'uploadFile']);
     Route::post('upload/multiple/files', [FileController::class, 'uploadFiles']);
     Route::delete('delete/file/{file}', [FileController::class, 'deleteFile']);
+    Route::post('delete/multiple/files', [FileController::class, 'deleteMultipleFile']);
 
     //country
     Route::get('countries',  [CountryController::class, 'index']);

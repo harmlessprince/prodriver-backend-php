@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 
 class FileController extends Controller
 {
-//    private  $fileService
+    //    private  $fileService
     public function __construct(private readonly CloudinaryFileService $fileService)
     {
     }
@@ -28,7 +28,7 @@ class FileController extends Controller
 
         /** @var User $user */
         $user = $request->user();
-       $file =  $this->fileService->uploadFile($request->file('file'), $user);
+        $file =  $this->fileService->uploadFile($request->file('file'), $user);
         return $this->respondSuccess([
             'file' => $file
         ], 'File uploaded successfully');
@@ -40,8 +40,8 @@ class FileController extends Controller
     public function uploadFiles(Request $request): JsonResponse
     {
         $this->validate($request, [
-           'files' => ['required', 'array'],
-           'files.*' => $this->fileService->getFileValidationRules(),
+            'files' => ['required', 'array'],
+            'files.*' => $this->fileService->getFileValidationRules(),
         ]);
         /** @var  User $user */
         $user = $request->user();
@@ -55,9 +55,19 @@ class FileController extends Controller
     {
         /** @var $user User */
         $user = $request->user();
-        if ($file->creator_id == $user->id){
+        if ($file->creator_id == $user->id) {
             $this->fileService->deleteFile($file);
         }
+        return $this->respondSuccess([], 'File deleted successfully');
+    }
+
+
+    public function deleteMultipleFile(Request $request): JsonResponse
+    {
+        /** @var $user User */
+        $user = $request->user();
+        $fileIds = $request->fileIds;
+        $this->fileService->deleteMultipleFilesById($fileIds);
         return $this->respondSuccess([], 'File deleted successfully');
     }
 }

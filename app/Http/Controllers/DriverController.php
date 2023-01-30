@@ -61,8 +61,9 @@ class DriverController extends Controller
             //     return $this->respondError('You are not allowed to create a driver until you create a company profile');
             // }
         } else {
-            $user = User::query()->findOrFail($request->user_id);
-            if ($user->user_type != User::USER_TYPE_TRANSPORTER) {
+            $transporterUser = User::query()->findOrFail($request->user_id);
+            if ($transporterUser->user_type != User::USER_TYPE_TRANSPORTER) {
+                $this->cloudinaryFileService->deleteMultipleFilesById([$request->picture_id, $request->license_picture_id]);
                 return  $this->respondError('The supplied user id does not belong to a transporter', 403);
             }
             // $company = Company::query()->findOrFail($request->company_id);

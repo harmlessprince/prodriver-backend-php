@@ -36,14 +36,14 @@ class TripRequest extends FormRequest
         $adminUserExists = Rule::exists(User::class, 'id')->where('user_type', User::USER_TYPE_ACCOUNT_MANAGER);
         $driverExists = Rule::exists(Driver::class, 'id');
         $truckExists = Rule::exists(Truck::class, 'id');
-         = Rule::exists(Driver::class, 'id');
         if (request()->method() == 'POST') {
             return [
                 'account_manager_id' => ['required', 'integer', $accountManagerUserExists],
-                'matched_by' => ['nullable', 'integer', $adminUserExists],
-                'declined_by' => ['nullable', 'integer', $adminUserExists],
-                'approved_by' => ['nullable', 'integer', $adminUserExists],
+//                'matched_by' => ['nullable', 'integer', $adminUserExists],
+//                'declined_by' => ['nullable', 'integer', $adminUserExists],
+//                'approved_by' => ['nullable', 'integer', $adminUserExists],
                 'driver_id' => ['required', 'integer', $driverExists],
+                'truck_id' => ['required', '']
             ];
         }
 

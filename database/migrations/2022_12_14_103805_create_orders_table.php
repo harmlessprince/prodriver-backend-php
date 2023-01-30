@@ -16,14 +16,13 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tonnage_id')->constrained('tonnages');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('transporter_id')->constrained('users');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->foreignId('matched_by')->nullable()->constrained('users');
-            $table->foreignId('declined_by')->nullable()->constrained('users');
             $table->foreignId('cancelled_by')->nullable()->constrained('users');
-            $table->foreignId('accepted_by')->nullable()->constrained('users');
             $table->float('amount_willing_to_pay')->nullable();
+            $table->float('potential_payout')->nullable();
             $table->boolean('display_amount_willing_to_pay')->default(true);
             $table->integer('number_of_trucks')->default(1);
             $table->text('description');

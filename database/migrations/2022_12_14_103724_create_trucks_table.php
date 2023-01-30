@@ -23,11 +23,7 @@ return new class extends Migration
             $table->string('chassis_number')->nullable()->unique();
             $table->string('maker')->nullable();
             $table->string('model')->nullable();
-//            $table->foreignId('picture_id')->nullable()->constrained('files')->cascadeOnDelete();
-//            $table->foreignId('proof_of_ownership_id')->nullable()->constrained('files')->cascadeOnDelete();
-//            $table->foreignId('road_worthiness_id')->nullable()->constrained('files')->cascadeOnDelete();
-//            $table->foreignId('license_id')->nullable()->constrained('files')->cascadeOnDelete();
-//            $table->foreignId('insurance_id')->nullable()->constrained('files')->cascadeOnDelete();
+            $table->boolean('on_trip')->default(false);
             $table->timestamps();
         });
     }

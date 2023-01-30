@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('trip_id')->unique();
             $table->foreignId('approved_by')->nullable()->constrained('users');
             $table->foreignId('matched_by')->nullable()->constrained('users');
-            $table->foreignId('declined_by')->nullable()->constrained('users');
             $table->foreignId('account_manager_id')->nullable()->constrained('users');
             $table->foreignId('driver_id')->constrained('drivers');
             $table->foreignId('truck_id')->constrained('trucks');

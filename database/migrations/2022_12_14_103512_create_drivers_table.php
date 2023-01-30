@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('license_number')->nullable();
             $table->foreignId('picture_id')->nullable()->constrained('files')->cascadeOnDelete();
             $table->foreignId('license_picture_id')->nullable()->constrained('files')->cascadeOnDelete();
+            $table->boolean('on_trip')->default(false);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

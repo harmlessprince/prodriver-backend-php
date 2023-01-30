@@ -47,7 +47,7 @@ class User extends Authenticatable
     const USER_TYPE_CARGO_OWNER = 'cargo-owner';
     const USER_TYPE_TRANSPORTER = 'transporter';
     const USER_TYPE_ADMIN = 'admin';
-    const USER_TYPE_ACCOUNT_MANAGER = 'account_manager';
+    const USER_TYPE_ACCOUNT_MANAGER = 'account-manager';
 
     const REGULAR_USER_TYPES = [self::USER_TYPE_TRANSPORTER, self::USER_TYPE_CARGO_OWNER];
     const ALL_USER_TYPES = [self::USER_TYPE_ADMIN, self::USER_TYPE_TRANSPORTER, self::USER_TYPE_CARGO_OWNER, self::USER_TYPE_ACCOUNT_MANAGER];

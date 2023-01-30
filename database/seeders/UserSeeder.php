@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
             ]
         );
         User::query()->updateOrCreate(
-            ['email' => 'admin@test.com'],
+            ['email' => 'account@test.com'],
             [
                 'first_name' => 'Account',
                 'last_name' => 'Manager User',

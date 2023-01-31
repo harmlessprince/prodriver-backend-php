@@ -8,8 +8,11 @@ use App\DataTransferObjects\MatchOrderDto;
 use App\Http\Requests\OrderRequest;
 use App\Models\AcceptedOrder;
 use App\Models\Order;
+use App\Models\Trip;
+use App\Models\TripStatus;
 use App\Models\Truck;
 use App\Models\User;
+use App\Models\WaybillStatus;
 use App\Repositories\Eloquent\Repository\OrderRepository;
 use App\Repositories\Eloquent\Repository\TruckRepository;
 use App\Services\CloudinaryFileService;
@@ -200,9 +203,7 @@ class OrderController extends Controller
         }
         $truckIsOnTrip = $this->truckRepository->truckIsOnTrip($request->truck_id);
 
-        if ($truckIsOnTrip) {
-            return $this->respondSuccess([], 'The selected truck is on a trip');
-        }
+        $truck = $this->checkTruckStatus($request->input('truck_id'));
         $acceptOrder = new AcceptOrderDto(
             $order->id,
             $request->input('truck_id'),
@@ -230,6 +231,7 @@ class OrderController extends Controller
         if ($this->orderServices->hasAcceptedOrder($order->id, $request->input('transporter_id'), $request->input('truck_id'))) {
             return $this->respondForbidden('The supplied transporter has already been matched with the supplied order');
         }
+        $this->checkTruckStatus($request->input('truck_id'));
         $matchOrderDto = new MatchOrderDto($order->id, $request->input('truck_id'), $request->input('transporter_id'), $user->id, $request->input('amount'));
         $this->orderServices->matchOrder($matchOrderDto);
         return $this->respondSuccess([], 'Order matched successfully');
@@ -243,22 +245,78 @@ class OrderController extends Controller
     {
         $this->authorize('approve', $acceptedOrder);
         $this->validate($request, [
-            'account_manger_id' => ['required', 'integer', Rule::exists('users', 'id')->where('user_type', User::USER_TYPE_ACCOUNT_MANAGER)],
+            'account_manager_id' => ['required', 'integer', Rule::exists('users', 'id')->where('user_type', User::USER_TYPE_ACCOUNT_MANAGER)],
             'total_payout' => ['required', 'numeric'],
             'advance_payout' => ['required', 'numeric'],
             'loading_date' => ['required', 'date', 'after:' . Carbon::now()->toDateString()],
             'delivery_date' => ['required', 'date', 'after:loading_date'],
         ]);
         $acceptedOrderDto = AcceptOrderDto::fromModel($acceptedOrder);
-//        $approveAcceptedOrderDto = new ApproveAcceptedOrderDto(
-//            $request->input('total_payout'),
-//
-//        );
-//        $this->orderServices->approveAnAcceptedOrderRequest();
-
+        /** @var Truck|string $truckStatus */
+        $truck = $this->checkTruckStatus($acceptedOrderDto->truck_id);
+        if (is_string($truck)) {
+            $this->respondError($truck);
+        }
+        /** @var Order $order */
+        $order = Order::query()->where('id', $acceptedOrderDto->order_id)->first();
+        $tripID = $this->generateTripID($acceptedOrderDto);
+        $loadingDate = $request->input('loading_date') ? Carbon::parse($request->input('loading_date'))->toDate() : null;
+        $deliveryDate = $request->input('delivery_date') ? Carbon::parse($request->input('delivery_date'))->toDate() : null;
+        $approveAcceptedOrderDto = new ApproveAcceptedOrderDto(
+            accepted_order_id: $acceptedOrderDto->id,
+            trip_id: $tripID,
+            driver_id: $truck->driver_id,
+            truck_id: $truck->id,
+            order_id: $acceptedOrderDto->order_id,
+            cargo_owner_id: $order->cargo_owner_id,
+            transporter_id: $acceptedOrderDto->accepted_by,
+            account_manager_id: $request->input('account_manager_id'),
+            approved_by: $request->user()->id,
+            total_payout: $request->input('total_payout'),
+            advance_payout: $request->input('advance_payout'),
+            loading_date: $loadingDate,
+            delivery_date: $deliveryDate,
+        );
+        $approveAcceptedOrderDto->margin_profit_amount = $order->amount_willing_to_pay - $approveAcceptedOrderDto->total_payout;
+        $approveAcceptedOrderDto->margin_profit_percentage = ($approveAcceptedOrderDto->margin_profit_amount / $order->amount_willing_to_pay) * 100;
+        $approveAcceptedOrderDto->trip_status_id = TripStatus::query()->where('name', TripStatus::STATUS_PENDING)->first()->id;
+        $approveAcceptedOrderDto->way_bill_status_id = WaybillStatus::query()->where('name', WaybillStatus::STATUS_PENDING)->first()->id;
+        $trip = $this->orderServices->convertApprovedOrderToTrip($approveAcceptedOrderDto)->load([
+            'tripStatus',
+            'waybillStatus',
+            'approvedBy',
+            'matchedBy',
+            'declinedBy',
+            'accountManager',
+            'driver',
+            'truck',
+            'order',
+            'cargoOwner',
+            'transporter',
+            'waybillPicture'
+        ]);
+        return $this->respondSuccess(['trip' => $trip], 'Accepted Request Approved and Converted To Trip Successfully');
     }
 
-   private function generateTripID (AcceptOrderDto $acceptOrderDto){
-//        return $acceptOrderDto->order_id . "/" . $acceptOrderDto->
-   }
+    private function generateTripID(AcceptOrderDto $acceptOrderDto): string
+    {
+        return 'TR-' . Carbon::now()->timestamp;
+    }
+
+    private function checkTruckStatus($truck_id): string|Truck
+    {
+
+        /** @var Truck $truck */
+        $truck = Truck::query()->where('id', $truck_id)->first();
+        if (!$truck) {
+            return 'The truck associated to accepted order request was not found';
+        }
+        if ($truck->on_trip) {
+            return 'The truck associated to accepted order request is currently on a trip';
+        }
+        if (!$truck->driver_id) {
+            return 'The truck associated to accepted order request does not have a driver';
+        }
+        return $truck;
+    }
 }

@@ -10,6 +10,7 @@ class AcceptOrderDto {
         public readonly float $amount,
         public readonly int|null $approved_by = null,
         public readonly int|null $matched_by= null,
+        public readonly ?int $id = null,
     )
     {
     }
@@ -21,7 +22,8 @@ class AcceptOrderDto {
         $acceptedOrder->accepted_by,
         $acceptedOrder->amount,
         $acceptedOrder->approved_by,
-        $acceptedOrder->matched_by
+        $acceptedOrder->matched_by,
+        $acceptedOrder->id,
     );
    }
 }

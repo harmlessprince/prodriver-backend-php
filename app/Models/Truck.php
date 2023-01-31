@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string maker
  * @property string model
  * @property int driver_id
+ * @property int on_trip
  * @property Carbon created_at
  * @property Carbon updated_at
  * @property Collection<Document> pictures
@@ -35,6 +36,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Truck extends Model
 {
     use HasFactory, SoftDeletes;
+
+
     protected $guarded = [];
     const MORPH_NAME = 'truck';
     const DOCUMENT_RELATIONS   = ['pictures', 'proofOfOwnership', 'roadWorthiness', 'license', 'insurance'];

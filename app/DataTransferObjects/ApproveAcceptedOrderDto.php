@@ -7,33 +7,31 @@ use Carbon\Carbon;
 class ApproveAcceptedOrderDto
 {
 
-    public readonly ?int $total_payout;
-        public readonly ?int $advance_payout;
-        public readonly ?float $margin_profit_amount;
-        public readonly ?float $margin_profit_percentage;
-        public readonly ?Carbon $delivery_date;
-        public readonly ?Carbon $loading_date;
-        public readonly ?int $trip_status_id;
-        public readonly ?int $way_bill_status_id;
-        public readonly ?int $way_bill_picture_id;
-    public function __construct(
-        public readonly int $trip_id,
-        public readonly int $driver_id,
-        public readonly int $truck_id,
-        public readonly int $order_id,
-        public readonly int $cargo_owner_id,
-        public readonly int $transporter_id,
-        public readonly int $account_manager_id,
-        public readonly int $approved_by,
 
+    public ?float $margin_profit_amount;
+    public ?float $margin_profit_percentage;
+    public ?int $trip_status_id;
+    public ?int $way_bill_status_id;
+    public ?int $way_bill_picture_id;
+
+    public function __construct(
+        public readonly int        $accepted_order_id,
+        public readonly string     $trip_id,
+        public readonly int        $driver_id,
+        public readonly int        $truck_id,
+        public readonly int        $order_id,
+        public readonly int        $cargo_owner_id,
+        public readonly int        $transporter_id,
+        public readonly int        $account_manager_id,
+        public readonly int        $approved_by,
+        public readonly ?float     $total_payout = 0,
+        public readonly ?float     $advance_payout = 0,
+        public readonly ?\DateTime $loading_date = null,
+        public readonly ?\DateTime $delivery_date = null,
     )
     {
-        $this->total_payout = null;
-        $this->advance_payout = null;
-        $this->margin_profit_amount = null;
-        $this->margin_profit_percentage = null;
-        $this->delivery_date = null;
-        $this->loading_date = null;
+        $this->margin_profit_amount = 0;
+        $this->margin_profit_percentage = 0;
         $this->trip_status_id = null;
         $this->way_bill_status_id = null;
         $this->way_bill_picture_id = null;

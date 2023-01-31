@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read int id
  * @property int tonnage_id
  * @property int truck_type_id
- * @property int user_id
+ * @property int cargo_owner_id
  * @property int created_by
  * @property int approved_by
  * @property int matched_by

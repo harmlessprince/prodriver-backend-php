@@ -6,7 +6,10 @@ use App\DataTransferObjects\AcceptOrderDto;
 use App\DataTransferObjects\ApproveAcceptedOrderDto;
 use App\DataTransferObjects\MatchOrderDto;
 use App\Models\AcceptedOrder;
+use App\Models\Trip;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class OrderServices
 {
@@ -14,6 +17,7 @@ class OrderServices
     {
         return AcceptedOrder::query()->where('order_id', $order_id)->where('accepted_by', $transporter_id)->where('truck_id', $truck_id)->exists();
     }
+
     public function acceptOrder(AcceptOrderDto $acceptOrderDto): void
     {
         AcceptedOrder::query()->create([
@@ -40,8 +44,9 @@ class OrderServices
         return;
     }
 
-    public function approveAnAcceptedOrderRequest(ApproveAcceptedOrderDto $dto){
-        dd($dto);
+    public function convertApprovedOrderToTrip(ApproveAcceptedOrderDto $dto): Model|Builder
+    {
+        return Trip::query()->create((array)$dto);
     }
 
 }

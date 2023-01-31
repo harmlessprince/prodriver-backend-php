@@ -38,7 +38,7 @@ class UserController extends Controller
     public function getAllTransporters(): JsonResponse
     {
         $this->authorize('viewAny', User::class);
-        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type')->where('user_type', User::USER_TYPE_TRANSPORTER)->get();
+        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type', 'email')->where('user_type', User::USER_TYPE_TRANSPORTER)->get();
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
 
@@ -48,7 +48,7 @@ class UserController extends Controller
     public function getAllCargoOwners(): JsonResponse
     {
         $this->authorize('viewAny', User::class);
-        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type')->where('user_type', User::USER_TYPE_CARGO_OWNER)->get();
+        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type', 'email')->where('user_type', User::USER_TYPE_CARGO_OWNER)->get();
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
 

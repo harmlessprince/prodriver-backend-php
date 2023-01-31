@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Trip extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $guarded = [];
     const MORPH_NAME = 'trip';
 
     const STATUS_PENDING = 'pending';
@@ -20,61 +22,61 @@ class Trip extends Model
     const STATUS_CANCELED = 'canceled';
     const INACTIVE_TRIP_STATUSES = [self::STATUS_CANCELED, self::STATUS_DELIVERED];
 
-    public function tripStatus()
+    public function tripStatus(): BelongsTo
     {
         return $this->belongsTo(TripStatus::class, 'trip_status_id');
     }
 
-    
-    public function waybillStatus()
+
+    public function waybillStatus(): BelongsTo
     {
         return $this->belongsTo(WaybillStatus::class, 'way_bill_status_id');
     }
-    public function approvedBy()
+    public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function matchedBy()
+    public function matchedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'matched_by');
     }
 
-    public function declinedBy()
+    public function declinedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'declined_by');
     }
 
-    public function accountManager()
+    public function accountManager(): BelongsTo
     {
         return $this->belongsTo(User::class, 'account_manager_id');
     }
-    public function driver()
+    public function driver(): BelongsTo
     {
         return $this->belongsTo(Driver::class, 'driver_id');
     }
 
-    public function truck()
+    public function truck(): BelongsTo
     {
         return $this->belongsTo(Truck::class, 'truck_id');
     }
 
-    public function order()
+    public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id');
     }
 
-    public function cargoOwner()
+    public function cargoOwner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'cargo_owner_id');
     }
 
-    public function transporter()
+    public function transporter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'transporter_id');
     }
 
-    public function waybillPicture()
+    public function waybillPicture(): BelongsTo
     {
         return $this->belongsTo(File::class, 'way_bill_status_id');
     }

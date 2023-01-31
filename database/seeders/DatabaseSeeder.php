@@ -17,11 +17,13 @@ class DatabaseSeeder extends Seeder
         $this->call([
             TonnageSeeder::class,
             TruckTypeSeeder::class,
-            StateCountrySeeder::class,
+//            StateCountrySeeder::class,
             BankSeeder::class,
             TripStatusesSeeeder::class,
             WaybillStatusSeeeder::class,
             UserSeeder::class,
+            DriverSeeder::class,
+            TruckSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

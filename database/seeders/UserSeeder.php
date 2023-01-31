@@ -59,5 +59,9 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        if (User::query()->count() <  10){
+            \App\Models\User::factory(10)->create();
+        }
+
     }
 }

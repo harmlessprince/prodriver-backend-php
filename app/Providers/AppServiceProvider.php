@@ -2,17 +2,19 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Models\Truck;
+use App\Models\Driver;
 use App\Models\Company;
 use App\Models\Document;
-use App\Models\Driver;
 use App\Models\Guarantor;
-use App\Models\Truck;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use App\Repositories\Eloquent\Repository\BaseRepository;
+use App\Repositories\Eloquent\Contracts\EloquentRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,7 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        
+        // $this->app->bind(EloquentRepositoryInterface::class, BaseRepository::class);
     }
 
     /**

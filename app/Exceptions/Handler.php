@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 
 
+use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Throwable;
@@ -111,7 +112,7 @@ class Handler extends ExceptionHandler
             return $this->apiResponse(
                 [
                     'success' => false,
-                    'message' => class_basename($e->getModel()) . ' not found'
+                    'message' => Str::of(class_basename($e->getModel()))->headline() . ' not found'
                 ],
                 404
             );
@@ -211,16 +212,16 @@ class Handler extends ExceptionHandler
                 500
             );
         }
-        if ($e instanceof CompanyProfileExistsException) {
-            return $this->apiResponse(
-                [
-                    'success' => false,
-                    'message' => $e->getMessage(),
-                    'exception' => $e
-                ],
-                409
-            );
-        }
+//        if ($e instanceof CompanyProfileExistsException) {
+//            return $this->apiResponse(
+//                [
+//                    'success' => false,
+//                    'message' => $e->getMessage(),
+//                    'exception' => $e
+//                ],
+//                409
+//            );
+//        }
         if ($e instanceof \Error) {
             return $this->apiResponse(
                 [

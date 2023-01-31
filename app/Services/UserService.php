@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Notification;
 
 class UserService
 {
+    /**
+     * @throws \Exception
+     */
     public function createUser($data): User
     {
 
@@ -19,7 +22,7 @@ class UserService
         $user->first_name = $data->first_name;
         $user->last_name = $data->last_name;
         $user->email = $data->email;
-        $user->password = strlen($data->password) > 0  ?  Hash::make($data->password) : Hash::make(random_bytes(8));
+        $user->password = strlen($data->password ?? '') > 0  ?  Hash::make($data->password) : Hash::make(random_bytes(8));
         $user->phone_number = $data->phone_number;
         $user->user_type = $data->user_type;
         $user->save();

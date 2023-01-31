@@ -2,22 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\DataTransferObjects\AcceptOrderDto;
+use App\DataTransferObjects\ApproveAcceptedOrderDto;
+use App\DataTransferObjects\MatchOrderDto;
 use App\Http\Requests\OrderRequest;
+use App\Models\AcceptedOrder;
 use App\Models\Order;
 use App\Models\Truck;
 use App\Models\User;
+use App\Repositories\Eloquent\Repository\OrderRepository;
+use App\Repositories\Eloquent\Repository\TruckRepository;
 use App\Services\CloudinaryFileService;
+use App\Services\OrderServices;
+use Carbon\Carbon;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
+    private TruckRepository $truckRepository;
+    private OrderRepository $orderRepository;
+    private CloudinaryFileService $cloudinaryFileService;
+    private OrderServices $orderServices;
 
-    public function __construct(private readonly CloudinaryFileService $cloudinaryFileService)
+
+    public function __construct(
+        CloudinaryFileService $cloudinaryFileService,
+        TruckRepository       $truckRepository,
+        OrderRepository       $orderRepository,
+        OrderServices         $orderServices,
+    )
     {
+        $this->orderRepository = $orderRepository;
+        $this->truckRepository = $truckRepository;
+        $this->cloudinaryFileService = $cloudinaryFileService;
+        $this->orderServices = $orderServices;
     }
 
     /**
@@ -32,17 +56,7 @@ class OrderController extends Controller
         $this->authorize('viewAny', Order::class);
         /** @var User $user */
         $user = $request->user();
-        $ordersQuery = Order::query()->with(['tonnage', 'truckTypes', 'cargoOwner:id,first_name,last_name,middle_name,phone_number,email']);
-        if ($user->user_type == User::USER_TYPE_CARGO_OWNER) {
-            $ordersQuery = $ordersQuery->where('user_id', $user->id);
-        }
-        if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
-            $ordersQuery = $ordersQuery->where('declined_by', null)
-                ->where('approved_by', null)
-                ->where('matched_by', null)
-                ->where('status', Order::PENDING);
-        }
-        $orders = $ordersQuery->simplePaginate();
+        $orders = $this->orderRepository->paginatedOrders($user, ['*'], ['tonnage', 'truckTypes', 'cargoOwner:id,first_name,last_name,middle_name,phone_number,email']);
         return $this->respondSuccess(['requests' => $orders], 'Truck requests fetched');
     }
 
@@ -73,7 +87,7 @@ class OrderController extends Controller
         if ($user->user_type !== User::USER_TYPE_ADMIN) {
             $data['cargo_owner_id'] = $user->id;
         }
-        $data['potential_payout'] = $data['amount_willing_to_pay'] - ((10 / 100) *  $data['amount_willing_to_pay']);
+        $data['potential_payout'] = $data['amount_willing_to_pay'] - ((10 / 100) * $data['amount_willing_to_pay']);
         /** @var  Order $truckRequest */
         // Log::info($data);
         $truckRequest = Order::query()->create($data);
@@ -168,23 +182,83 @@ class OrderController extends Controller
         $order->save();
     }
 
-    public function acceptOrder(Request $request, Order $order)
+    /**
+     * @throws ValidationException
+     * @throws AuthorizationException
+     */
+    public function acceptOrder(Request $request, Order $order): JsonResponse
     {
+        $this->authorize('accept', $order);
         $this->validate($request, [
-            // 'amount' => ['nullable', '']
+            'amount' => ['required', 'numeric', 'min:1'],
+            'truck_id' => ['required', 'numeric', Rule::exists('trucks', 'id')]
         ]);
-        //TODO Authorize user
         /** @var User $user */
         $user = $request->user();
+        if ($this->orderServices->hasAcceptedOrder($order->id, $user->id, $request->input('truck_id'))) {
+            return $this->respondForbidden('You can not accept a order more than once');
+        }
+        $truckIsOnTrip = $this->truckRepository->truckIsOnTrip($request->truck_id);
+
+        if ($truckIsOnTrip) {
+            return $this->respondSuccess([], 'The selected truck is on a trip');
+        }
+        $acceptOrder = new AcceptOrderDto(
+            $order->id,
+            $request->input('truck_id'),
+            $user->id,
+            $request->input('amount'),
+        );
+        $this->orderServices->acceptOrder($acceptOrder);
+        return $this->respondSuccess([], 'Your interest in this order has been registered');
     }
 
-    public function matchRequest(Request $request, Order $order)
+    /**
+     * @throws ValidationException
+     * @throws AuthorizationException
+     */
+    public function matchOrder(Request $request, Order $order): JsonResponse
     {
-        //TODO Authorize user
+        $this->authorize('match', $order);
+        $this->validate($request, [
+            'amount' => ['required', 'numeric', 'min:1'],
+            'transporter_id' => ['required', 'numeric', Rule::exists('users', 'id')->where('user_type', User::USER_TYPE_TRANSPORTER)],
+            'truck_id' => ['required', 'numeric', Rule::exists('trucks', 'id')],
+        ]);
         /** @var User $user */
         $user = $request->user();
-        $order->status = Order::MATCHED;
-        $order->matched_by = $user->id;
-        $order->save();
+        if ($this->orderServices->hasAcceptedOrder($order->id, $request->input('transporter_id'), $request->input('truck_id'))) {
+            return $this->respondForbidden('The supplied transporter has already been matched with the supplied order');
+        }
+        $matchOrderDto = new MatchOrderDto($order->id, $request->input('truck_id'), $request->input('transporter_id'), $user->id, $request->input('amount'));
+        $this->orderServices->matchOrder($matchOrderDto);
+        return $this->respondSuccess([], 'Order matched successfully');
     }
+
+    /**
+     * @throws ValidationException
+     * @throws AuthorizationException
+     */
+    public function approveOrder(Request $request, AcceptedOrder $acceptedOrder)
+    {
+        $this->authorize('approve', $acceptedOrder);
+        $this->validate($request, [
+            'account_manger_id' => ['required', 'integer', Rule::exists('users', 'id')->where('user_type', User::USER_TYPE_ACCOUNT_MANAGER)],
+            'total_payout' => ['required', 'numeric'],
+            'advance_payout' => ['required', 'numeric'],
+            'loading_date' => ['required', 'date', 'after:' . Carbon::now()->toDateString()],
+            'delivery_date' => ['required', 'date', 'after:loading_date'],
+        ]);
+        $acceptedOrderDto = AcceptOrderDto::fromModel($acceptedOrder);
+//        $approveAcceptedOrderDto = new ApproveAcceptedOrderDto(
+//            $request->input('total_payout'),
+//
+//        );
+//        $this->orderServices->approveAnAcceptedOrderRequest();
+
+    }
+
+   private function generateTripID (AcceptOrderDto $acceptOrderDto){
+//        return $acceptOrderDto->order_id . "/" . $acceptOrderDto->
+   }
 }

@@ -77,6 +77,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Truck requests
     Route::apiResource('truckRequests', OrderController::class);
+    Route::post('accept/request/{order}/from/transporter', [OrderController::class, 'acceptOrder']);
+    Route::post('match/request/{order}/to/transporter', [OrderController::class, 'matchOrder']);
+    Route::post('approve/accepted/{acceptedOrder}', [OrderController::class, 'approveOrder']);
     //driver endpoints
     Route::apiResource('drivers', DriverController::class);
     Route::patch('change/driver/picture/{driver}', [DriverController::class, 'changeDriverPicture']);

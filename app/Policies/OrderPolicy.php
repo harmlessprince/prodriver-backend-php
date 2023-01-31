@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\AcceptedOrder;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -17,7 +18,7 @@ class OrderPolicy
      * @param User $user
      * @return Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): Response|bool
     {
         return true;
     }
@@ -40,9 +41,8 @@ class OrderPolicy
      * @param User $user
      * @return bool
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
-        return true;
         return $user->user_type == User::USER_TYPE_ADMIN || $user->user_type == User::USER_TYPE_CARGO_OWNER;
     }
 
@@ -53,7 +53,7 @@ class OrderPolicy
      * @param Order $order
      * @return bool
      */
-    public function update(User $user, Order $order)
+    public function update(User $user, Order $order): bool
     {
         return $order->user_id == $user->id || $user->user_type == User::USER_TYPE_ADMIN || $user->user_type == User::USER_TYPE_CARGO_OWNER;
     }
@@ -77,7 +77,7 @@ class OrderPolicy
      * @param Order $order
      * @return Response|bool
      */
-    public function restore(User $user, Order $order)
+    public function restore(User $user, Order $order): Response|bool
     {
         return $user->user_type == User::USER_TYPE_ADMIN;
     }
@@ -89,8 +89,19 @@ class OrderPolicy
      * @param Order $order
      * @return Response|bool
      */
-    public function forceDelete(User $user, Order $order)
+    public function forceDelete(User $user, Order $order): Response|bool
     {
         return $user->user_type == User::USER_TYPE_ADMIN;
     }
+
+    public function accept(User $user, Order $order): bool
+    {
+        return $user->user_type == User::USER_TYPE_TRANSPORTER;
+    }
+
+    public function match(User $user, Order $order): bool
+    {
+        return $user->user_type == User::USER_TYPE_ADMIN;
+    }
+
 }

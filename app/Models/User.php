@@ -145,4 +145,21 @@ class User extends Authenticatable
         }
         return [];
     }
+    public  function isAdmin(): bool
+    {
+        return $this->user_type == User::USER_TYPE_ADMIN;
+    }
+    public  function isTransporter(): bool
+    {
+        return $this->user_type == User::USER_TYPE_TRANSPORTER;
+    }
+
+    public  function isCargoOwner(): bool
+    {
+        return $this->user_type == User::USER_TYPE_CARGO_OWNER;
+    }
+    public  function isAccountManager(): bool
+    {
+        return $this->user_type == User::USER_TYPE_ACCOUNT_MANAGER;
+    }
 }

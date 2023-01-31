@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Trip;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TripController extends Controller
@@ -18,11 +20,23 @@ class TripController extends Controller
 
     }
 
-    public function index(Request $request){
-        $trips = Trip::query()->with(Trip::RELATIONS)->latest('created_at');
-        return $this->respondSuccess(['trips' => $trips->simplePaginate()], 'Trips fetched successfully');
-    }
+    public function index(Request $request): JsonResponse
+    {
+        /** @var User $user */
+        $user = $request->user();
+        $tripQuery = Trip::query()->with(Trip::RELATIONS)->latest('created_at');
+        if ($user->isAccountManager()) {
+            $tripQuery = $tripQuery->where('account_manager_id', $user->id);
+        }
+        if ($user->isTransporter()) {
+            $tripQuery = $tripQuery->where('transporter_id', $user->id);
+        }
+        if ($user->isCargoOwner()) {
+            $tripQuery = $tripQuery->where('cargo_owner_id', $user->id);
+        }
 
+        return $this->respondSuccess(['trips' => $tripQuery->simplePaginate()], 'Trips fetched successfully');
+    }
 
 
 }

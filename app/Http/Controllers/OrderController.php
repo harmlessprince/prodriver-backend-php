@@ -241,7 +241,7 @@ class OrderController extends Controller
      * @throws ValidationException
      * @throws AuthorizationException
      */
-    public function approveOrder(Request $request, AcceptedOrder $acceptedOrder)
+    public function approveOrder(Request $request, AcceptedOrder $acceptedOrder): JsonResponse
     {
         $this->authorize('approve', $acceptedOrder);
         $this->validate($request, [
@@ -281,20 +281,7 @@ class OrderController extends Controller
         $approveAcceptedOrderDto->margin_profit_percentage = ($approveAcceptedOrderDto->margin_profit_amount / $order->amount_willing_to_pay) * 100;
         $approveAcceptedOrderDto->trip_status_id = TripStatus::query()->where('name', TripStatus::STATUS_PENDING)->first()->id;
         $approveAcceptedOrderDto->way_bill_status_id = WaybillStatus::query()->where('name', WaybillStatus::STATUS_PENDING)->first()->id;
-        $trip = $this->orderServices->convertApprovedOrderToTrip($approveAcceptedOrderDto)->load([
-            'tripStatus',
-            'waybillStatus',
-            'approvedBy',
-            'matchedBy',
-            'declinedBy',
-            'accountManager',
-            'driver',
-            'truck',
-            'order',
-            'cargoOwner',
-            'transporter',
-            'waybillPicture'
-        ]);
+        $trip = $this->orderServices->convertApprovedOrderToTrip($approveAcceptedOrderDto)->load(Trip::RELATIONS);
         return $this->respondSuccess(['trip' => $trip], 'Accepted Request Approved and Converted To Trip Successfully');
     }
 

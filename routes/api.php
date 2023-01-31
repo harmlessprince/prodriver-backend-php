@@ -14,6 +14,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TonnageController;
 use App\Http\Controllers\TransporterDriverController;
+use App\Http\Controllers\TripController;
 use App\Http\Controllers\TruckController;
 use App\Http\Controllers\TruckTypeController;
 use App\Http\Controllers\UpdateProfileController;
@@ -87,6 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('change/driver/owner/{driver}', [DriverController::class, 'changeDriverOwner']);
     Route::apiResource('trucks', TruckController::class);
 
+    Route::apiResource('trips', TripController::class);
     //users
     Route::apiResource('users', UserController::class);
     Route::get('/cargo-owners', [UserController::class, 'getAllCargoOwners']);

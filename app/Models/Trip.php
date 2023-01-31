@@ -10,17 +10,33 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Trip extends Model
 {
     use HasFactory, SoftDeletes;
+
     protected $guarded = [];
     const MORPH_NAME = 'trip';
 
     const STATUS_PENDING = 'pending';
     const STATUS_IN_TRANSIT = 'in-transit';
-    const STATUS_ACCIDENT =  'awaiting-offloading';
+    const STATUS_ACCIDENT = 'awaiting-offloading';
     const STATUS_AWAITING_OFFLOADING = 'awaiting-offloading';
     const STATUS_DIVERTED = 'diverted';
     const STATUS_DELIVERED = 'delivered';
     const STATUS_CANCELED = 'canceled';
     const INACTIVE_TRIP_STATUSES = [self::STATUS_CANCELED, self::STATUS_DELIVERED];
+
+    const RELATIONS = [
+        'tripStatus',
+        'waybillStatus',
+        'approvedBy',
+        'matchedBy',
+        'declinedBy',
+        'accountManager',
+        'driver',
+        'truck',
+        'order',
+        'cargoOwner',
+        'transporter',
+        'waybillPicture'
+    ];
 
     public function tripStatus(): BelongsTo
     {
@@ -32,6 +48,7 @@ class Trip extends Model
     {
         return $this->belongsTo(WaybillStatus::class, 'way_bill_status_id');
     }
+
     public function approvedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
@@ -51,6 +68,7 @@ class Trip extends Model
     {
         return $this->belongsTo(User::class, 'account_manager_id');
     }
+
     public function driver(): BelongsTo
     {
         return $this->belongsTo(Driver::class, 'driver_id');

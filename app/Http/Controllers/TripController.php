@@ -34,7 +34,6 @@ class TripController extends Controller
         if ($user->isCargoOwner()) {
             $tripQuery = $tripQuery->where('cargo_owner_id', $user->id);
         }
-
         return $this->respondSuccess(['trips' => $tripQuery->simplePaginate()], 'Trips fetched successfully');
     }
 

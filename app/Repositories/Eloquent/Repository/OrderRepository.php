@@ -20,7 +20,7 @@ class OrderRepository extends BaseRepository
 
         $ordersQuery =  $this->model->with($relations);
         if ($user->user_type == User::USER_TYPE_CARGO_OWNER) {
-            $ordersQuery = $ordersQuery->where('user_id', $user->id);
+            $ordersQuery = $ordersQuery->where('cargo_owner_id', $user->id);
         }
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
             $ordersQuery = $ordersQuery->where('declined_by', null)

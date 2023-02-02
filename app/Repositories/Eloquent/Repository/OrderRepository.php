@@ -23,7 +23,7 @@ class OrderRepository extends BaseRepository
             $ordersQuery = $ordersQuery->where('cargo_owner_id', $user->id);
         }
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
-            $ordersQuery = $ordersQuery->where('declined_by', null)
+            $ordersQuery = $ordersQuery
                 ->where('approved_by', null)
                 ->where('matched_by', null)
                 ->where('status', Order::PENDING);

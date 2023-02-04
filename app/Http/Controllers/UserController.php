@@ -32,6 +32,15 @@ class UserController extends Controller
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
 
+     /**
+     * @throws AuthorizationException
+     */
+    public function getAllAccountManagers(): JsonResponse
+    {
+        $this->authorize('viewAny', User::class);
+        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type', 'email')->where('user_type', User::USER_TYPE_ACCOUNT_MANAGER)->get();
+        return $this->respondSuccess(['users' => $users], 'Account managers fetched successfully');
+    }
     /**
      * @throws AuthorizationException
      */
@@ -39,7 +48,7 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
         $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type', 'email')->where('user_type', User::USER_TYPE_TRANSPORTER)->get();
-        return $this->respondSuccess(['users' => $users], 'User fetched successfully');
+        return $this->respondSuccess(['users' => $users], 'Transporters fetched successfully');
     }
 
     /**

@@ -39,8 +39,7 @@ class OrderController extends Controller
         TruckRepository       $truckRepository,
         OrderRepository       $orderRepository,
         OrderServices         $orderServices,
-    )
-    {
+    ) {
         $this->orderRepository = $orderRepository;
         $this->truckRepository = $truckRepository;
         $this->cloudinaryFileService = $cloudinaryFileService;
@@ -165,15 +164,7 @@ class OrderController extends Controller
         $order->save();
     }
 
-    public function approveRequest(Request $request, Order $order)
-    {
-        //TODO Authorize user
-        /** @var User $user */
-        $user = $request->user();
-        $order->status = Order::APPROVED;
-        $order->approved_by = $user->id;
-        $order->save();
-    }
+
 
     public function declineRequest(Request $request, Order $order)
     {
@@ -189,7 +180,7 @@ class OrderController extends Controller
      * @throws ValidationException
      * @throws AuthorizationException
      */
-    public function acceptOrder(Request $request, Order $order): JsonResponse
+    public function acceptRequest(Request $request, Order $order): JsonResponse
     {
         $this->authorize('accept', $order);
         $this->validate($request, [
@@ -218,7 +209,7 @@ class OrderController extends Controller
      * @throws ValidationException
      * @throws AuthorizationException
      */
-    public function matchOrder(Request $request, Order $order): JsonResponse
+    public function matchRequest(Request $request, Order $order): JsonResponse
     {
         $this->authorize('match', $order);
         $this->validate($request, [
@@ -237,11 +228,18 @@ class OrderController extends Controller
         return $this->respondSuccess([], 'Order matched successfully');
     }
 
+
+    public function allAcceptedRequest(Request $request, Order $order)
+    {
+        $acceptedRequests = $order->acceptedOrMatchedRequest()->with(['order', 'truck', 'acceptedBy', 'matchedBy', 'approvedBy', 'cancelledBy'])->get();
+        return $this->respondSuccess(['accepted_requests' => $acceptedRequests], 'Fetched accepted requests');
+    }
+
     /**
      * @throws ValidationException
      * @throws AuthorizationException
      */
-    public function approveOrder(Request $request, AcceptedOrder $acceptedOrder): JsonResponse
+    public function approveRequest(Request $request, AcceptedOrder $acceptedOrder): JsonResponse
     {
         $this->authorize('approve', $acceptedOrder);
         $this->validate($request, [

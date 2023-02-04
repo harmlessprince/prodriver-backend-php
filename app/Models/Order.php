@@ -101,4 +101,8 @@ class Order extends Model
     {
         return $this->belongsTo(Tonnage::class, 'tonnage_id');
     }
+    public function acceptedOrMatchedRequest()
+    {
+        return $this->hasMany(AcceptedOrder::class, 'order_id');
+    }
 }

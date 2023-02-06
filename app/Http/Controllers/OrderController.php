@@ -231,6 +231,7 @@ class OrderController extends Controller
 
     public function allAcceptedRequest(Request $request, Order $order)
     {
+        $this->authorize('match', $order);
         $acceptedRequests = $order->acceptedOrMatchedRequest()->with(['order', 'truck', 'acceptedBy', 'matchedBy', 'approvedBy', 'cancelledBy'])->get();
         return $this->respondSuccess(['accepted_requests' => $acceptedRequests], 'Fetched accepted requests');
     }

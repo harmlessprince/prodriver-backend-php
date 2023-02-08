@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -63,7 +64,9 @@ class Order extends Model
     const  ORDER_STATUSES = [self::CANCELLED, self::PENDING, self::ACCEPTED, self::COMPLETED, self::DECLINED];
     const FINANCIAL_STATUSES = [self::PAID, self::PENDING];
 
-    const RELATIONS = ['truckTypes', 'tonnage', ];
+    const MORPH_NAME = 'order';
+
+    const RELATIONS = ['truckTypes', 'tonnage', 'pictures'];
 
     public function cargoOwner(): BelongsTo
     {
@@ -104,5 +107,9 @@ class Order extends Model
     public function acceptedOrMatchedRequest()
     {
         return $this->hasMany(AcceptedOrder::class, 'order_id');
+    }
+    public function pictures(): MorphMany
+    {
+        return $this->morphMany(File::class, 'owner');
     }
 }

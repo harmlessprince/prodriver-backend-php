@@ -97,7 +97,7 @@ class OrderController extends Controller
             $truckRequest->truckTypes()->sync($truckTypeIds);
         }
         if (count($productPictures) > 0) {
-            $this->cloudinaryFileService->takeOwnerShip($productPictures, Truck::MORPH_NAME, $truckRequest->id);
+            $this->cloudinaryFileService->takeOwnerShip($productPictures, Order::MORPH_NAME, $truckRequest->id);
         }
         $truckRequest = $truckRequest->load(['tonnage', 'truckTypes']);
         return $this->respondSuccess(['order' => $truckRequest], 'Truck request created successfully');

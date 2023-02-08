@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\Document;
 use App\Models\Guarantor;
 use App\Models\Order;
+use App\Models\Trip;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
@@ -46,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
             Company::MORPH_NAME => Company::class,
             Truck::MORPH_NAME => Truck::class,
             Order::MORPH_NAME => Order::class,
+            Trip::MORPH_NAME => Trip::class,
         ]);
         $app_name = Config::get('app.name');
         $client_url = Config::get('app.client_url');

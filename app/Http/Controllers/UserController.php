@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Repositories\Eloquent\Repository\UserRepository;
 use App\Services\UserService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -14,6 +15,10 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
+
+    public function __construct(public readonly UserRepository $userRepository) {
+        
+    }
     /**
      * Display a listing of the resource.
      *
@@ -28,7 +33,7 @@ class UserController extends Controller
         if (!in_array($request->query('user_type'), $userTypes)) {
             return $this->respondError('Please provide a valid user type in params');
         }
-        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type')->where('user_type', $request->query('user_type'))->get();
+        $users = $this->userRepository->filter()->orderBy('created_at')->get();
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
 

@@ -94,6 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::get('/cargo-owners', [UserController::class, 'getAllCargoOwners']);
     Route::get('/transporters', [UserController::class, 'getAllTransporters']);
+    Route::get('/account-managers', [UserController::class, 'getAllAccountManagers']);
     Route::get('transporters/{transporter}/driver', [TransporterDriverController::class, 'index']);
 
     //truck types

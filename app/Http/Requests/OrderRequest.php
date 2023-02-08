@@ -58,7 +58,7 @@ class OrderRequest extends FormRequest
                 'destination_address' => ['required', 'string'],
                 'number_trucks' => ['sometimes', 'integer', 'min:1'],
                 'date_needed' => ['required', 'date', 'after:' . Carbon::now()],
-                'product_pictures' => ['nullable', 'array', 'min:1'],
+                'product_pictures' => ['nullable', 'array', 'min:1', 'max:4'],
                 'product_pictures.*' => ['integer', $fileExists],
             ];
         }

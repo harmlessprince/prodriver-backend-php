@@ -14,7 +14,7 @@ class StateController extends Controller
     public function index(Request $request): JsonResponse
     {
         if (!$request->has('country_id')) return $this->respondError('Please provide country_id as param');
-        $states =  State::query()->where('country_id', $request->country_id)->with('country')->get();
+        $states =  State::query()->where('country_id', $request->country_id)->with('country')->paginate();
         return $this->respondSuccess(['states' => $states], 'All states fetched');
     }
 }

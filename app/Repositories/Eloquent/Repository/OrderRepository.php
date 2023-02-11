@@ -28,7 +28,7 @@ class OrderRepository extends BaseRepository
                 ->where('matched_by', null)
                 ->where('status', Order::PENDING);
         }
-        return $ordersQuery->simplePaginate();
+        return $ordersQuery->paginate();
     }
 
 

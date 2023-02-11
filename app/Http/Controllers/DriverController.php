@@ -36,7 +36,7 @@ class DriverController extends Controller
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
             $driversQuery = $driversQuery->where('user_id', $user->id);
         }
-        $drivers = $driversQuery->simplePaginate();
+        $drivers = $driversQuery->paginate();
         return $this->respondSuccess(['drivers' => $drivers], 'Drivers retrieved successfully');
     }
 

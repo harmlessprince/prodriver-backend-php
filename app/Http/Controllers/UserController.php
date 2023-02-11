@@ -33,7 +33,7 @@ class UserController extends Controller
         if (!in_array($request->query('user_type'), $userTypes)) {
             return $this->respondError('Please provide a valid user type in params');
         }
-        $users = $this->userRepository->filter()->orderBy('created_at')->get();
+        $users = $this->userRepository->filter()->orderBy('created_at')->paginate();
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
 

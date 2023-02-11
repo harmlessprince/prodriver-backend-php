@@ -15,9 +15,9 @@ class TripController extends Controller
 
     }
 
-    public function updateTripStatus(Request $request)
+    public function updateTripStatus(Request $request, Trip $trip)
     {
-
+        
     }
 
     public function index(Request $request): JsonResponse

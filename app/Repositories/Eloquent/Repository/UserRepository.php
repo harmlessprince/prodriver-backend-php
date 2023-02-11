@@ -18,10 +18,8 @@ class UserRepository extends BaseRepository
     }
     public function filter()
     {
-
         //TODO, load role relation
         return $this->model->query()
-            ->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type')
             ->whereFirstName(request('first_name'))
             ->whereMiddleName(request('middle_name'))
             ->whereLastName(request('last_name'))

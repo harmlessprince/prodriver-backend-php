@@ -43,7 +43,7 @@ class TruckController extends Controller
         if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
             $truckQuery = $truckQuery->where('truck_owner_id', $user->id);
         }
-        $trucks = $truckQuery->simplePaginate();
+        $trucks = $truckQuery->paginate(request('per_page'));
         return $this->respondSuccess(['trucks' => $trucks], 'All trucks fetched successfully');
     }
 

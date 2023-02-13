@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\SearchableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,7 +45,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Order extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, SearchableTrait;
     protected $guarded = [];
     protected $attributes = [
         'financial_status' => self::PENDING,
@@ -63,7 +64,10 @@ class Order extends Model
     const MATCHED = 'matched';
     const  ORDER_STATUSES = [self::CANCELLED, self::PENDING, self::ACCEPTED, self::COMPLETED, self::DECLINED];
     const FINANCIAL_STATUSES = [self::PAID, self::PENDING];
-
+    public array $searchable = [
+        'cargoOwner.first_name', 'cargoOwner.last_name', 'cargoOwner.middle_name',
+        'pickup_address', 'destination_address'
+    ];
     const MORPH_NAME = 'order';
 
     const RELATIONS = ['truckTypes', 'tonnage', 'pictures'];

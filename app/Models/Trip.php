@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Trip extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, SearchableTrait;
 
     protected $guarded = [];
     const MORPH_NAME = 'trip';
@@ -22,6 +23,15 @@ class Trip extends Model
     const STATUS_DELIVERED = 'delivered';
     const STATUS_CANCELED = 'canceled';
     const INACTIVE_TRIP_STATUSES = [self::STATUS_CANCELED, self::STATUS_DELIVERED];
+
+    public array $searchable = [
+        'trip_id',
+        'accountManager.first_name', 'accountManager.last_name', 'accountManager.middle_name',
+        'accountManager.phone_number',
+        'cargoOwner.first_name', 'cargoOwner.last_name', 'cargoOwner.middle_name',  'cargoOwner.phone_number',
+        'transporter.first_name', 'transporter.last_name', 'transporter.middle_name',  'transporter.phone_number',
+        'order.pickup_address', 'order.destination_address', 
+    ];
 
     const RELATIONS = [
         'tripStatus',

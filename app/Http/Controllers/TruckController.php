@@ -23,8 +23,7 @@ class TruckController extends Controller
     public function __construct(
         private readonly CloudinaryFileService $cloudinaryFileService,
         private readonly TruckService          $truckService
-    )
-    {
+    ) {
     }
 
     /**
@@ -38,7 +37,7 @@ class TruckController extends Controller
     {
         $this->authorize('viewAny', Truck::class);
 
-        $truckQuery = Truck::query()->with(Truck::NON_DOCUMENT_RELATIONS);
+        $truckQuery = Truck::query()->search()->with(Truck::NON_DOCUMENT_RELATIONS);
         $user = $request->user();
         if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
             $truckQuery = $truckQuery->where('truck_owner_id', $user->id);
@@ -146,7 +145,8 @@ class TruckController extends Controller
             return Schema::getColumnListing($tableName);
         });
     }
-    public function createTruckDocs(TruckDto $truckDto, Truck $truck) {
+    public function createTruckDocs(TruckDto $truckDto, Truck $truck)
+    {
         if ($truckDto->picture_id) {
             $this->truckService->syncTruckPictures($truck, $truckDto->picture_id);
         }

@@ -14,15 +14,24 @@ class TonnageController extends Controller
 
     public function  index(Request $request): JsonResponse
     {
-        return $this->respondSuccess(['tonnages' => Tonnage::query()->get()], 'Tonnages fetched successfully');
+        $tonnagesQuery = Tonnage::query()->search();
+        if ($request->query('shouldPaginate') === 'yes') {
+            $tonnages = $tonnagesQuery->paginate();
+        } else {
+            $tonnages = $tonnagesQuery->get();
+        }
+        return $this->respondSuccess(['tonnages' => $tonnages], 'Tonnages fetched successfully');
     }
     /**
      * @throws ValidationException
      */
     public  function  store(Request $request): JsonResponse
     {
-        $this->validate($request, ['name' => ['required', 'string', Rule::unique('tonnages', 'name')]]);
-        $tonnage =  Tonnage::query()->create(['name' => $request->input('name')]);
+        $this->validate($request, [
+            'name' => ['required', 'string', Rule::unique('tonnages', 'name')],
+            'value' => ['required', 'integer', Rule::unique('tonnages', 'value')],
+        ]);
+        $tonnage =  Tonnage::query()->create(['name' => $request->input('name'), 'value' => $request->input('value')]);
         return $this->respondSuccess(['tonnage' => $tonnage], 'Tonnage created');
     }
     /**
@@ -30,8 +39,12 @@ class TonnageController extends Controller
      */
     public  function  update(Request $request, Tonnage $tonnage): JsonResponse
     {
-        $this->validate($request, ['name' => ['required', 'string', Rule::unique('tonnages', 'name')->ignore($tonnage->id)]]);
-        $tonnage->update(['name' => $request->input('name')]);
+        $this->validate($request, [
+            'name' => ['sometimes', 'string', Rule::unique('tonnages', 'name')->ignore($tonnage->id)],
+            'value' => ['sometimes', 'integer', Rule::unique('tonnages', 'value')->ignore($tonnage->id)]
+        ]);
+
+        $tonnage->update(['name' => $request->input('name', $tonnage->name), 'value' => $request->input('value', $tonnage->value)]);
         return $this->respondSuccess([], 'Tonnage updated');
     }
 

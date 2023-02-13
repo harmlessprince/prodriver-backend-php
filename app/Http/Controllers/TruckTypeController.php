@@ -12,8 +12,14 @@ class TruckTypeController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $truckTypeQuery = TruckType::query()->withCount('trucks');
-        $truckTypes = $truckTypeQuery->get();
+        $truckTypeQuery = TruckType::query()->search()->withCount('trucks');
+
+        if ($request->query('shouldPaginate') === 'yes') {
+            $truckTypes = $truckTypeQuery->paginate();
+        } else {
+            $truckTypes = $truckTypeQuery->get();
+        }
+
         return $this->respondSuccess(['truck_types' => $truckTypes], 'Truck types fetched');
     }
 

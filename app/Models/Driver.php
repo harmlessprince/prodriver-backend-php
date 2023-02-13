@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\SearchableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,10 +28,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Driver extends Model
 {
-    use HasFactory;
+    use HasFactory, SearchableTrait;
 
     protected $guarded = [];
     const MORPH_NAME = 'driver';
+
+    public array $searchable = [
+        'first_name', 'last_name', 'phone_number',
+        'license_number',
+    ];
 
     public function picture(): BelongsTo
     {

@@ -16,8 +16,8 @@ use Illuminate\Http\Response;
 class UserController extends Controller
 {
 
-    public function __construct(public readonly UserRepository $userRepository) {
-        
+    public function __construct(public readonly UserRepository $userRepository)
+    {
     }
     /**
      * Display a listing of the resource.
@@ -30,14 +30,18 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
         $userTypes = User::ALL_USER_TYPES;
-        if (!in_array($request->query('user_type'), $userTypes)) {
+        if (!in_array($request->query('user_type'), $userTypes) && $request->has('user_type')) {
             return $this->respondError('Please provide a valid user type in params');
         }
         $users = $this->userRepository->filter()->orderBy('created_at')->paginate();
+        if ($request->has('searchTerm')) {
+            $users = $this->userRepository->searchUser()->orderBy('created_at')->paginate();
+        }
+
         return $this->respondSuccess(['users' => $users], 'User fetched successfully');
     }
 
-     /**
+    /**
      * @throws AuthorizationException
      */
     public function getAllAccountManagers(): JsonResponse
@@ -119,6 +123,5 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-
     }
 }

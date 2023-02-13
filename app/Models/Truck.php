@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\SearchableTrait;
 use App\Utils\DocumentType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,13 +36,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Truck extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, SearchableTrait;
 
 
     protected $guarded = [];
     const MORPH_NAME = 'truck';
     const DOCUMENT_RELATIONS   = ['pictures', 'proofOfOwnership', 'roadWorthiness', 'license', 'insurance'];
     const NON_DOCUMENT_RELATIONS = ['driver', 'tonnage:id,name', 'truckType:id,name', 'truckOwner:id,first_name,last_name,middle_name,user_type,phone_number'];
+    public array $searchable = [
+        'truckOwner.first_name', 'truckOwner.last_name', 'truckOwner.middle_name', 'truckOwner.email', 'truckOwner.phone_number',
+        'driver.first_name', 'driver.last_name', 'driver.phone_number', 'plate_number', 'chassis_number', 'model',
+        'maker'
+    ];
 
     public function driver(): BelongsTo
     {
@@ -81,5 +87,4 @@ class Truck extends Model
     {
         return $this->morphOne(Document::class, 'documentable')->where('document_type', DocumentType::TRUCK_INSURANCE['key']);
     }
-
 }

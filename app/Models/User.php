@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Filters\UserBuilder;
+use App\Traits\SearchableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,7 +42,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SearchableTrait;
 
     const MORPH_NAME = 'user';
     public const GENDER_MALE = 'male';
@@ -57,7 +58,8 @@ class User extends Authenticatable
     const CARGO_OWNER_PROFILE = ['spouse', 'nextOfKin', 'company'];
     const TRANSPORTER_PROFILE = ['spouse', 'nextOfKin', 'bankAccount', 'guarantors', 'company'];
 
-
+    public array $searchable = ['first_name', 'last_name', 'middle_name', 'email', 'phone_number'];
+    
     public const GENDERS = [
         self::GENDER_MALE, self::GENDER_FEMALE,
     ];

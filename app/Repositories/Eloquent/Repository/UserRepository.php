@@ -18,7 +18,7 @@ class UserRepository extends BaseRepository
     }
     public function filter()
     {
-        //TODO, load role relation
+        // TODO, load role relation
         return $this->model->query()
             ->whereFirstName(request('first_name'))
             ->whereMiddleName(request('middle_name'))
@@ -26,5 +26,10 @@ class UserRepository extends BaseRepository
             ->whereEmail(request('email'))
             ->whereGender(request('gender'))
             ->whereUserType(request('user_type'));
+    }
+
+    public function searchUser()
+    {
+        return $this->model->query()->search();
     }
 }

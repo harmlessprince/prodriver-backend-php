@@ -24,7 +24,7 @@ class TripController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        $tripQuery = Trip::query()->with(Trip::RELATIONS)->latest('created_at');
+        $tripQuery = Trip::query()->search()->with(Trip::RELATIONS)->latest('created_at');
         if ($user->isAccountManager()) {
             $tripQuery = $tripQuery->where('account_manager_id', $user->id);
         }

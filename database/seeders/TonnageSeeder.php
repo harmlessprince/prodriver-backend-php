@@ -39,7 +39,7 @@ class TonnageSeeder extends Seeder
             '60 TONS',
         ];
         foreach ($tonnages as $key => $value) {
-            Tonnage::query()->updateOrCreate(['name' => $value]);
+            Tonnage::query()->updateOrCreate(['name' => $value, 'value' => explode(' ', $value)[0] ?? 0]);
         }
         // while ($nextValue <= 100) {
         //     $tonnage = $initialValue . '-' . $nextValue . ' ton';

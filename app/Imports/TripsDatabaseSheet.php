@@ -82,7 +82,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 $days_delivered = $row['days_delivered'];
                 $days_in_transit = $row['days_in_transit'];
 
-                if (!Trip::where('trip_id', $trip_id)->exists()) {
+                if (!Trip::where('trip_id', $trip_id)->exists() && $trip_id) {
                     if ($partner) {
                         $cargoOwner = User::query()->firstOrCreate(
                             ['first_name' => $partner],

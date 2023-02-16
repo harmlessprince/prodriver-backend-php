@@ -30,10 +30,10 @@ class ImportTripsExcelDataCommand extends Command
     public function handle()
     {
         $file = $this->argument('file');
-
+        $this->output->title('Starting import');
         $import = new TripsImport();
         $import->onlySheets('DATABASE');
         Excel::queueImport($import, $file);
-        $this->info('Data imported successfully.');
+        $this->output->success('Import successful');
     }
 }

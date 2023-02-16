@@ -46,6 +46,8 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
         $wayBillStatusId = WaybillStatus::query()->where('name', WaybillStatus::STATUS_RECEIVED)->first()->id;
 
         foreach ($rows as $key => $row) {
+
+
             $cargoOwner = null;
             $transporter = null;
             $driver = null;
@@ -82,7 +84,13 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 $days_delivered = $row['days_delivered'];
                 $days_in_transit = $row['days_in_transit'];
 
+                $str = "Importing for id " . $trip_id . "\n";
+
+                printf($str);
                 if (!Trip::where('trip_id', $trip_id)->exists() && $trip_id) {
+                    $str = "Found for id " . $trip_id ."\n";
+
+                    printf($str);
                     if ($partner) {
                         $cargoOwner = User::query()->firstOrCreate(
                             ['first_name' => $partner],
@@ -194,6 +202,9 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                         $trip->save();
                     }
                     DB::commit();
+                    $str = "Committed for id " . $trip_id ."\n";
+
+                    printf($str);
                 }
                 // return $trip;
             } catch (\Throwable $th) {

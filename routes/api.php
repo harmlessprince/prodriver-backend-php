@@ -100,4 +100,6 @@ Route::middleware('auth:sanctum')->group(function () {
     //truck types
     Route::apiResource('truckTypes', TruckTypeController::class)->only(['store', 'index', 'destroy', 'update']);
     Route::apiResource('tonnages', TonnageController::class)->only(['store', 'index', 'destroy', 'update']);
+
+    Route::post('import/trips', [TripController::class, 'importTrips']);
 });

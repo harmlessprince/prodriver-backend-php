@@ -6,6 +6,7 @@ use App\Exceptions\CompanyProfileExistsException;
 use App\Http\Requests\CompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
+use App\Models\User;
 use App\Services\CompanyService;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,15 @@ class CompanyController extends Controller
      */
     public function store(UpdateCompanyRequest $request, CompanyService $companyService): \Illuminate\Http\JsonResponse
     {
+
+        /** @var User $user */
         $user = $request->user();
+        if ($request->has('user_id')) {
+            $user = User::where('id', $request->input('user_id'))->first();
+            if (!$user) {
+                return $this->respondError('The provided user id doest not exists');
+            }
+        }
         $company = $companyService->createCompany(
             name: $request->name,
             email: $request->email,
@@ -40,8 +49,5 @@ class CompanyController extends Controller
     public function update(UpdateCompanyRequest $request, Company $company)
     {
         $data = $request->validated();
-        
     }
-
-
 }

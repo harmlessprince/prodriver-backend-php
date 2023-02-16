@@ -3,8 +3,10 @@
 namespace App\Http\Requests;
 
 use App\Models\File;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\RequiredIf;
 
 /**
  * @property string $name
@@ -42,6 +44,7 @@ class UpdateCompanyRequest extends FormRequest
         ->where('type', File::TYPE_IMAGE)
         ->where('creator_id', $user->id);
         return [
+            'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
             'name' => ['required', 'string', 'max:200'],
             'email' => ['required', 'email'],
             'phone_number' => ['required', 'string', 'min:11'],

@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        User::query()->updateOrCreate(
+        $transporter = User::query()->updateOrCreate(
             ['email' => 'truck@test.com'],
             [
                 'first_name' => 'Truck',
@@ -26,6 +26,17 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $driver =  $transporter->drivers()->create([
+            'first_name' => 'Anonymous',
+            'last_name' => 'Driver',
+            'phone_number' => 12345678910
+        ]);
+
+        $transporter->trucks()->create([
+            'driver_id' => $driver->id,
+            'on_trip' => true,
+        ]);
+
         User::query()->updateOrCreate(
             ['email' => 'cargo@test.com'],
             [
@@ -52,16 +63,16 @@ class UserSeeder extends Seeder
             ['email' => 'account@test.com'],
             [
                 'first_name' => 'Account',
-                'last_name' => 'Manager User',
+                'middle_name' => 'Manager',
+                'last_name' => 'User',
                 'phone_number' => '09086442314',
                 'password' => Hash::make('password'),
                 'user_type' => User::USER_TYPE_ACCOUNT_MANAGER,
                 'email_verified_at' => now(),
             ]
         );
-        if (User::query()->count() <  10){
-            \App\Models\User::factory(10)->create();
-        }
-
+        // if (User::query()->count() <  10) {
+        //     \App\Models\User::factory(10)->create();
+        // }
     }
 }

@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\RequiredIf;
 
 /**
  * @property-read string first_name
@@ -57,11 +58,14 @@ class UpdateProfileRequest extends FormRequest
             ->where('type', File::TYPE_IMAGE)
             ->where('creator_id', $user->id);
         $stateRule = Rule::exists('states', 'id')->where('country_id', $this->country_id);
+        $ignorePhoneNumberId =  request('user_id') ?: $user->id;
+
         return [
+            'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN && request('user_id') !=  $user->id) , 'integer', 'exists:users,id'],
             'first_name' => ['sometimes', 'string', 'max:200'],
             'middle_name' => ['sometimes', 'string', 'max:200'],
             'last_name' => ['sometimes', 'string', 'max:200'],
-            'phone_number' => ['sometimes', 'string', 'max:11', Rule::unique('users', 'phone_number')->ignore($user->id)],
+            'phone_number' => ['sometimes', 'string', 'max:11', Rule::unique('users', 'phone_number')->ignore($ignorePhoneNumberId)],
             'date_of_birth' => ['sometimes', 'date'],
             'profile_image_id' => ['sometimes', 'integer', $profileImageRule],
             'country_id' => ['sometimes', 'integer', 'exists:countries,id'],

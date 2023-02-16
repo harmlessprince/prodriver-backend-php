@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamp('declined_at')->nullable();
             $table->foreignId('cancelled_by')->nullable()->constrained('users');
             $table->timestamp('cancelled_at')->nullable();
-            $table->float("amount")->nullable();
+            $table->float("amount", 12)->nullable();
             $table->timestamps();
         });
     }

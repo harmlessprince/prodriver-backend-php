@@ -24,6 +24,14 @@ class GuarantorController extends Controller
     {
         /** @var  User $user */
         $user = $request->user();
+        /** @var User $user */
+        $user = $request->user();
+        if ($request->has('user_id')) {
+            $user = User::where('id', $request->input('user_id'))->first();
+            if (!$user) {
+                return $this->respondError('The provided user id doest not exists');
+            }
+        }
         if ($user->guarantors()->count() == User::MAXIMUM_NO_OF_GUARANTORS) {
             return $this->respondError('You are not allowed to create more than 2 guarantors');
         }

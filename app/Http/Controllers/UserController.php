@@ -12,6 +12,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -82,7 +83,8 @@ class UserController extends Controller
     public function store(CreateUserRequest $request, UserService $userService): JsonResponse
     {
         $this->authorize('create', User::class);
-        $user = $userService->createUser((object)$request->validated());
+        $data = $request->validated();
+        $user = $userService->createUser((object) $data);
         return $this->respondSuccess(['user' => $user], 'User created successfully');
     }
 

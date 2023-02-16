@@ -13,6 +13,7 @@ class ApproveAcceptedOrderDto
     public ?int $trip_status_id;
     public ?int $way_bill_status_id;
     public ?int $way_bill_picture_id;
+    public ?float $balance;
 
     public function __construct(
         public readonly int        $accepted_order_id,
@@ -35,5 +36,6 @@ class ApproveAcceptedOrderDto
         $this->trip_status_id = null;
         $this->way_bill_status_id = null;
         $this->way_bill_picture_id = null;
+        $this->balance = 0;
     }
 }

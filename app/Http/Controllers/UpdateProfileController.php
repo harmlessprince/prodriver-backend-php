@@ -16,6 +16,12 @@ class UpdateProfileController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
+        if ($request->has('user_id')) {
+            $user = User::where('id', $request->input('user_id'))->first();
+            if (!$user) {
+                return $this->respondError('The provided user id doest not exists');
+            }
+        }
         $attributes = $request->validated();
         $profileData = [];
         $spouseData = [];

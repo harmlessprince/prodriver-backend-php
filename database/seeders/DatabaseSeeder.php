@@ -22,8 +22,8 @@ class DatabaseSeeder extends Seeder
             TripStatusesSeeeder::class,
             WaybillStatusSeeeder::class,
             UserSeeder::class,
-            DriverSeeder::class,
-            TruckSeeder::class,
+            // DriverSeeder::class,
+            // TruckSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

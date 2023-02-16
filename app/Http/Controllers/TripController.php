@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\TripsImport;
 use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TripController extends Controller
 {
 
     public function updateWaybillStatus(Request $request)
     {
-
     }
 
     public function updateTripStatus(Request $request, Trip $trip)
     {
-        
     }
 
     public function index(Request $request): JsonResponse
@@ -37,5 +37,16 @@ class TripController extends Controller
         return $this->respondSuccess(['trips' => $tripQuery->paginate()], 'Trips fetched successfully');
     }
 
+    public function importTrips(Request $request)
+    {
+        $this->validate($request, [
+            'file' => ['required', 'file']
+        ]);
 
+        $import = new TripsImport();
+        $import->onlySheets('DATABASE');
+        Excel::queueImport($import, $request->file('file'));
+
+        // Excel::import(new UsersImport, 'users.xlsx');
+    }
 }

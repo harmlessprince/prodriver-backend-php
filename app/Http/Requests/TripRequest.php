@@ -37,18 +37,17 @@ class TripRequest extends FormRequest
         $driverExists = Rule::exists(Driver::class, 'id');
         $truckExists = Rule::exists(Truck::class, 'id');
         if (request()->method() == 'POST') {
-            return [
-                'account_manager_id' => ['required', 'integer', $accountManagerUserExists],
-//                'matched_by' => ['nullable', 'integer', $adminUserExists],
-//                'declined_by' => ['nullable', 'integer', $adminUserExists],
-//                'approved_by' => ['nullable', 'integer', $adminUserExists],
-                'driver_id' => ['required', 'integer', $driverExists],
-                'truck_id' => ['required', '']
-            ];
+            return [];
         }
 
         if (request()->method() == 'PATCH') {
-            return [];
+            return [
+                'way_bill_picture_id' => ['sometimes', 'integer', $fileExists],
+                'total_payout' => ['sometimes', 'numeric'],
+                'advance_payout' => ['sometimes', 'numeric'],
+                'loading_date' => ['sometimes', 'date'],
+                'delivery_date' => ['sometimes', 'date'],
+            ];
         }
         return [];
     }

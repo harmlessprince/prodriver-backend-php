@@ -50,7 +50,8 @@ class TonnageController extends Controller
 
     public function destroy(Request $request, Tonnage $tonnage): JsonResponse
     {
-        $tonnage->delete();
+        $tonnage->status = false;
+        $tonnage->update();
         return $this->respondSuccess([], 'Tonnage deleted successfully');
     }
 }

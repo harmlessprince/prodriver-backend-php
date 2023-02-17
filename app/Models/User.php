@@ -136,6 +136,16 @@ class User extends Authenticatable
         return $this->hasMany(Truck::class, 'truck_owner_id');
     }
 
+    public function transporterTrips(): HasMany
+    {
+        return $this->hasMany(Trip::class, 'transporter_id');
+    }
+
+    public function cargoOwnerTrips(): HasMany
+    {
+        return $this->hasMany(Trip::class, 'cargo_owner_id')->where('user_type', self::USER_TYPE_CARGO_OWNER);
+    }
+
     public function myRelations($user_type): array
     {
         if ($user_type == self::USER_TYPE_TRANSPORTER) {

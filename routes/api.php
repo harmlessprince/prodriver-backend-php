@@ -15,10 +15,12 @@ use App\Http\Controllers\StateController;
 use App\Http\Controllers\TonnageController;
 use App\Http\Controllers\TransporterDriverController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\TripStatusController;
 use App\Http\Controllers\TruckController;
 use App\Http\Controllers\TruckTypeController;
 use App\Http\Controllers\UpdateProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WaybillStatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -82,6 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('match/request/{order}/to/transporter', [OrderController::class, 'matchRequest']);
     Route::post('approve/accepted/{acceptedOrder}', [OrderController::class, 'approveRequest']);
     Route::get('accepted/request/{order}', [OrderController::class, 'allAcceptedRequest']);
+    Route::get('cancel/request/{order}', [OrderController::class, 'cancelRequest']);
     //driver endpoints
     Route::apiResource('drivers', DriverController::class);
     Route::patch('change/driver/picture/{driver}', [DriverController::class, 'changeDriverPicture']);
@@ -89,7 +92,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('change/driver/owner/{driver}', [DriverController::class, 'changeDriverOwner']);
     Route::apiResource('trucks', TruckController::class);
 
-    Route::apiResource('trips', TripController::class);
+    Route::apiResource('trips', TripController::class)->only('index', 'update');
+    Route::patch('updateWaybillStatus/{trip}', [TripController::class, 'updateWaybillStatus']);
+    Route::patch('updateTripStatus/{trip}', [TripController::class, 'updateTripStatus']);
     //users
     Route::apiResource('users', UserController::class);
     Route::get('/cargo-owners', [UserController::class, 'getAllCargoOwners']);
@@ -100,6 +105,9 @@ Route::middleware('auth:sanctum')->group(function () {
     //truck types
     Route::apiResource('truckTypes', TruckTypeController::class)->only(['store', 'index', 'destroy', 'update']);
     Route::apiResource('tonnages', TonnageController::class)->only(['store', 'index', 'destroy', 'update']);
+    Route::apiResource('tripStatuses', TripStatusController::class);
+    Route::apiResource('waybillStatuses', WaybillStatusController::class);
+
 
     Route::post('import/trips', [TripController::class, 'importTrips']);
 });

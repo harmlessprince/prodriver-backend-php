@@ -15,4 +15,6 @@ class Tonnage extends Model
         'name',
     ];
     protected $guarded = [];
+
+ 
 }

@@ -17,4 +17,10 @@ class TripStatus extends Model
     const STATUS_DELIVERED = 'delivered';
     const STATUS_CANCELED = 'canceled';
     const INACTIVE_TRIP_STATUSES = [self::STATUS_CANCELED, self::STATUS_DELIVERED];
+
+
+    public function trips()
+    {
+        return $this->hasMany(Trip::class, 'trip_status_id');
+    }
 }

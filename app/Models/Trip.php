@@ -106,6 +106,6 @@ class Trip extends Model
 
     public function waybillPicture(): BelongsTo
     {
-        return $this->belongsTo(File::class, 'way_bill_status_id');
+        return $this->belongsTo(File::class, 'way_bill_picture_id');
     }
 }

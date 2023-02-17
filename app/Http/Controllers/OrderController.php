@@ -162,19 +162,10 @@ class OrderController extends Controller
         $order->status = Order::CANCELLED;
         $order->cancelled_by = $user->id;
         $order->save();
+
+        return $this->respondSuccess(['order' => $order->fresh()], 'Truck request has been canceled');
     }
 
-
-
-    public function declineRequest(Request $request, Order $order)
-    {
-        //TODO Authorize user
-        /** @var User $user */
-        $user = $request->user();
-        $order->status = Order::DECLINED;
-        $order->declined_by = $user->id;
-        $order->save();
-    }
 
     /**
      * @throws ValidationException

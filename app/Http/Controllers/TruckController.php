@@ -38,12 +38,14 @@ class TruckController extends Controller
         $this->authorize('viewAny', Truck::class);
 
         $truckQuery = Truck::query()->search()->with(Truck::NON_DOCUMENT_RELATIONS);
+        $totalTrucksQuery = Truck::query();
         $user = $request->user();
         if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
+            $totalTrucksQuery = $totalTrucksQuery->where('truck_owner_id', $user->id);
             $truckQuery = $truckQuery->where('truck_owner_id', $user->id);
         }
         $trucks = $truckQuery->paginate(request('per_page'));
-        return $this->respondSuccess(['trucks' => $trucks], 'All trucks fetched successfully');
+        return $this->respondSuccess(['trucks' => $trucks, 'meta' => ['total_trucks' => $totalTrucksQuery->count()]], 'All trucks fetched successfully');
     }
 
     /**

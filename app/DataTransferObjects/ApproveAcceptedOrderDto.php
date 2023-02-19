@@ -3,6 +3,7 @@
 namespace App\DataTransferObjects;
 
 use Carbon\Carbon;
+use DateTime;
 
 class ApproveAcceptedOrderDto
 {
@@ -14,7 +15,11 @@ class ApproveAcceptedOrderDto
     public ?int $way_bill_status_id;
     public ?int $way_bill_picture_id;
     public ?float $balance;
-
+    public ?string $delivery_status;
+    public ?string $payout_status;
+    public ?int $days_in_transit;
+    public ?int $days_delivered;
+    public ?DateTime $completed_date;
     public function __construct(
         public readonly int        $accepted_order_id,
         public readonly string     $trip_id,
@@ -37,5 +42,7 @@ class ApproveAcceptedOrderDto
         $this->way_bill_status_id = null;
         $this->way_bill_picture_id = null;
         $this->balance = 0;
+        $this->delivery_status = 'pending';
+        $this->payout_status = 'pending';
     }
 }

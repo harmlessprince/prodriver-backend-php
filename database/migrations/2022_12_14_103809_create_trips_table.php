@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use League\CommonMark\Extension\Table\Table;
 
 return new class extends Migration
 {
@@ -29,12 +30,22 @@ return new class extends Migration
             $table->float('total_payout', 12)->nullable();
             $table->float('advance_payout', 12)->nullable();
             $table->float('balance', 12)->nullable();
+            $table->float('net_margin_profit_amount', 12)->nullable();
             $table->float('margin_profit_amount', 12)->nullable();
             $table->float('margin_profit_percentage', 12)->nullable();
             $table->date('loading_date')->nullable();
             $table->date('delivery_date')->nullable();
+            $table->date('completed_date')->nullable();
             $table->foreignId('trip_status_id')->nullable()->constrained('trip_statuses')->nullOnDelete();
             $table->foreignId('way_bill_status_id')->nullable()->constrained('waybill_statuses')->nullOnDelete();
+            $table->string('payout_status')->default('pending')->nullable();
+            $table->string('delivery_status')->default('pending')->nullable();
+            $table->float('loading_tonnage_value')->default(0.0);
+            $table->float('offloading_tonnage_value')->default(0.0);
+            $table->integer('days_in_transit')->nullable();
+            $table->integer('days_delivered')->nullable();
+            $table->boolean('flagged')->default(false);
+            $table->foreignId('flagged_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

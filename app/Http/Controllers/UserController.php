@@ -39,7 +39,7 @@ class UserController extends Controller
             $users = $this->userRepository->searchUser()->orderBy('created_at')->paginate();
         }
 
-        return $this->respondSuccess(['users' => $users], 'User fetched successfully');
+        return $this->respondSuccess(['users' => $users, 'meta' => ['total_users' => $this->userRepository->totalNumberOfUser($request->query('user_type'))]], 'User fetched successfully');
     }
 
     /**

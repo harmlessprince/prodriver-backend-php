@@ -32,4 +32,13 @@ class UserRepository extends BaseRepository
     {
         return $this->model->query()->search();
     }
+
+    public function totalNumberOfUser(string $user_type)
+    {
+        $userTypes = User::ALL_USER_TYPES;
+        if (!in_array($user_type, $userTypes)) {
+            return 0;
+        }
+        return  $this->model->where('user_type', $user_type)->count();
+    }
 }

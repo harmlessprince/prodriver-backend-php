@@ -2,32 +2,34 @@
 
 namespace App\Imports;
 
-use App\DataTransferObjects\AcceptOrderDto;
-use App\DataTransferObjects\ApproveAcceptedOrderDto;
-use App\Models\AcceptedOrder;
-use App\Models\Company;
-use App\Models\Driver;
-use App\Models\Order;
-use App\Models\Tonnage;
+use Carbon\Carbon;
 use App\Models\Trip;
-use App\Models\TripStatus;
-use App\Models\Truck;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Truck;
+use App\Models\Driver;
+use App\Models\Company;
+use App\Models\Tonnage;
+use App\Models\TripStatus;
+use App\Models\AcceptedOrder;
 use App\Models\WaybillStatus;
 use App\Services\OrderServices;
-use Carbon\Carbon;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Concerns\HasReferencesToOtherSheets;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToArray;
-use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use App\DataTransferObjects\AcceptOrderDto;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use App\DataTransferObjects\ApproveAcceptedOrderDto;
+use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
+use Maatwebsite\Excel\Concerns\HasReferencesToOtherSheets;
 
 class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCalculatedFormulas, WithHeadingRow, WithChunkReading, ShouldQueue
 {
@@ -46,7 +48,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
         $wayBillStatusId = WaybillStatus::query()->where('name', WaybillStatus::STATUS_RECEIVED)->first()->id;
 
         foreach ($rows as $key => $row) {
-
+   
 
             $cargoOwner = null;
             $transporter = null;
@@ -58,8 +60,10 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 $truck_number = $row['truck_number'] ?? null;
                 $loading_site = $row['loading_site'] ?? 'loading site';
                 $destination = $row['destination'] ?? 'destination site';
-                $loading_date = $row['loading_date'] ?? Carbon::now();
-                $pymt_status = strtolower($row['pymt_status'] ?? 'completed');
+                $loading_date = $row['loading_date'] ? Date::excelToDateTimeObject($row['loading_date']) : Carbon::now();
+                $delivery_date = $row['delivery_date'] ? Date::excelToDateTimeObject($row['delivery_date']): Carbon::now();
+                $pay_out_status = strtolower($row['pay_out_status'] ?? 'completed');
+                $delivery_status = strtolower($row['delivery_status'] ?? 'completed');
                 $company = $row['company'] ?? '';
                 $loading_tonnage = $row['loading_tonnage'];
                 $client = $row['client'];
@@ -71,18 +75,19 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 $payout_rate = $row['payout_rate'] ?? 0;
                 $payable = $row['payable'];
                 $margin = $row['margin'];
-                $margin_rate = $row[22];
+                $margin_rate = $row['pm'];
                 $driver_name = $row['driver_name'];
                 $driver_phone = $row['driver_phone'];
                 $goods = $row['goods'];
                 $partner = $row['partner'];
-                $phone = $row['phone'];
+                $partner_phone = $row['partner_phone'];
 
                 $loaded_by = $row['loaded_by'];
                 $remark = $row['remark'];
-                $completed_date = $row['completed_date'];
+                $completed_date =  $row['completed_date'] ? Date::excelToDateTimeObject($row['completed_date']) : Carbon::now();
                 $days_delivered = $row['days_delivered'];
                 $days_in_transit = $row['days_in_transit'];
+                dd($loading_date);
 
                 $str = "Importing for id " . $trip_id . "\n";
 
@@ -93,7 +98,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     printf($str);
                     if ($partner) {
                         $cargoOwner = User::query()->firstOrCreate(
-                            ['first_name' => $partner],
+                            ['first_name' => $partner, 'phone_number' => $partner_phone],
                             [
                                 'password' => '$2y$10$LIduCnhF4GBYEKkUaptgAOPThAfItENWyFR13uH93A.N7Y8blm/9u',
                                 'user_type' => User::USER_TYPE_TRANSPORTER,
@@ -185,8 +190,8 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                         approved_by: $anonymousAdmin->id,
                         total_payout: $acceptedOrderDto->amount,
                         advance_payout: $advance,
-                        loading_date: Carbon::now(),
-                        delivery_date: Carbon::now(),
+                        loading_date: $loading_date,
+                        delivery_date: $delivery_date,
                     );
 
 
@@ -195,6 +200,11 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     $approveAcceptedOrderDto->trip_status_id = $tripStatusId;
                     $approveAcceptedOrderDto->way_bill_status_id = $wayBillStatusId;
                     $approveAcceptedOrderDto->balance = $payout_rate && $advance && $payout_rate > 0 ? $payout_rate - $advance : 0;
+                    $approveAcceptedOrderDto->delivery_status = $delivery_status;
+                    $approveAcceptedOrderDto->payout_status = $pay_out_status;
+                    $approveAcceptedOrderDto->days_delivered = $days_delivered;
+                    $approveAcceptedOrderDto->days_in_transit = $days_in_transit;
+                    $approveAcceptedOrderDto->completed_date = $completed_date;
                     $orderService = new OrderServices();
                     $trip = $orderService->convertApprovedOrderToTrip($approveAcceptedOrderDto);
                     if ($trip->trip_id === null) {
@@ -218,11 +228,12 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
     }
     public function headingRow(): int
     {
-        return 2;
+        return 1;
     }
 
     public function chunkSize(): int
     {
         return 500;
     }
+  
 }

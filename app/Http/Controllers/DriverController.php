@@ -32,12 +32,14 @@ class DriverController extends Controller
         $this->authorize('viewAny', Driver::class);
         /** @var User $user */
         $user = $request->user();
-        $driversQuery = Driver::query()->with(['picture', 'licensePicture', 'user']);
+        $totalDriversQuery = Driver::query();
+        $driversQuery = Driver::query()->search()->with(['picture', 'licensePicture', 'user']);
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
+            $totalDriversQuery = $totalDriversQuery->where('user_id', $user->id);
             $driversQuery = $driversQuery->where('user_id', $user->id);
         }
         $drivers = $driversQuery->paginate();
-        return $this->respondSuccess(['drivers' => $drivers], 'Drivers retrieved successfully');
+        return $this->respondSuccess(['drivers' => $drivers, 'meta' => ['total_drivers' => $totalDriversQuery->count()]], 'Drivers retrieved successfully');
     }
 
     /**

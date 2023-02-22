@@ -14,7 +14,8 @@ class ApproveAcceptedOrderDto
     public ?int $trip_status_id;
     public ?int $way_bill_status_id;
     public ?int $way_bill_picture_id;
-    public ?float $balance;
+    public ?float $balance_payout;
+    public ?float $total_gtv;
     public ?string $delivery_status;
     public ?string $payout_status;
     public ?int $days_in_transit;
@@ -44,7 +45,7 @@ class ApproveAcceptedOrderDto
         $this->trip_status_id = null;
         $this->way_bill_status_id = null;
         $this->way_bill_picture_id = null;
-        $this->balance = 0;
+        $this->balance_gtv = 0;
         $this->delivery_status = 'pending';
         $this->payout_status = 'pending';
     }

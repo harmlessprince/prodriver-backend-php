@@ -4,73 +4,90 @@ namespace App\DataTransferObjects;
 
 use App\Http\Requests\TripRequest;
 use App\Http\Requests\TruckRequest;
+use App\Models\Trip;
 use Carbon\Carbon;
 
 class TripDto
 {
 
+    public  Carbon|null $loading_date;
+    public  Carbon|null $delivery_date;
+    public  Carbon|null $completed_date;
     public function __construct(
-        public readonly ?int    $trip_id,
-        public readonly ?int    $approved_by,
-        public readonly ?int    $matched_by,
-        public readonly ?int    $declined_by,
-        public readonly ?int    $account_manager_id,
-        public readonly ?int    $driver_id,
-        public readonly ?int    $truck_id,
-        public readonly ?int    $order_id,
-        public readonly ?int    $cargo_owner_id,
-        public readonly ?int    $transporter_id,
-        public readonly ?int    $way_bill_picture_id,
-        public readonly ?float  $total_payout,
-        public readonly ?float  $advance_payout,
-        public readonly ?float  $margin_profit_amount,
-        public readonly ?float  $margin_profit_percentage,
-        public readonly ?Carbon $loading_date,
-        public readonly ?Carbon $delivery_date,
+        public readonly string    $trip_id,
+        public readonly int    $approved_by,
+        public readonly int|null    $matched_by,
+        public readonly int|null    $declined_by,
+        public readonly int|null    $account_manager_id,
+        public readonly int    $accepted_order_id,
+        public readonly int    $driver_id,
+        public readonly int    $truck_id,
+        public readonly int    $order_id,
+        public readonly int    $cargo_owner_id,
+        public readonly int    $transporter_id,
+        public readonly int|null    $way_bill_picture_id,
+        public readonly float|null  $total_payout,
+        public readonly float|null  $advance_payout,
+        public readonly float|null  $balance_payout,
+        public readonly float|null  $incidental_cost,
+        public readonly float|null  $net_margin_profit_amount,
+        public readonly float|null  $margin_profit_amount,
+        public readonly float|null  $margin_profit_percentage,
+        public readonly string    $payout_status,
+        public readonly string    $delivery_status,
+        public readonly float|null  $loading_tonnage_value,
+        public readonly float|null  $offloading_tonnage_value,
+        public readonly int|null  $days_in_transit,
+        public readonly int|null  $days_delivered,
+        public readonly bool|null  $flagged,
+        public readonly int|null  $flagged_by,
         public readonly ?int    $trip_status_id,
         public readonly ?int    $way_bill_status_id,
-    )
-    {
+    ) {
+        $this->loading_date =  null;
+        $this->delivery_date = null;
+        $this->completed_date = null;
     }
 
-//      public static function fromApiRequest(TripRequest $request, int $truckOwnerId, int $driver_id): TripDto
-//      {
-// //         return new self (
-//              // truck_owner_id: $truckOwnerId,
-//              // driver_id: $driver_id,
-//              // truck_type_id: $request->truck_type_id,
-//              // tonnage_id: $request->tonnage_id,
-//              // chassis_number: $request->chassis_number,
-//              // plate_number: $request->plate_number,
-//              // maker: $request->maker,
-//              // model: $request->model,
-//              // registration_number: $request->registration_number,
-//              // picture_id: $request->picture_id,
-//              // proof_of_ownership_id: $request->proof_of_ownership_id,
-//              // road_worthiness_id: $request->road_worthiness_id,
-//              // license_id: $request->validated('license_id'),
-//              // insurance_id: $request->insurance_id
-// //         );
-//      }
-//    public static function cleanRequest(TruckRequest $request, int $truckOwnerId, int $driver_id)
-//    {
-//        $object  =  new self (
-//            truck_owner_id: $truckOwnerId,
-//            driver_id: $driver_id,
-//            truck_type_id: $request->truck_type_id,
-//            tonnage_id: $request->tonnage_id,
-//            chassis_number: $request->chassis_number,
-//            plate_number: $request->plate_number,
-//            maker: $request->maker,
-//            model: $request->model,
-//            registration_number: $request->registration_number,
-//            picture_id: $request->picture_id,
-//            proof_of_ownership_id: $request->proof_of_ownership_id,
-//            road_worthiness_id: $request->road_worthiness_id,
-//            license_id: $request->license_id,
-//            insurance_id: $request->insurance_id
-//        );
-//    }
+
+    public static function fromModel(Trip $trip)
+    {
+        $object =  new self(
+            $trip->trip_id,
+            $trip->approved_by,
+            $trip->matched_by,
+            $trip->declined_by,
+            $trip->account_manager_id,
+            $trip->accepted_order_id,
+            $trip->driver_id,
+            $trip->truck_id,
+            $trip->order_id,
+            $trip->cargo_owner_id,
+            $trip->transporter_id,
+            $trip->way_bill_picture_id,
+            $trip->total_payout,
+            $trip->advance_payout,
+            $trip->balance_payout,
+            $trip->incidental_cost,
+            $trip->net_margin_profit_amount,
+            $trip->margin_profit_amount,
+            $trip->margin_profit_percentage,
+            $trip->payout_status,
+            $trip->delivery_status,
+            $trip->loading_tonnage_value,
+            $trip->offloading_tonnage_value,
+            $trip->days_in_transit,
+            $trip->days_delivered,
+            $trip->flagged,
+            $trip->flagged_by,
+            $trip->trip_status_id,
+            $trip->way_bill_status_id,
+        );
+        $object->loading_date = $trip->loading_date ? Carbon::parse($trip->loading_date) : null;
+        $object->delivery_date = $trip->delivery_date ? Carbon::parse($trip->delivery_date) : null;
+        $object->completed_date = $trip->completed_date ? Carbon::parse($trip->completed_date) : null;
+        return $object;
+    }
 
     public function cleanObject($object): object
     {

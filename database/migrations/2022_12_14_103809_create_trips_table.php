@@ -29,7 +29,8 @@ return new class extends Migration
             $table->foreignId('way_bill_picture_id')->nullable()->constrained('files')->nullOnDelete();
             $table->float('total_payout', 12)->nullable();
             $table->float('advance_payout', 12)->nullable();
-            $table->float('balance', 12)->nullable();
+            $table->float('balance_payout', 12)->nullable();
+            $table->float('total_gtv', 12)->nullable();
             $table->float('advance_gtv', 12)->nullable();
             $table->float('balance_gtv', 12)->nullable();
             $table->float('incidental_cost', 12)->nullable();

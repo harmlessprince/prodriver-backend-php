@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Auth\AuthenticationController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\VerificationController;
@@ -107,6 +108,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('tonnages', TonnageController::class)->only(['store', 'index', 'destroy', 'update']);
     Route::apiResource('tripStatuses', TripStatusController::class);
     Route::apiResource('waybillStatuses', WaybillStatusController::class);
+
+    Route::get('admin/stats', [AnalyticsController::class, 'adminStats']);
 
 
     Route::post('import/trips', [TripController::class, 'importTrips']);

@@ -70,13 +70,14 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 $client = $row['client'];
                 $ref_id = $row['ref_id'];
                 $gtv = $row['gtv'];
+                $payout_rate = $row['payout_rate'] ?? 0;
                 $advance = $row['advance'] ?? 0;
                 $balance = $row['balance'];
                 $advance_gtv = $row['advance_gtv'] ?? 0;
                 $balance_gtv = $row['balance_gtv'] ?? 0;
                 $receivable = $row['receivable'];
                 $net_margin = $row['net_margin'];
-                $payout_rate = $row['payout_rate'] ?? 0;
+               
                 $payable = $row['payable'];
                 $margin = $row['margin'];
                 $margin_rate = $row['pm'];
@@ -203,7 +204,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     $approveAcceptedOrderDto->margin_profit_percentage = $margin_rate;
                     $approveAcceptedOrderDto->trip_status_id = $tripStatusId;
                     $approveAcceptedOrderDto->way_bill_status_id = $wayBillStatusId;
-                    $approveAcceptedOrderDto->balance = $balance;
+                    $approveAcceptedOrderDto->balance_payout = $balance;
                     $approveAcceptedOrderDto->delivery_status = $delivery_status;
                     $approveAcceptedOrderDto->payout_status = $pay_out_status;
                     $approveAcceptedOrderDto->days_delivered = $days_delivered;
@@ -212,10 +213,14 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     $approveAcceptedOrderDto->net_margin_profit_amount = $net_margin;
                     $approveAcceptedOrderDto->balance_gtv   = $balance_gtv;
                     $approveAcceptedOrderDto->advance_gtv = $advance_gtv;
+                    $approveAcceptedOrderDto->total_gtv = $gtv;
+                    
                     $orderService = new OrderServices();
                     $trip = $orderService->convertApprovedOrderToTrip($approveAcceptedOrderDto);
+                    
                     if ($trip->trip_id === null) {
                         $trip->trip_id = 'TID' . str_pad($trip->id, 6, "0", STR_PAD_LEFT);
+                        
                         $trip->save();
                     }
                     DB::commit();

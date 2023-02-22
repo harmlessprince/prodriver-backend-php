@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Trip;
+use App\Models\TripStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 
@@ -21,37 +24,61 @@ class AnalyticsService
 
     public function totalNumberOfFlaggedTrips(EloquentBuilder | QueryBuilder $tripBuilder)
     {
-        $tripBuilder->where('flagged', 1)->count();
+        return  $tripBuilder->where('flagged', 1)->count();
     }
 
     public function totalNumberOfTrips(EloquentBuilder | QueryBuilder $tripBuilder)
     {
-        $tripBuilder->count();
+        return  $tripBuilder->count();
     }
 
     public function totalNumberOfActiveTrips(EloquentBuilder | QueryBuilder $tripBuilder)
     {
-
     }
 
     public function totalNumberOfDeliveredTrips(EloquentBuilder | QueryBuilder $tripBuilder)
     {
-        $tripBuilder->where('delivery_date', '!=', null)->count();
+        return  $tripBuilder->where('delivery_date', '!=', null)->count();
     }
 
-    public function totalAmountOfIncome()
+    public function totalAmountOfIncome(EloquentBuilder | QueryBuilder $tripBuilder)
     {
+        return $tripBuilder->sum('total_gtv');
     }
 
-    public function totalAmountOfPendingIncome()
+    public function totalIncomeForTheMonth(EloquentBuilder | QueryBuilder $tripBuilder)
     {
+        return  $tripBuilder->whereBetween('loading_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('total_gtv');
     }
 
-    public function totalAmountPaidAdvance()
+    public function totalAmountOfPendingIncome(EloquentBuilder | QueryBuilder $tripBuilder)
     {
+        return  $tripBuilder->sum('total_gtv') -  $tripBuilder->sum('advance_gtv');
     }
 
-    public function totalAmountReceivableAdvance()
+    public function totalPayout(EloquentBuilder | QueryBuilder $tripBuilder)
     {
+        return  $tripBuilder->sum('total_gtv');
+    }
+
+
+
+    public function totalNumberOfCancelledTrips(EloquentBuilder | QueryBuilder $tripBuilder)
+    {
+        $status = TripStatus::where('name', TripStatus::STATUS_CANCELED)->first();
+        return $tripBuilder->where('trip_status_id', $status->id)->count();
+    }
+
+    public function totalNumberOfCompletedTrips(EloquentBuilder | QueryBuilder $tripBuilder)
+    {
+        $status = TripStatus::where('name', TripStatus::STATUS_COMPLETED)->first();
+        return $tripBuilder->where('trip_status_id', $status->id)->count();
+    }
+
+    public function totalNumberOfOngoingTrips(EloquentBuilder | QueryBuilder $tripBuilder)
+    {
+        $status = TripStatus::query()->select('id')->whereIn('name', [TripStatus::STATUS_COMPLETED, TripStatus::STATUS_CANCELED, TripStatus::STATUS_DIVERTED])->get();
+
+        return $tripBuilder->whereNotIn('trip_status_id', $status->pluck('id')->toArray())->count();
     }
 }

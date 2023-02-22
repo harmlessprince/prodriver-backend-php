@@ -214,10 +214,12 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     $approveAcceptedOrderDto->balance_gtv   = $balance_gtv;
                     $approveAcceptedOrderDto->advance_gtv = $advance_gtv;
                     $approveAcceptedOrderDto->total_gtv = $gtv;
+
                     
                     $orderService = new OrderServices();
                     $trip = $orderService->convertApprovedOrderToTrip($approveAcceptedOrderDto);
-                    
+                    $trip->loading_tonnage_value = $loading_tonnage;
+                    $trip->update();
                     if ($trip->trip_id === null) {
                         $trip->trip_id = 'TID' . str_pad($trip->id, 6, "0", STR_PAD_LEFT);
                         

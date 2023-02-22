@@ -60,8 +60,8 @@ class UpdateProfileRequest extends FormRequest
         $stateRule = Rule::exists('states', 'id')->where('country_id', $this->country_id);
         $ignorePhoneNumberId =  request('user_id') ?: $user->id;
 
-        return [
-            'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN && request('user_id') !=  $user->id) , 'integer', 'exists:users,id'],
+        $rules =  [
+            
             'first_name' => ['sometimes', 'string', 'max:200'],
             'middle_name' => ['sometimes', 'string', 'max:200'],
             'last_name' => ['sometimes', 'string', 'max:200'],
@@ -85,5 +85,15 @@ class UpdateProfileRequest extends FormRequest
             'next_of_kin_relationship' => ['sometimes', 'string', 'max:200'],
             'next_of_kin_occupation' => ['sometimes', 'string', 'max:200'],
         ];
+
+        if (request()->user()->user_type !== User::USER_TYPE_ADMIN) {
+            $rules['user_id'] = ['nullable', 'integer', 'exists:users,id'];
+        }
+
+        if (request()->has('user_id') && request()->user()->user_type == User::USER_TYPE_ADMIN) {
+            $rules['user_id'] = ['required', 'integer', 'exists:users,id'];
+        }
+        return $rules;
+        // 'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN && request('user_id') !=  $user->id) , 'integer', 'exists:users,id'],
     }
 }

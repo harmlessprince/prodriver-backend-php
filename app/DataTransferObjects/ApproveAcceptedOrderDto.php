@@ -20,6 +20,9 @@ class ApproveAcceptedOrderDto
     public ?int $days_in_transit;
     public ?int $days_delivered;
     public ?DateTime $completed_date;
+    public float|null $net_margin_profit_amount;
+    public float|null $advance_gtv;
+    public float|null $balance_gtv;
     public function __construct(
         public readonly int        $accepted_order_id,
         public readonly string     $trip_id,

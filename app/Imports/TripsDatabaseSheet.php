@@ -44,16 +44,17 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
         $anonymousAccountManager = User::where('first_name', 'Account')->first();
         $anonymousTruck = Truck::where('truck_owner_id', $anonymousTransporter->id)->first();
         $anonymousDriver = Driver::where('user_id', $anonymousTransporter->id)->first();
-        $tripStatusId =  TripStatus::query()->where('name', TripStatus::STATUS_DELIVERED)->first()->id;
+        $tripStatusId =  TripStatus::query()->where('name', TripStatus::STATUS_COMPLETED)->first()->id;
         $wayBillStatusId = WaybillStatus::query()->where('name', WaybillStatus::STATUS_RECEIVED)->first()->id;
 
         foreach ($rows as $key => $row) {
-   
 
+            // dd($row);
             $cargoOwner = null;
             $transporter = null;
             $driver = null;
             $truck = null;
+            $delivery_status = null;
             try {
                 DB::beginTransaction();
                 $trip_id = $row['trip_id'];
@@ -61,17 +62,20 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 $loading_site = $row['loading_site'] ?? 'loading site';
                 $destination = $row['destination'] ?? 'destination site';
                 $loading_date = $row['loading_date'] ? Date::excelToDateTimeObject($row['loading_date']) : Carbon::now();
-                $delivery_date = $row['delivery_date'] ? Date::excelToDateTimeObject($row['delivery_date']): Carbon::now();
+                $delivery_date = $row['delivery_date'] ? Date::excelToDateTimeObject($row['delivery_date']) : Carbon::now();
                 $pay_out_status = strtolower($row['pay_out_status'] ?? 'completed');
                 $delivery_status = strtolower($row['delivery_status'] ?? 'completed');
-                $company = $row['company'] ?? '';
+                $company = $row['company'] ?? 'completed';
                 $loading_tonnage = $row['loading_tonnage'];
                 $client = $row['client'];
                 $ref_id = $row['ref_id'];
                 $gtv = $row['gtv'];
                 $advance = $row['advance'] ?? 0;
                 $balance = $row['balance'];
+                $advance_gtv = $row['advance_gtv'] ?? 0;
+                $balance_gtv = $row['balance_gtv'] ?? 0;
                 $receivable = $row['receivable'];
+                $net_margin = $row['net_margin'];
                 $payout_rate = $row['payout_rate'] ?? 0;
                 $payable = $row['payable'];
                 $margin = $row['margin'];
@@ -87,18 +91,15 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 $completed_date =  $row['completed_date'] ? Date::excelToDateTimeObject($row['completed_date']) : Carbon::now();
                 $days_delivered = $row['days_delivered'];
                 $days_in_transit = $row['days_in_transit'];
-                dd($loading_date);
 
                 $str = "Importing for id " . $trip_id . "\n";
 
-                printf($str);
+                // printf($str);
                 if (!Trip::where('trip_id', $trip_id)->exists() && $trip_id) {
-                    $str = "Found for id " . $trip_id ."\n";
 
-                    printf($str);
                     if ($partner) {
                         $cargoOwner = User::query()->firstOrCreate(
-                            ['first_name' => $partner, 'phone_number' => $partner_phone],
+                            ['phone_number' => $partner_phone],
                             [
                                 'password' => '$2y$10$LIduCnhF4GBYEKkUaptgAOPThAfItENWyFR13uH93A.N7Y8blm/9u',
                                 'user_type' => User::USER_TYPE_TRANSPORTER,
@@ -145,6 +146,9 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     if ($company) {
                         $company = Company::query()->firstOrCreate(['name' => $company, 'user_id' => $transporter ? $transporter->id : $anonymousTransporter->id]);
                     }
+
+             
+                    $tripStatusId = TripStatus::where('name', $delivery_status)->first()->id;
 
                     //create 
                     // create the request
@@ -199,12 +203,15 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     $approveAcceptedOrderDto->margin_profit_percentage = $margin_rate;
                     $approveAcceptedOrderDto->trip_status_id = $tripStatusId;
                     $approveAcceptedOrderDto->way_bill_status_id = $wayBillStatusId;
-                    $approveAcceptedOrderDto->balance = $payout_rate && $advance && $payout_rate > 0 ? $payout_rate - $advance : 0;
+                    $approveAcceptedOrderDto->balance = $balance;
                     $approveAcceptedOrderDto->delivery_status = $delivery_status;
                     $approveAcceptedOrderDto->payout_status = $pay_out_status;
                     $approveAcceptedOrderDto->days_delivered = $days_delivered;
                     $approveAcceptedOrderDto->days_in_transit = $days_in_transit;
                     $approveAcceptedOrderDto->completed_date = $completed_date;
+                    $approveAcceptedOrderDto->net_margin_profit_amount = $net_margin;
+                    $approveAcceptedOrderDto->balance_gtv   = $balance_gtv;
+                    $approveAcceptedOrderDto->advance_gtv = $advance_gtv;
                     $orderService = new OrderServices();
                     $trip = $orderService->convertApprovedOrderToTrip($approveAcceptedOrderDto);
                     if ($trip->trip_id === null) {
@@ -212,7 +219,11 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                         $trip->save();
                     }
                     DB::commit();
-                    $str = "Committed for id " . $trip_id ."\n";
+                    $str = "Committed for id " . $trip_id . "\n";
+
+                    printf($str);
+                } else {
+                    $str = "Found for id " . $trip_id . "\n";
 
                     printf($str);
                 }
@@ -235,5 +246,4 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
     {
         return 500;
     }
-  
 }

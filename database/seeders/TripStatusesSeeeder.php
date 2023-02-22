@@ -15,15 +15,7 @@ class TripStatusesSeeeder extends Seeder
      */
     public function run()
     {
-        $statuses = [
-            'pending',
-            'in-transit',
-            'accident',
-            'awaiting-offloading',
-            'diverted',
-            'delivered',
-            'canceled'
-        ];
+        $statuses = TripStatus::STATUSES;
         
 
         foreach ($statuses as $key => $status) {

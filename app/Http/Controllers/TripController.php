@@ -71,6 +71,7 @@ class TripController extends Controller
     }
 
 
+
     public function update(TripRequest $request, Trip $trip)
     {
         $trip->update($request->validated());

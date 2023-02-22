@@ -10,13 +10,24 @@ class TripStatus extends Model
     use HasFactory;
     protected $guarded = [];
     const STATUS_PENDING = 'pending';
-    const STATUS_IN_TRANSIT = 'in-transit';
-    const STATUS_ACCIDENT =  'awaiting-offloading';
+    const STATUS_IN_TRANSIT = 'intransit';
+    const STATUS_ACCIDENT =  'accidented';
     const STATUS_AWAITING_OFFLOADING = 'awaiting-offloading';
     const STATUS_DIVERTED = 'diverted';
     const STATUS_DELIVERED = 'delivered';
-    const STATUS_CANCELED = 'canceled';
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_CANCELED = 'cancelled';
     const INACTIVE_TRIP_STATUSES = [self::STATUS_CANCELED, self::STATUS_DELIVERED];
+    const STATUSES = [
+        self::STATUS_PENDING,
+        self::STATUS_IN_TRANSIT,
+        self::STATUS_ACCIDENT,
+        self::STATUS_AWAITING_OFFLOADING,
+        self::STATUS_DIVERTED,
+        self::STATUS_DELIVERED,
+        self::STATUS_CANCELED,
+        self::STATUS_COMPLETED,
+    ];
 
 
     public function trips()

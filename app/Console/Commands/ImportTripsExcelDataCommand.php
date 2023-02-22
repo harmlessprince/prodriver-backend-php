@@ -29,11 +29,20 @@ class ImportTripsExcelDataCommand extends Command
      */
     public function handle()
     {
-        $file = $this->argument('file');
-        $this->output->title('Starting import');
-        $import = new TripsImport();
-        $import->onlySheets('DATABASE');
-        Excel::queueImport($import, $file);
-        $this->output->success('Import successful');
+        $path = $this->argument('file');
+        $files = scandir($path);
+        sort($files, SORT_NATURAL);
+
+        foreach ($files as $file) {
+            // Check if the file is an Excel file
+            if (pathinfo($file, PATHINFO_EXTENSION) == 'xlsx' || pathinfo($file, PATHINFO_EXTENSION) == 'xls') {
+
+                $this->output->title('Starting import ' . basename($file));
+                $import = new TripsImport();
+                $import->onlySheets('DATABASE');
+                Excel::queueImport($import, $path . '/' . $file);
+                $this->output->success('Import successful');
+            }
+        }
     }
 }

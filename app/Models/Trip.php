@@ -15,14 +15,9 @@ class Trip extends Model
     protected $guarded = [];
     const MORPH_NAME = 'trip';
 
-    const STATUS_PENDING = 'pending';
-    const STATUS_IN_TRANSIT = 'in-transit';
-    const STATUS_ACCIDENT = 'accident';
-    const STATUS_AWAITING_OFFLOADING = 'awaiting-offloading';
-    const STATUS_DIVERTED = 'diverted';
-    const STATUS_DELIVERED = 'delivered';
-    const STATUS_CANCELED = 'canceled';
-    const INACTIVE_TRIP_STATUSES = [self::STATUS_CANCELED, self::STATUS_DELIVERED];
+    const PAYOUT_COMPLETED = 'completed';
+    const PAYOUT_PENDING = 'pending';
+    const TRIP_STATUSES =  TripStatus::STATUSES;
 
     public array $searchable = [
         'trip_id',

@@ -30,6 +30,9 @@ return new class extends Migration
             $table->float('total_payout', 12)->nullable();
             $table->float('advance_payout', 12)->nullable();
             $table->float('balance', 12)->nullable();
+            $table->float('advance_gtv', 12)->nullable();
+            $table->float('balance_gtv', 12)->nullable();
+            $table->float('incidental_cost', 12)->nullable();
             $table->float('net_margin_profit_amount', 12)->nullable();
             $table->float('margin_profit_amount', 12)->nullable();
             $table->float('margin_profit_percentage', 12)->nullable();

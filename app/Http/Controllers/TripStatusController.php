@@ -10,9 +10,16 @@ use Illuminate\Validation\Rule;
 class TripStatusController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        return $this->respondSuccess(['trips_statuses' => TripStatus::get()]);
+        $tripStatusQuery = TripStatus::query();
+
+        if ($request->query('shouldPaginate') === 'yes') {
+            $tripStatuses = $tripStatusQuery->paginate();
+        } else {
+            $tripStatuses = $tripStatusQuery->get();
+        }
+        return $this->respondSuccess(['trips_statuses' =>$tripStatuses]);
     }
 
     /**

@@ -58,6 +58,7 @@ class OrderController extends Controller
         $this->authorize('viewAny', Order::class);
         /** @var User $user */
         $user = $request->user();
+
         $orders = $this->orderRepository->paginatedOrders($user, ['*'], ['tonnage', 'truckTypes', 'cargoOwner:id,first_name,last_name,middle_name,phone_number,email']);
         return $this->respondSuccess(['requests' => $orders], 'Truck requests fetched');
     }
@@ -298,5 +299,10 @@ class OrderController extends Controller
             return 'The truck associated to accepted order request does not have a driver';
         }
         return $truck;
+    }
+
+    public function financialStatues()
+    {
+        return $this->respondSuccess(['financialStatuses' => Order::FINANCIAL_STATUSES], 'All financial statuses fetched');
     }
 }

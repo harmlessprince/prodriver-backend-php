@@ -113,4 +113,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::post('import/trips', [TripController::class, 'importTrips']);
+
+    Route::get('orders/financial/statuses', [OrderController::class, 'financialStatues']);
 });

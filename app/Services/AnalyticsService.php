@@ -32,10 +32,7 @@ class AnalyticsService
         return  $tripBuilder->count();
     }
 
-    public function totalNumberOfActiveTrips(EloquentBuilder | QueryBuilder $tripBuilder)
-    {
-    }
-
+  
     public function totalNumberOfDeliveredTrips(EloquentBuilder | QueryBuilder $tripBuilder)
     {
         return  $tripBuilder->where('delivery_date', '!=', null)->count();
@@ -58,7 +55,7 @@ class AnalyticsService
 
     public function totalPayout(EloquentBuilder | QueryBuilder $tripBuilder)
     {
-        return  $tripBuilder->sum('total_gtv');
+        return  $tripBuilder->sum('total_payout');
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Filters\TripBuilder;
 use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,7 @@ class Trip extends Model
         'accountManager.phone_number',
         'cargoOwner.first_name', 'cargoOwner.last_name', 'cargoOwner.middle_name',  'cargoOwner.phone_number',
         'transporter.first_name', 'transporter.last_name', 'transporter.middle_name',  'transporter.phone_number',
-        'order.pickup_address', 'order.destination_address', 
+        'order.pickup_address', 'order.destination_address',
     ];
 
     const RELATIONS = [
@@ -102,5 +103,10 @@ class Trip extends Model
     public function waybillPicture(): BelongsTo
     {
         return $this->belongsTo(File::class, 'way_bill_picture_id');
+    }
+
+    public function newEloquentBuilder($query): TripBuilder
+    {
+        return new TripBuilder($query);
     }
 }

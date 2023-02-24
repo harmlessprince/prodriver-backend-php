@@ -28,13 +28,26 @@ class OrderRepository extends BaseRepository
                 ->where('matched_by', null)
                 ->where('status', Order::PENDING);
         }
-        return $ordersQuery->search()->paginate();
+        $ordersQuery = $ordersQuery->search();
+        $ordersQuery = $ordersQuery->filter(request()->all(), $ordersQuery);
+        return $ordersQuery->paginate();
     }
 
 
-    public function acceptOrder(int $truck_id, int $amount)
+    public function filterOrder(array $params)
     {
+        return $this->model->query()->filter($params);
+    }
 
+    public function searchOrder()
+    {
+        return $this->model->query()->search();
+    }
+
+
+    public  function searchAndFilterOrder(array $params){
+        $query = $this->model->query()->search();
+        return $query->filter($params,$query);
     }
 
 }

@@ -16,16 +16,9 @@ class UserRepository extends BaseRepository
     {
         return $this->model->query()->where('email', $email)->first();
     }
-    public function filter()
+    public function filterUser(array $params)
     {
-        // TODO, load role relation
-        return $this->model->query()
-            ->whereFirstName(request('first_name'))
-            ->whereMiddleName(request('middle_name'))
-            ->whereLastName(request('last_name'))
-            ->whereEmail(request('email'))
-            ->whereGender(request('gender'))
-            ->whereUserType(request('user_type'));
+        return $this->model->query()->filter($params);
     }
 
     public function searchUser()
@@ -33,10 +26,16 @@ class UserRepository extends BaseRepository
         return $this->model->query()->search();
     }
 
-    public function totalNumberOfUser(string $user_type)
+
+    public  function searchAndFilter(array $params){
+        $query = $this->model->query()->search();
+        return $query->filter($params,$query);
+    }
+
+    public function totalNumberOfUser(string $user_type = null)
     {
         $userTypes = User::ALL_USER_TYPES;
-        if (!in_array($user_type, $userTypes)) {
+        if (!in_array($user_type, $userTypes) || $user_type == null) {
             return 0;
         }
         return  $this->model->where('user_type', $user_type)->count();

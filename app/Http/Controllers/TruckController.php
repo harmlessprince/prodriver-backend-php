@@ -37,7 +37,9 @@ class TruckController extends Controller
     {
         $this->authorize('viewAny', Truck::class);
 
-        $truckQuery = Truck::query()->search()->with(Truck::NON_DOCUMENT_RELATIONS);
+        $truckQuery = Truck::query()->with(Truck::NON_DOCUMENT_RELATIONS);
+        $truckQuery = $truckQuery->filter($request->all(), $truckQuery);
+        $truckQuery = $truckQuery->search();
         $totalTrucksQuery = Truck::query();
         $user = $request->user();
         if ($user->user_type === User::USER_TYPE_TRANSPORTER) {

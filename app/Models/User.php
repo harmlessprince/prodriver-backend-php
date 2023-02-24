@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Filters\OrderBuilder;
 use App\Filters\UserBuilder;
 use App\Traits\SearchableTrait;
 use Carbon\Carbon;
@@ -59,7 +60,7 @@ class User extends Authenticatable
     const TRANSPORTER_PROFILE = ['spouse', 'nextOfKin', 'bankAccount', 'guarantors', 'company'];
 
     public array $searchable = ['first_name', 'last_name', 'middle_name', 'email', 'phone_number'];
-    
+
     public const GENDERS = [
         self::GENDER_MALE, self::GENDER_FEMALE,
     ];

@@ -8,6 +8,7 @@ use App\Http\Controllers\BankController;
 use App\Http\Controllers\BankDetailController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GuarantorController;
@@ -108,6 +109,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('tonnages', TonnageController::class)->only(['store', 'index', 'destroy', 'update']);
     Route::apiResource('tripStatuses', TripStatusController::class);
     Route::apiResource('waybillStatuses', WaybillStatusController::class);
+    Route::apiResource('documents', DocumentController::class);
+
 
     Route::get('admin/stats', [AnalyticsController::class, 'adminStats']);
 

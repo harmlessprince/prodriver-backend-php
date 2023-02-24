@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Filters\OrderBuilder;
 use App\Traits\SearchableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -108,12 +110,17 @@ class Order extends Model
     {
         return $this->belongsTo(Tonnage::class, 'tonnage_id');
     }
-    public function acceptedOrMatchedRequest()
+    public function acceptedOrMatchedRequest(): HasMany
     {
         return $this->hasMany(AcceptedOrder::class, 'order_id');
     }
     public function pictures(): MorphMany
     {
         return $this->morphMany(File::class, 'owner');
+    }
+
+    public function newEloquentBuilder($query): OrderBuilder
+    {
+        return new OrderBuilder($query);
     }
 }

@@ -5,8 +5,25 @@ namespace App\Filters;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class UserBuilder extends Builder
+class UserBuilder extends BaseModelBuilder
 {
+
+    protected function getModelClass(): string
+    {
+        return User::class;
+    }
+
+    // protected function getSearchableFields(): array
+    // {
+    //     return [
+    //         'first_name',
+    //         'last_name',
+    //         'middle_name',
+    //         'email',
+    //         'user_type',
+    //         'gender',
+    //     ];
+    // }
     public function whereFirstName(string $first_name = null): static
     {
         if ($first_name == null) return $this;
@@ -56,13 +73,4 @@ class UserBuilder extends Builder
         $this->where('gender', $gender);
         return $this;
     }
-
-    // public function whereRole(int $role = null): static
-    // {
-    //     if ($role == null) return $this;
-    //     $this->role($role);
-    //     return $this;
-    // }
-
-
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Filters\TruckBuilder;
 use App\Traits\SearchableTrait;
 use App\Utils\DocumentType;
 use Carbon\Carbon;
@@ -86,5 +87,10 @@ class Truck extends Model
     public function insurance(): MorphOne
     {
         return $this->morphOne(Document::class, 'documentable')->where('document_type', DocumentType::TRUCK_INSURANCE['key']);
+    }
+
+    public function newEloquentBuilder($query): TruckBuilder
+    {
+        return new TruckBuilder($query);
     }
 }

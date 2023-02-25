@@ -12,32 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
-
-      - name: Generate key
-        run: php artisan key:generate --force
-
-      - name: Migrate database
-        run: php artisan migrate --force
-
-      - name: Cache clear
-        run: php artisan cache:clear
-
-      - name: Clear config cache
-        run: php artisan config:cache
-
-      - name: Clear route cache
-        run: php artisan route:cache
-
-      - name: Clear view cache
-        run: php artisan view:clear
-
       - name: Archive application
         run: tar -czf app.tar.gz .
 
@@ -63,3 +37,43 @@ jobs:
           find /path/to/your/laravel/root/directory -type d -exec chmod 755 {} \;
           chgrp -R www-data storage bootstrap/cache
           chmod -R ug+rwx storage bootstrap/cache
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Install dependencies
+        run: |
+          cd /var/www/app.prodriversafrica.com
+          composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+
+      - name: Generate key
+        run: |
+          cd /var/www/app.prodriversafrica.com 
+          php artisan key:generate --force
+
+      - name: Migrate database
+        run: |
+          cd /var/www/app.prodriversafrica.com 
+          php artisan migrate --force
+
+      - name: Cache clear
+        run: |
+          cd /var/www/app.prodriversafrica.com 
+          php artisan cache:clear
+
+      - name: Clear config cache
+        run: |
+          cd /var/www/app.prodriversafrica.com
+          php artisan config:cache
+
+      - name: Clear route cache
+        run: |
+          cd /var/www/app.prodriversafrica.com
+          php artisan route:cache
+
+      - name: Clear view cache
+        run:
+          cd /var/www/app.prodriversafrica.com 
+          php artisan view:clear

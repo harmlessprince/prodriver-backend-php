@@ -34,7 +34,10 @@ class AnalyticsController extends Controller
             'totalNumberOfDrivers' => $this->analyticsService->totalNumberOfDrivers(clone $driverQuery),
             'totalAmountOfPendingIncome' => "NGN " . number_format( $this->analyticsService->totalAmountOfPendingIncome(clone $tripQuery, $user), 2),
             'totalNumberOfTrucks' => $this->analyticsService->totalNumberOfTrucks(clone $truckQuery),
-            'totalLoadingTonnage' => $this->analyticsService->totalLoadingTonnage(clone $tripQuery)
+            'totalLoadingTonnage' => number_format($this->analyticsService->totalLoadingTonnage(clone $tripQuery), 2,'.', ""),
+            'totalMarginProfit' => "NGN " . number_format($this->analyticsService->totalMarginProfit(clone $tripQuery), 2),
+            'totalNetMarginProfit' => "NGN " . number_format($this->analyticsService->totalNetMarginProfit(clone $tripQuery), 2),
+            // 'totalLoadingTonnage' => $this->analyticsService->totalLoadingTonnage(clone $tripQuery)
         ]);
     }
 
@@ -44,8 +47,6 @@ class AnalyticsController extends Controller
         $truckQuery = Truck::query()->where('transporter_id', $user->id);
         $tripQuery = Trip::query()->where('transporter_id', $user->id);
         $driverQuery = Driver::query()->where('user_id', $user->id);
-
-
 
         return $this->respondSuccess([
             'totalNumberOfTrips' => $this->analyticsService->totalNumberOfTrips(clone $tripQuery),

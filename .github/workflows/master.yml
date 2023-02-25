@@ -22,7 +22,6 @@ jobs:
         run: |
           cd /var/www/app.prodriversafrica.com
           tar -xzf app.tar.gz
-
       - name: Change ownership of /var/www
         run: |
           # set webserver as owner as files

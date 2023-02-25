@@ -17,8 +17,8 @@ jobs:
       - name: Move deployment archive
         run: sudo -S <<< ${{ secrets.USER_PASS }} mv app.tar.gz /var/www/app.prodriversafrica.com
       - name: Extract deployment archive
+        working-directory: /var/www/app.prodriversafrica.com
         run: |
-          cd /var/www/app.prodriversafrica.com
           tar -xzf app.tar.gz
       - name: Change ownership of /var/www
         run: |
@@ -28,6 +28,7 @@ jobs:
           sudo -S <<< ${{ secrets.USER_PASS }} usermod -a -G www-data ubuntu
 
       - name: Set file permissions
+        working-directory: /var/www/app.prodriversafrica.com
         run: |
           chmod -R 755 /var/www/app.prodriversafrica.com
           find /path/to/your/laravel/root/directory -type f -exec chmod 644 {} \;
@@ -41,36 +42,35 @@ jobs:
           php-version: '8.1'
 
       - name: Install dependencies
+        working-directory: /var/www/app.prodriversafrica.com
         run: |
-          cd /var/www/app.prodriversafrica.com
           composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
       - name: Generate key
+        working-directory: /var/www/app.prodriversafrica.com
         run: |
-          cd /var/www/app.prodriversafrica.com 
           php artisan key:generate --force
 
       - name: Migrate database
+        working-directory: /var/www/app.prodriversafrica.com
         run: |
-          cd /var/www/app.prodriversafrica.com 
           php artisan migrate --force
 
       - name: Cache clear
+        working-directory: /var/www/app.prodriversafrica.com
         run: |
-          cd /var/www/app.prodriversafrica.com 
           php artisan cache:clear
 
       - name: Clear config cache
+        working-directory: /var/www/app.prodriversafrica.com
         run: |
-          cd /var/www/app.prodriversafrica.com
           php artisan config:cache
 
       - name: Clear route cache
+        working-directory: /var/www/app.prodriversafrica.com
         run: |
-          cd /var/www/app.prodriversafrica.com
           php artisan route:cache
 
       - name: Clear view cache
-        run:
-          cd /var/www/app.prodriversafrica.com 
-          php artisan view:clear
+        working-directory: /var/www/app.prodriversafrica.com
+        run: php artisan view:clear

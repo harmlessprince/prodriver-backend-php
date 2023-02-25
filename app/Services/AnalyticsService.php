@@ -12,9 +12,19 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 class AnalyticsService
 {
 
-    public function totalNumberOfTrucks(EloquentBuilder | QueryBuilder $truckBuilder)
+    public function totalNumberOfTrucks(EloquentBuilder | QueryBuilder $truckBuilder, User $user)
     {
-        return $truckBuilder->count();
+        if ($user->isAccountManager()) {
+            return 0;
+        } else if ($user->isTransporter()) {
+            return $truckBuilder->where('transporter_id', $user->id)->count();
+        } else if ($user->isCargoOwner()) {
+            return 0;
+        } else if ($user->isAdmin()) {
+            return $truckBuilder->count();
+        } else {
+            return 0;
+        }
     }
 
 
@@ -28,16 +38,23 @@ class AnalyticsService
         return  $tripBuilder->where('flagged', 1)->count();
     }
 
-    public function totalNumberOfTrips(EloquentBuilder | QueryBuilder $tripBuilder)
+    public function totalNumberOfTrips(EloquentBuilder | QueryBuilder $tripBuilder, User $user)
     {
-        return  $tripBuilder->count();
+        if ($user->isAccountManager()) {
+            return $tripBuilder->where('account_manager_id', $user->id)->count();
+        } else if ($user->isTransporter()) {
+            return $tripBuilder->where('transporter_id', $user->id)->count();
+        } else if ($user->isCargoOwner()) {
+            return $tripBuilder->where('cargo_owner_id', $user->id)->count();
+        } else if ($user->isAdmin()) {
+            return $tripBuilder->count();
+        } else {
+            return 0;
+        }
     }
 
 
-    public function totalNumberOfDeliveredTrips(EloquentBuilder | QueryBuilder $tripBuilder)
-    {
-        return  $tripBuilder->where('delivery_date', '!=', null)->count();
-    }
+
 
     public function totalAmountOfIncome(EloquentBuilder | QueryBuilder $tripBuilder, User $user)
     {
@@ -98,24 +115,62 @@ class AnalyticsService
 
 
 
-    public function totalNumberOfCancelledTrips(EloquentBuilder | QueryBuilder $tripBuilder)
+    public function totalNumberOfCancelledTrips(EloquentBuilder | QueryBuilder $tripBuilder, $user)
     {
+
         $status = TripStatus::where('name', TripStatus::STATUS_CANCELED)->first();
-        return $tripBuilder->where('trip_status_id', $status->id)->count();
+        $tripBuilder =   $tripBuilder->where('trip_status_id', $status->id);
+        if ($user->isAccountManager()) {
+            return $tripBuilder->where('account_manager_id', $user->id)->count();
+        } else if ($user->isTransporter()) {
+            return $tripBuilder->where('transporter_id', $user->id)->count();
+        } else if ($user->isCargoOwner()) {
+            return $tripBuilder->where('cargo_owner_id', $user->id)->count();
+        } else if ($user->isAdmin()) {
+            return $tripBuilder->count();
+        } else {
+            return 0;
+        }
     }
 
 
-
-    public function totalNumberOfCompletedTrips(EloquentBuilder | QueryBuilder $tripBuilder)
-    {
-        $status = TripStatus::where('name', TripStatus::STATUS_COMPLETED)->first();
-        return $tripBuilder->where('trip_status_id', $status->id)->count();
-    }
-
-    public function totalNumberOfOngoingTrips(EloquentBuilder | QueryBuilder $tripBuilder)
+    public function totalNumberOfOngoingTrips(EloquentBuilder | QueryBuilder $tripBuilder, $user)
     {
         $status = TripStatus::query()->select('id')->whereIn('name', [TripStatus::STATUS_COMPLETED, TripStatus::STATUS_CANCELED, TripStatus::STATUS_DIVERTED])->get();
+        $tripBuilder =   $tripBuilder->whereNotIn('trip_status_id', $status->pluck('id')->toArray());
+        if ($user->isAccountManager()) {
+            return $tripBuilder->where('account_manager_id', $user->id)->count();
+        } else if ($user->isTransporter()) {
+            return $tripBuilder->where('transporter_id', $user->id)->count();
+        } else if ($user->isCargoOwner()) {
+            return $tripBuilder->where('cargo_owner_id', $user->id)->count();
+        } else if ($user->isAdmin()) {
+            return $tripBuilder->count();
+        } else {
+            return 0;
+        }
 
-        return $tripBuilder->whereNotIn('trip_status_id', $status->pluck('id')->toArray())->count();
+        return 0;
+    }
+
+    public function totalNumberOfCompletedTrips(EloquentBuilder | QueryBuilder $tripBuilder, $user)
+    {
+        $status = TripStatus::where('name', TripStatus::STATUS_COMPLETED)->first();
+        $tripBuilder =   $tripBuilder->where('trip_status_id', $status->id);
+        if ($user->isAccountManager()) {
+            return $tripBuilder->where('account_manager_id', $user->id)->count();
+        } else if ($user->isTransporter()) {
+            return $tripBuilder->where('transporter_id', $user->id)->count();
+        } else if ($user->isCargoOwner()) {
+            return $tripBuilder->where('cargo_owner_id', $user->id)->count();
+        } else if ($user->isAdmin()) {
+            return $tripBuilder->count();
+        } else {
+            return 0;
+        }
+    }
+    public function totalNumberOfDeliveredTrips(EloquentBuilder | QueryBuilder $tripBuilder)
+    {
+        return  $tripBuilder->where('delivery_date', '!=', null)->count();
     }
 }

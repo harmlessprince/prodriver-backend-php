@@ -10,6 +10,7 @@ use App\Imports\TripsImport;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\TripRequest;
+use App\Services\AnalyticsService;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -17,55 +18,21 @@ class TripController extends Controller
 {
 
 
-    public function index(Request $request)
+    public function index(Request $request, AnalyticsService $analyticsService)
     {
         /** @var User $user */
         $user = $request->user();
-        $totalTripsQuery = Trip::query();
-        $ripsStatusQuery = TripStatus::query();
         $tripQuery = Trip::query()->search()->with(Trip::RELATIONS)->latest('created_at');
-        $filterTransporter = function ($query) use ($user) {
-            $query->where('transporter_id', $user->id);
-        };
-        $filterCargoOwner = function ($query) use ($user) {
-            $query->where('cargo_owner_id', $user->id);
-        };
-        $filterAccountManager = function ($query) use ($user) {
-            $query->where('account_manager_id', $user->id);
-        };
-
-
-        if ($user->isAccountManager()) {
-            $totalTripsQuery = $totalTripsQuery->where('trips.account_manager_id', $user->id);
-            $tripStatusCountsQuery  =  $ripsStatusQuery->withCount(['trips' => $filterAccountManager]);
-            $tripQuery = $tripQuery->where('account_manager_id', $user->id);
-        } else if ($user->isTransporter()) {
-            $totalTripsQuery = $totalTripsQuery->where('trips.transporter_id', $user->id);
-            $tripStatusCountsQuery  =  $ripsStatusQuery->withCount(['trips' => $filterTransporter]);
-            $tripQuery = $tripQuery->where('transporter_id', $user->id);
-        } else if ($user->isCargoOwner()) {
-            $totalTripsQuery = $totalTripsQuery->where('trips.cargo_owner_id', $user->id);
-            $tripStatusCountsQuery  =  $ripsStatusQuery->withCount(['trips' => $filterCargoOwner]);
-            $tripQuery = $tripQuery->where('cargo_owner_id', $user->id);
-        } else {
-            $tripStatusCountsQuery  =  $ripsStatusQuery->withCount('trips');
-        }
-        $tripStatusCounts =  $tripStatusCountsQuery->get()->map(function ($tripStatus) {
-            return [
-                'name' => $tripStatus->name,
-                'display_name' => Str::headline($tripStatus->name),
-                'count' => $tripStatus->trips_count,
-            ];
-        });
 
         return $this->respondSuccess([
             'trips' => $tripQuery->paginate(),
 
             'meta' => [
-                'totalTrips' => $totalTripsQuery->count(),
-                'tripStatusCounts' => $tripStatusCounts,
+                'totalNumberOfCompletedTrips' => $analyticsService->totalNumberOfCompletedTrips(clone $tripQuery, $user),
+                'totalNumberOfCancelledTrips' => $analyticsService->totalNumberOfCancelledTrips(clone $tripQuery, $user),
+                'totalNumberOfTrips' => $analyticsService->totalNumberOfTrips(clone $tripQuery, $user),
+                'totalNumberOfOngoingTrips' => $analyticsService->totalNumberOfOngoingTrips(clone $tripQuery, $user),
             ]
-
 
         ], 'Trips fetched successfully');
     }
@@ -132,5 +99,44 @@ class TripController extends Controller
         //     }
         // })->filter();
         // $tripStatusCounts = $groupedTripStatuses->merge($ungroupedTripStatuses);
+
+
+
+        //filtering
+        // $filterTransporter = function ($query) use ($user) {
+        //     $query->where('transporter_id', $user->id);
+        // };
+        // $filterCargoOwner = function ($query) use ($user) {
+        //     $query->where('cargo_owner_id', $user->id);
+        // };
+        // $filterAccountManager = function ($query) use ($user) {
+        //     $query->where('account_manager_id', $user->id);
+        // };
+
+
+        //filtering
+        // if ($user->isAccountManager()) {
+        //     $totalTripsQuery = $totalTripsQuery->where('trips.account_manager_id', $user->id);
+        //     $tripStatusCountsQuery  =  $ripsStatusQuery->withCount(['trips' => $filterAccountManager]);
+        //     $tripQuery = $tripQuery->where('account_manager_id', $user->id);
+        // } else if ($user->isTransporter()) {
+        //     $totalTripsQuery = $totalTripsQuery->where('trips.transporter_id', $user->id);
+        //     $tripStatusCountsQuery  =  $ripsStatusQuery->withCount(['trips' => $filterTransporter]);
+        //     $tripQuery = $tripQuery->where('transporter_id', $user->id);
+        // } else if ($user->isCargoOwner()) {
+        //     $totalTripsQuery = $totalTripsQuery->where('trips.cargo_owner_id', $user->id);
+        //     $tripStatusCountsQuery  =  $ripsStatusQuery->withCount(['trips' => $filterCargoOwner]);
+        //     $tripQuery = $tripQuery->where('cargo_owner_id', $user->id);
+        // } else {
+        //     $tripStatusCountsQuery  =  $ripsStatusQuery->withCount('trips');
+        // }
+        // $tripStatusCounts =  $tripStatusCountsQuery->get()->map(function ($tripStatus) {
+        //     return [
+        //         'name' => $tripStatus->name,
+        //         'display_name' => Str::headline($tripStatus->name),
+        //         'count' => $tripStatus->trips_count,
+        //     ];
+        // });
+
     }
 }

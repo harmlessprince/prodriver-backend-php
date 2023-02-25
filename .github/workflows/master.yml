@@ -15,7 +15,7 @@ jobs:
       - name: Archive application
         run: tar -czf app.tar.gz *
       - name: Move deployment archive
-        run: sudo -S <<< ${{ secrets.USER_PASS }} mv app.tar.gz /var/www/app.prodriversafrica.com
+        run: sudo -S <<< ${{ secrets.USER_PASS }} mv app.tar.gz /var/www/app.prodriversafrica.com/
       - name: Extract deployment archive
         working-directory: /var/www/app.prodriversafrica.com
         run: |

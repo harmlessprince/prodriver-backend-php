@@ -169,6 +169,40 @@ class AnalyticsService
             return 0;
         }
     }
+
+    public function totalNumberOfAccidentsTrips(EloquentBuilder | QueryBuilder $tripBuilder, $user)
+    {
+        $status = TripStatus::where('name', TripStatus::STATUS_ACCIDENT)->first();
+        $tripBuilder =   $tripBuilder->where('trip_status_id', $status->id);
+        if ($user->isAccountManager()) {
+            return $tripBuilder->where('account_manager_id', $user->id)->count();
+        } else if ($user->isTransporter()) {
+            return $tripBuilder->where('transporter_id', $user->id)->count();
+        } else if ($user->isCargoOwner()) {
+            return $tripBuilder->where('cargo_owner_id', $user->id)->count();
+        } else if ($user->isAdmin()) {
+            return $tripBuilder->count();
+        } else {
+            return 0;
+        }
+    }
+
+    public function totalNumberOfDivertedTrips(EloquentBuilder | QueryBuilder $tripBuilder, $user)
+    {
+        $status = TripStatus::where('name', TripStatus::STATUS_DIVERTED)->first();
+        $tripBuilder =   $tripBuilder->where('trip_status_id', $status->id);
+        if ($user->isAccountManager()) {
+            return $tripBuilder->where('account_manager_id', $user->id)->count();
+        } else if ($user->isTransporter()) {
+            return $tripBuilder->where('transporter_id', $user->id)->count();
+        } else if ($user->isCargoOwner()) {
+            return $tripBuilder->where('cargo_owner_id', $user->id)->count();
+        } else if ($user->isAdmin()) {
+            return $tripBuilder->count();
+        } else {
+            return 0;
+        }
+    }
     public function totalNumberOfDeliveredTrips(EloquentBuilder | QueryBuilder $tripBuilder)
     {
         return  $tripBuilder->where('delivery_date', '!=', null)->count();

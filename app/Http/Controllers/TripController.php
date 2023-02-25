@@ -32,6 +32,8 @@ class TripController extends Controller
                 'totalNumberOfCancelledTrips' => $analyticsService->totalNumberOfCancelledTrips(clone $tripQuery, $user),
                 'totalNumberOfTrips' => $analyticsService->totalNumberOfTrips(clone $tripQuery, $user),
                 'totalNumberOfOngoingTrips' => $analyticsService->totalNumberOfOngoingTrips(clone $tripQuery, $user),
+                'totalNumberOfDivertedTrips' => $analyticsService->totalNumberOfDivertedTrips(clone $tripQuery, $user),
+                'totalNumberOfAccidentsTrips' => $analyticsService->totalNumberOfAccidentsTrips(clone $tripQuery, $user),
             ]
 
         ], 'Trips fetched successfully');

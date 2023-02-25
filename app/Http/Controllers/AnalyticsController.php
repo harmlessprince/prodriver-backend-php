@@ -37,7 +37,8 @@ class AnalyticsController extends Controller
             'totalLoadingTonnage' => number_format($this->analyticsService->totalLoadingTonnage(clone $tripQuery), 2, '.', ""),
             'totalMarginProfit' => "NGN " . number_format($this->analyticsService->totalMarginProfit(clone $tripQuery), 2),
             'totalNetMarginProfit' => "NGN " . number_format($this->analyticsService->totalNetMarginProfit(clone $tripQuery), 2),
-            // 'totalLoadingTonnage' => $this->analyticsService->totalLoadingTonnage(clone $tripQuery)
+            'totalNumberOfDivertedTrips' => $this->analyticsService->totalNumberOfDivertedTrips(clone $tripQuery, $user),
+            'totalNumberOfAccidentsTrips' => $this->analyticsService->totalNumberOfAccidentsTrips(clone $tripQuery, $user),
         ]);
     }
 

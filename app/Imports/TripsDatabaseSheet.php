@@ -30,8 +30,9 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use App\DataTransferObjects\ApproveAcceptedOrderDto;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Concerns\HasReferencesToOtherSheets;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 
-class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCalculatedFormulas, WithHeadingRow, WithChunkReading, ShouldQueue
+class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCalculatedFormulas, WithHeadingRow, WithChunkReading, ShouldQueue, SkipsEmptyRows
 {
     /**
      * @param Collection $collection
@@ -42,7 +43,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
         $anonymousTransporter = User::where('first_name', 'Truck')->first();
         $anonymousCargoOwner = User::where('first_name', 'Cargo')->first();
         $anonymousAccountManager = User::where('first_name', 'Account')->first();
-        $anonymousTruck = Truck::where('truck_owner_id', $anonymousTransporter->id)->first();
+        $anonymousTruck = Truck::where('transporter_id', $anonymousTransporter->id)->first();
         $anonymousDriver = Driver::where('user_id', $anonymousTransporter->id)->first();
         $tripStatusId =  TripStatus::query()->where('name', TripStatus::STATUS_COMPLETED)->first()->id;
         $wayBillStatusId = WaybillStatus::query()->where('name', WaybillStatus::STATUS_RECEIVED)->first()->id;
@@ -77,7 +78,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 $balance_gtv = $row['balance_gtv'] ?? 0;
                 $receivable = $row['receivable'];
                 $net_margin = $row['net_margin'];
-               
+
                 $payable = $row['payable'];
                 $margin = $row['margin'];
                 $margin_rate = $row['pm'];
@@ -99,9 +100,14 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 if (!Trip::where('trip_id', $trip_id)->exists() && $trip_id) {
 
                     if ($partner) {
-                        $cargoOwner = User::query()->firstOrCreate(
+                        $name = explode(' ', $partner);
+                        $first_name = $name[0] ?? null;
+                        $last_name = $name[1] ??  null;
+                        $transporter  = User::query()->firstOrCreate(
                             ['phone_number' => $partner_phone],
                             [
+                                'first_name' => $first_name,
+                                'last_name' => $last_name,
                                 'password' => '$2y$10$LIduCnhF4GBYEKkUaptgAOPThAfItENWyFR13uH93A.N7Y8blm/9u',
                                 'user_type' => User::USER_TYPE_TRANSPORTER,
                                 'email_verified_at' => now(),
@@ -109,9 +115,10 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                         );
                     }
                     if ($client) {
-                        $transporter = User::query()->firstOrCreate(
+                        $cargoOwner = User::query()->firstOrCreate(
                             ['first_name' => $client],
                             [
+                                'last_name' => $client,
                                 'password' => '$2y$10$LIduCnhF4GBYEKkUaptgAOPThAfItENWyFR13uH93A.N7Y8blm/9u',
                                 'user_type' => User::USER_TYPE_CARGO_OWNER,
                                 'email_verified_at' => now(),
@@ -132,7 +139,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                             ],
                             [
                                 'driver_id' => $driver ? $driver->id : $anonymousDriver->id,
-                                'truck_owner_id' => $transporter ? $transporter->id : $anonymousTransporter->id,
+                                'transporter_id' => $transporter ? $transporter->id : $anonymousTransporter->id,
                             ]
                         );
                     }
@@ -148,7 +155,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                         $company = Company::query()->firstOrCreate(['name' => $company, 'user_id' => $transporter ? $transporter->id : $anonymousTransporter->id]);
                     }
 
-             
+
                     $tripStatusId = TripStatus::where('name', $delivery_status)->first()->id;
 
                     //create 
@@ -215,14 +222,17 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     $approveAcceptedOrderDto->advance_gtv = $advance_gtv;
                     $approveAcceptedOrderDto->total_gtv = $gtv;
 
-                    
+
                     $orderService = new OrderServices();
                     $trip = $orderService->convertApprovedOrderToTrip($approveAcceptedOrderDto);
-                    $trip->loading_tonnage_value = $loading_tonnage;
-                    $trip->update();
+                    if ($loading_tonnage) {
+                        $trip->loading_tonnage_value = $loading_tonnage;
+                        $trip->update();
+                    }
+
                     if ($trip->trip_id === null) {
                         $trip->trip_id = 'TID' . str_pad($trip->id, 6, "0", STR_PAD_LEFT);
-                        
+
                         $trip->save();
                     }
                     DB::commit();

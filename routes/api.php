@@ -114,6 +114,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('admin/stats', [AnalyticsController::class, 'adminStats']);
 
+    Route::get('transporter/stats', [AnalyticsController::class, 'transporterStats']);
 
     Route::post('import/trips', [TripController::class, 'importTrips']);
 

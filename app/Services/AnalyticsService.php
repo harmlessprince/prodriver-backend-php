@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Trip;
 use App\Models\TripStatus;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -32,30 +33,67 @@ class AnalyticsService
         return  $tripBuilder->count();
     }
 
-  
+
     public function totalNumberOfDeliveredTrips(EloquentBuilder | QueryBuilder $tripBuilder)
     {
         return  $tripBuilder->where('delivery_date', '!=', null)->count();
     }
 
-    public function totalAmountOfIncome(EloquentBuilder | QueryBuilder $tripBuilder)
+    public function totalAmountOfIncome(EloquentBuilder | QueryBuilder $tripBuilder, User $user)
     {
-        return $tripBuilder->sum('total_gtv');
+        if ($user->user_type == User::USER_TYPE_ADMIN) {
+            return $tripBuilder->sum('total_gtv');
+        }
+
+        if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
+            return $tripBuilder->sum('total_payout');
+        }
+        return 0;
     }
 
-    public function totalIncomeForTheMonth(EloquentBuilder | QueryBuilder $tripBuilder)
+
+    public function totalNetMarginProfit(EloquentBuilder | QueryBuilder $tripBuilder)
     {
-        return  $tripBuilder->whereBetween('loading_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('total_gtv');
+        return $tripBuilder->sum('net_margin_profit_amount');
     }
 
-    public function totalAmountOfPendingIncome(EloquentBuilder | QueryBuilder $tripBuilder)
+    public function totalMarginProfit(EloquentBuilder | QueryBuilder $tripBuilder)
     {
-        return  $tripBuilder->sum('total_gtv') -  $tripBuilder->sum('advance_gtv');
+        return $tripBuilder->sum('margin_profit_amount');
     }
+
+    public function totalIncomeForTheMonth(EloquentBuilder | QueryBuilder $tripBuilder, $user)
+    {
+        if ($user->user_type == User::USER_TYPE_ADMIN) {
+            return  $tripBuilder->whereBetween('loading_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('total_gtv');
+        }
+
+        if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
+            return  $tripBuilder->whereBetween('loading_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('total_payout');
+        }
+        return 0;
+    }
+
+    public function totalAmountOfPendingIncome(EloquentBuilder | QueryBuilder $tripBuilder, $user)
+    {
+        if ($user->user_type == User::USER_TYPE_ADMIN) {
+            return  $tripBuilder->sum('total_gtv') -  $tripBuilder->sum('advance_gtv');
+        }
+        if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
+            return  $tripBuilder->sum('total_payout') -  $tripBuilder->sum('advance_payout');
+        }
+        return 0;
+    }
+
 
     public function totalPayout(EloquentBuilder | QueryBuilder $tripBuilder)
     {
         return  $tripBuilder->sum('total_payout');
+    }
+
+    public function totalLoadingTonnage(EloquentBuilder | QueryBuilder $tripBuilder)
+    {
+        return  $tripBuilder->sum('loading_tonnage_value');
     }
 
 
@@ -65,6 +103,8 @@ class AnalyticsService
         $status = TripStatus::where('name', TripStatus::STATUS_CANCELED)->first();
         return $tripBuilder->where('trip_status_id', $status->id)->count();
     }
+
+
 
     public function totalNumberOfCompletedTrips(EloquentBuilder | QueryBuilder $tripBuilder)
     {

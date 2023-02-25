@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('trucks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('truck_owner_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('transporter_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('truck_type_id')->nullable()->constrained('truck_types')->nullOnDelete();
             $table->foreignId('driver_id')->nullable()->constrained('drivers')->nullOnDelete();
             $table->string('registration_number')->nullable();

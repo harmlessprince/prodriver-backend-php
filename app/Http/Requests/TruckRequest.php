@@ -10,7 +10,7 @@ use Illuminate\Validation\Rules\RequiredIf;
 
 /**
  * @property-read int id
- * @property int truck_owner_id
+ * @property int transporter_id
  * @property int truck_type_id
  * @property int registration_number
  * @property int tonnage_id
@@ -59,7 +59,7 @@ class TruckRequest extends FormRequest
                 'road_worthiness_id' => ['sometimes', 'integer', $fileExists],
                 'license_id' => ['sometimes', 'integer', $fileExists],
                 'insurance_id' => ['sometimes', 'integer', $fileExists],
-                "truck_owner_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
+                "transporter_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
                 "truck_type_id" => ['required', 'integer', 'exists:truck_types,id'],
                 "tonnage_id" => ['required', 'integer', 'exists:tonnages,id'],
                 "driver_id" => ['required', 'integer', 'exists:drivers,id'],
@@ -77,7 +77,7 @@ class TruckRequest extends FormRequest
                 'road_worthiness_id' => ['sometimes', 'integer', $fileExists],
                 'license_id' => ['sometimes', 'integer', $fileExists],
                 'insurance_id' => ['sometimes', 'integer', $fileExists],
-                "truck_owner_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
+                "transporter_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
                 "truck_type_id" => ['sometimes', 'integer', 'exists:truck_types,id'],
                 "tonnage_id" => ['sometimes', 'integer', 'exists:tonnages,id'],
             ];

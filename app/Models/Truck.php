@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property-read int id
- * @property int truck_owner_id
+ * @property int transporter_id
  * @property int company_id
  * @property int truck_type_id
  * @property int registration_number
@@ -66,7 +66,7 @@ class Truck extends Model
 
     public function truckOwner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'truck_owner_id');
+        return $this->belongsTo(User::class, 'transporter_id');
     }
     public function pictures(): MorphMany
     {

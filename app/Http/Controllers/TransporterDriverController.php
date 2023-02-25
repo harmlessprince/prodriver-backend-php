@@ -11,7 +11,7 @@ class TransporterDriverController extends Controller
 {
     public function index(Request $request, User $transporter)
     {
-        $inActiveTripStatuses = TripStatus::whereIn('name', Trip::INACTIVE_TRIP_STATUSES)->get()->pluck('id')->toArray();
+        $inActiveTripStatuses = TripStatus::whereIn('name', TripStatus::INACTIVE_TRIP_STATUSES)->get()->pluck('id')->toArray();
         if ($transporter->user_type !== User::USER_TYPE_TRANSPORTER) {
             return $this->respondSuccess([], 'Invalid transporter id supplied');
         }

@@ -24,7 +24,7 @@ class TruckSeeder extends Seeder
             $transPorters = User::query()->where('user_type', User::USER_TYPE_TRANSPORTER)->doesntHave('trucks')->get()->pluck('id');
             foreach ($drivers as $driver){
                 $truck = Truck::factory()->create([
-                    'truck_owner_id' => $driver->user_id,
+                    'transporter_id' => $driver->user_id,
                     'truck_type_id' => TruckType::query()->inRandomOrder()->first()->id,
                     'tonnage_id' => Tonnage::query()->get()->random(1)[0],
                 ]);

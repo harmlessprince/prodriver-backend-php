@@ -7,7 +7,7 @@ use App\Http\Requests\TruckRequest;
 class TruckDto
 {
     public function __construct(
-        public readonly ?int    $truck_owner_id,
+        public readonly ?int    $transporter_id,
         public readonly ?int    $driver_id,
         public readonly ?int    $truck_type_id,
         public readonly ?int    $tonnage_id,
@@ -28,7 +28,7 @@ class TruckDto
     public static function fromApiRequest(TruckRequest $request, int $truckOwnerId, int $driver_id): TruckDto
     {
         return new self (
-            truck_owner_id: $truckOwnerId,
+            transporter_id: $truckOwnerId,
             driver_id: $driver_id,
             truck_type_id: $request->truck_type_id,
             tonnage_id: $request->tonnage_id,
@@ -47,7 +47,7 @@ class TruckDto
     public static function cleanRequest(TruckRequest $request, int $truckOwnerId, int $driver_id)
     {
         $object  =  new self (
-            truck_owner_id: $truckOwnerId,
+            transporter_id: $truckOwnerId,
             driver_id: $driver_id,
             truck_type_id: $request->truck_type_id,
             tonnage_id: $request->tonnage_id,

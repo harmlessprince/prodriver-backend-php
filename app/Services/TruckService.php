@@ -19,7 +19,7 @@ class TruckService
     {
         /** @var Truck */
         return Truck::query()->create([
-            'truck_owner_id' => $truckDto->truck_owner_id,
+            'transporter_id' => $truckDto->transporter_id,
             'driver_id' => $truckDto->driver_id,
             'truck_type_id' => $truckDto->truck_type_id,
             'registration_number' => $truckDto->registration_number,
@@ -34,7 +34,7 @@ class TruckService
     {
         $pictureDoc = $truck->pictures()->create(
             [
-                'user_id' => $truck->truck_owner_id,
+                'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_PICTURE['key'],
                 'document_name' => DocumentType::TRUCK_PICTURE['name'],
             ],
@@ -50,7 +50,7 @@ class TruckService
     {
         $proofDoc = $truck->proofOfOwnership()->create(
             [
-                'user_id' => $truck->truck_owner_id,
+                'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_PROOF_OF_OWNERSHIP['key'],
                 'document_name' => DocumentType::TRUCK_PROOF_OF_OWNERSHIP['name'],
             ],
@@ -66,7 +66,7 @@ class TruckService
     {
         $roadDoc = $truck->roadWorthiness()->create(
             [
-                'user_id' => $truck->truck_owner_id,
+                'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_ROAD_WORTHINESS['key'],
                 'document_name' => DocumentType::TRUCK_ROAD_WORTHINESS['name'],
             ],
@@ -81,7 +81,7 @@ class TruckService
     {
         $licenseDoc = $truck->license()->updateOrCreate(
             [
-                'user_id' => $truck->truck_owner_id,
+                'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_LICENSE['key'],
                 'document_name' => DocumentType::TRUCK_LICENSE['name'],
             ],
@@ -98,7 +98,7 @@ class TruckService
     {
         $insuranceDoc = $truck->insurance()->updateOrCreate(
             [
-                'user_id' => $truck->truck_owner_id,
+                'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_INSURANCE['key'],
                 'document_name' => DocumentType::TRUCK_INSURANCE['name'],
             ],

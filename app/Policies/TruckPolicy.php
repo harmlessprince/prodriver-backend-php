@@ -31,7 +31,7 @@ class TruckPolicy
      */
     public function view(User $user, Truck $truck)
     {
-        return  $user->user_type === User::USER_TYPE_ADMIN || ($user->user_type === User::USER_TYPE_TRANSPORTER && $user->id === $truck->truck_owner_id);
+        return  $user->user_type === User::USER_TYPE_ADMIN || ($user->user_type === User::USER_TYPE_TRANSPORTER && $user->id === $truck->transporter_id);
     }
 
     /**
@@ -54,7 +54,7 @@ class TruckPolicy
      */
     public function update(User $user, Truck $truck)
     {
-        return  $user->user_type === User::USER_TYPE_ADMIN || ($user->user_type === User::USER_TYPE_TRANSPORTER && $user->id === $truck->truck_owner_id);
+        return  $user->user_type === User::USER_TYPE_ADMIN || ($user->user_type === User::USER_TYPE_TRANSPORTER && $user->id === $truck->transporter_id);
     }
 
     /**

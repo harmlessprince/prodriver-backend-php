@@ -16,7 +16,7 @@ class TruckBuilder extends BaseModelBuilder
     public function whereTruckOwnerId(int $value = null): static
     {
         if ($value == null) return $this;
-        $this->where('truck_owner_id', $value);
+        $this->where('transporter_id', $value);
         return $this;
     }
 

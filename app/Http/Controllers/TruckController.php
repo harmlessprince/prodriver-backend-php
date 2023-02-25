@@ -43,8 +43,8 @@ class TruckController extends Controller
         $totalTrucksQuery = Truck::query();
         $user = $request->user();
         if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
-            $totalTrucksQuery = $totalTrucksQuery->where('truck_owner_id', $user->id);
-            $truckQuery = $truckQuery->where('truck_owner_id', $user->id);
+            $totalTrucksQuery = $totalTrucksQuery->where('transporter_id', $user->id);
+            $truckQuery = $truckQuery->where('transporter_id', $user->id);
         }
         $trucks = $truckQuery->paginate(request('per_page'));
         return $this->respondSuccess(['trucks' => $trucks, 'meta' => ['total_trucks' => $totalTrucksQuery->count()]], 'All trucks fetched successfully');
@@ -62,18 +62,18 @@ class TruckController extends Controller
         $this->authorize('create', Truck::class);
         $user = $request->user();
         $driver_id = $request->driver_id;
-        if ($request->has('truck_owner_id')) {
-            $truck_owner_id = $request->truck_owner_id;
+        if ($request->has('transporter_id')) {
+            $transporter_id = $request->transporter_id;
         } else {
-            $truck_owner_id = $user->id;
+            $transporter_id = $user->id;
         }
         $driverExists = User::query()->whereHas('drivers', function ($query) use ($driver_id) {
             $query->where('id', $driver_id);
-        })->where('id', $truck_owner_id)->exists();
+        })->where('id', $transporter_id)->exists();
         if (!$driverExists) {
             $this->respondError('The supplied driver doest not belong to the supplied truck owner');
         }
-        $truckDto = TruckDto::fromApiRequest($request, $truck_owner_id, $driver_id);
+        $truckDto = TruckDto::fromApiRequest($request, $transporter_id, $driver_id);
         $truck = $this->truckService->createTruck($truckDto);
         $this->createTruckDocs($truckDto, $truck);
         return $this->respondSuccess(['truck' => $truck], 'Truck created successfully');
@@ -91,7 +91,7 @@ class TruckController extends Controller
         $this->authorize('view', $truck);
         $user = request()->user();
         $relations = [...Truck::DOCUMENT_RELATIONS, ...Truck::NON_DOCUMENT_RELATIONS];
-        if ($user->id === $truck->truck_owner_id) {
+        if ($user->id === $truck->transporter_id) {
             unset($relations['truckOwner']);
         }
         $truck = $truck->load($relations);
@@ -110,7 +110,7 @@ class TruckController extends Controller
     {
         $this->authorize('update', $truck);
         $user = $request->user();
-        $truckDto = TruckDto::fromApiRequest($request, $truck->truck_owner_id, $truck->driver_id);
+        $truckDto = TruckDto::fromApiRequest($request, $truck->transporter_id, $truck->driver_id);
         $attributes = $request->validated();
         $truckTableColumns = $this->getTruckTableColumns();
         $truckData = [];

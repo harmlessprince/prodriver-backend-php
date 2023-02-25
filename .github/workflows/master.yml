@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Archive application
-        run: tar -czf app.tar.gz .
+        run: tar -czf app.tar.gz *
       - name: Move deployment archive
         run: mv app.tar.gz /var/www/app.prodriversafrica.com
       - name: Extract deployment archive

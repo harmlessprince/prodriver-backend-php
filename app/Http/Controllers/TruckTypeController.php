@@ -15,7 +15,7 @@ class TruckTypeController extends Controller
         $truckTypeQuery = TruckType::query()->search()->withCount('trucks');
 
         if ($request->query('shouldPaginate') === 'yes') {
-            $truckTypes = $truckTypeQuery->paginate();
+            $truckTypes = $truckTypeQuery->paginate(request('per_page', 15));
         } else {
             $truckTypes = $truckTypeQuery->get();
         }

@@ -18,7 +18,7 @@ class OrderRepository extends BaseRepository
     public function paginatedOrders(User $user,array $columns = ['*'], array $relations = []): Paginator
     {
 
-        $ordersQuery =  $this->model->with($relations);
+        $ordersQuery =  $this->model->with($relations)->latest('created_at');
         if ($user->user_type == User::USER_TYPE_CARGO_OWNER) {
             $ordersQuery = $ordersQuery->where('cargo_owner_id', $user->id);
         }
@@ -30,7 +30,7 @@ class OrderRepository extends BaseRepository
         }
         $ordersQuery = $ordersQuery->search();
         $ordersQuery = $ordersQuery->filter(request()->all(), $ordersQuery);
-        return $ordersQuery->paginate();
+        return $ordersQuery->paginate(request('per_page', 15));
     }
 
 

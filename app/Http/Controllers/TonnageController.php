@@ -16,7 +16,7 @@ class TonnageController extends Controller
     {
         $tonnagesQuery = Tonnage::query()->search();
         if ($request->query('shouldPaginate') === 'yes') {
-            $tonnages = $tonnagesQuery->paginate();
+            $tonnages = $tonnagesQuery->paginate(request('per_page', 15));
         } else {
             $tonnages = $tonnagesQuery->get();
         }

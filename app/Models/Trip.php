@@ -38,6 +38,7 @@ class Trip extends Model
         'accountManager',
         'driver',
         'truck',
+        'truck.truckType',
         'order',
         'cargoOwner',
         'transporter',

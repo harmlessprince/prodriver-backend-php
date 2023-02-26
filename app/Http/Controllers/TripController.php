@@ -22,7 +22,11 @@ class TripController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
-        $tripQuery = Trip::query()->search()->with(Trip::RELATIONS)->latest('created_at');
+        $tripQuery = Trip::query()->search();
+
+        $tripQuery = $tripQuery->filter($request->all(), $tripQuery);
+
+        $tripQuery = $tripQuery->with(Trip::RELATIONS)->latest('created_at');
 
         return $this->respondSuccess([
             'trips' => $tripQuery->paginate(request('per_page', 15)),

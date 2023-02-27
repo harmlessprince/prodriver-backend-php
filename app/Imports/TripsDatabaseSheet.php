@@ -124,7 +124,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                                 'email_verified_at' => now(),
                             ]
                         );
-                        $cargoOwner->company()->create(['name' => $client]);
+                        $cargoOwner->company()->firstOrCreate(['name' => $client]);
                     }
                     if ($driver_name) {
                         $driver =    Driver::query()->firstOrCreate(

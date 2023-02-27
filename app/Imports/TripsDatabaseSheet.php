@@ -57,7 +57,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
             $truck = null;
             $delivery_status = null;
             try {
-                DB::beginTransaction();
+                // DB::beginTransaction();
                 $trip_id = $row['trip_id'];
                 $truck_number = $row['truck_number'] ?? null;
                 $loading_site = $row['loading_site'] ?? 'loading site';
@@ -230,12 +230,12 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                         $trip->update();
                     }
 
-                    if ($trip->trip_id === null) {
-                        $trip->trip_id = 'TID' . str_pad($trip->id, 6, "0", STR_PAD_LEFT);
+                    // if ($trip->trip_id === null) {
+                    //     $trip->trip_id = 'TID' . str_pad($trip->id, 6, "0", STR_PAD_LEFT);
 
-                        $trip->save();
-                    }
-                    DB::commit();
+                    //     $trip->update();
+                    // }
+                    // DB::commit();
                     $str = "Committed for id " . $trip_id . "\n";
 
                     printf($str);
@@ -246,6 +246,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                 }
                 // return $trip;
             } catch (\Throwable $th) {
+                dd($th);
                 Log::error($th);
                 Log::info($row);
                 DB::rollBack();

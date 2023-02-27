@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\RequiredIf;
 
 /**
  * @property-read string first_name
@@ -37,6 +38,7 @@ class RegisterRequest extends FormRequest
             return [
                 'first_name' => ['required', 'string', 'max:200'],
                 'last_name' => ['required', 'string', 'max:200'],
+                'company_name' => [new RequiredIf($this->user_type === User::USER_TYPE_CARGO_OWNER), 'string', 'max:200', 'unique:companies,name'],
                 'email' => ['required', 'email', 'max:200', 'unique:users,email'],
                 'phone_number' => ['required', 'string', 'max:11', 'unique:users,phone_number'],
                 'password' => ['required', 'string'],

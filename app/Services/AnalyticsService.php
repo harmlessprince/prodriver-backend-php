@@ -94,10 +94,10 @@ class AnalyticsService
     public function totalAmountOfPendingIncome(EloquentBuilder | QueryBuilder $tripBuilder, $user)
     {
         if ($user->user_type == User::USER_TYPE_ADMIN) {
-            return  $tripBuilder->sum('total_gtv') -  $tripBuilder->sum('advance_gtv');
+            return  $tripBuilder->sum('total_gtv') -  $tripBuilder->sum('advance_gtv') - $tripBuilder->sum('balance_gtv');;
         }
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
-            return  $tripBuilder->sum('total_payout') -  $tripBuilder->sum('advance_payout');
+            return  $tripBuilder->sum('total_payout') -  $tripBuilder->sum('advance_payout') - $tripBuilder->sum('balance_payout');
         }
         return 0;
     }

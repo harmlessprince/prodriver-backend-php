@@ -27,8 +27,15 @@ class AuthenticationController extends Controller
         /** @var User $user */
         $data = $request->validated();
         unset($data['confirm_password']);
+        unset($data['company_name']);
         $data['password'] = Hash::make($data['password']);
         $user = $this->userRepository->create($data);
+        if ($user->user_type === User::USER_TYPE_CARGO_OWNER) {
+            $user->company()->create([
+                'name' => $request->company_name,
+            ]);
+        }
+        $user = $user->load('company');
         $emailToken = $this->appTokenService->generateUserEmailToken($user);
         event(new UserRegisteredEvent($user, $emailToken->token));
         $token =  $user->createToken('register-token')->plainTextToken;

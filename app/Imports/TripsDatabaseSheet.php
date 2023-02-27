@@ -124,6 +124,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                                 'email_verified_at' => now(),
                             ]
                         );
+                        $cargoOwner->company()->create(['name' => $client]);
                     }
                     if ($driver_name) {
                         $driver =    Driver::query()->firstOrCreate(
@@ -151,9 +152,9 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                     }
 
 
-                    if ($company) {
-                        $company = Company::query()->firstOrCreate(['name' => $company, 'user_id' => $transporter ? $transporter->id : $anonymousTransporter->id]);
-                    }
+                    // if ($company) {
+                    //     $company = Company::query()->firstOrCreate(['name' => $company]);
+                    // }
 
 
                     $tripStatusId = TripStatus::where('name', $delivery_status)->first()->id;

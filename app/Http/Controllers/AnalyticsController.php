@@ -48,7 +48,6 @@ class AnalyticsController extends Controller
         $truckQuery = Truck::query();
         $tripQuery = Trip::query();
         $driverQuery = Driver::query();
-dd(number_format($this->analyticsService->totalAmountOfPendingIncome(clone $tripQuery, $user), 2));
         return $this->respondSuccess([
             'totalNumberOfTrips' => $this->analyticsService->totalNumberOfTrips(clone $tripQuery, $user),
             'totalNumberOfOngoingTrips' => $this->analyticsService->totalNumberOfOngoingTrips(clone $tripQuery, $user),

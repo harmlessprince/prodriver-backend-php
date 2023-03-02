@@ -32,7 +32,7 @@ class TruckService
     }
     public function syncTruckPictures(Truck $truck, $picture_id)
     {
-        $pictureDoc = $truck->pictures()->create(
+        $pictureDoc = $truck->pictures()->updateOrCreate(
             [
                 'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_PICTURE['key'],
@@ -48,7 +48,7 @@ class TruckService
 
     public function syncTruckProofOfOwnerShipDoc(Truck $truck, int $proof_of_ownership_id)
     {
-        $proofDoc = $truck->proofOfOwnership()->create(
+        $proofDoc = $truck->proofOfOwnership()->updateOrCreate(
             [
                 'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_PROOF_OF_OWNERSHIP['key'],
@@ -64,7 +64,7 @@ class TruckService
 
     public function syncTruckRoadWorthinessDoc(Truck $truck, int $road_worthiness_id)
     {
-        $roadDoc = $truck->roadWorthiness()->create(
+        $roadDoc = $truck->roadWorthiness()->updateOrCreate(
             [
                 'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_ROAD_WORTHINESS['key'],

@@ -239,8 +239,8 @@ class OrderController extends Controller
             'account_manager_id' => ['required', 'integer', Rule::exists('users', 'id')->where('user_type', User::USER_TYPE_ACCOUNT_MANAGER)],
             'total_payout' => ['required', 'numeric'],
             'advance_payout' => ['required', 'numeric'],
-            'loading_date' => ['required', 'date', 'after:' . Carbon::now()->toDateString()],
-            'delivery_date' => ['required', 'date', 'after:loading_date'],
+            'loading_date' => ['required', 'date'],
+            'delivery_date' => ['required', 'date'],
         ]);
         $acceptedOrderDto = AcceptOrderDto::fromModel($acceptedOrder);
         /** @var Truck|string $truckStatus */

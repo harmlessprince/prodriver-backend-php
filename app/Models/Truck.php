@@ -42,8 +42,9 @@ class Truck extends Model
 
     protected $guarded = [];
     const MORPH_NAME = 'truck';
-    const DOCUMENT_RELATIONS   = ['pictures', 'proofOfOwnership', 'roadWorthiness', 'license', 'insurance'];
+    const DOCUMENT_RELATIONS   = ['picture', 'proofOfOwnership', 'roadWorthiness', 'license', 'insurance'];
     const NON_DOCUMENT_RELATIONS = ['driver', 'tonnage:id,name', 'truckType:id,name', 'truckOwner:id,first_name,last_name,middle_name,user_type,phone_number'];
+    const RELATIONS = [...self::DOCUMENT_RELATIONS, ...self::NON_DOCUMENT_RELATIONS];
     public array $searchable = [
         'truckOwner.first_name', 'truckOwner.last_name', 'truckOwner.middle_name', 'truckOwner.email', 'truckOwner.phone_number',
         'driver.first_name', 'driver.last_name', 'driver.phone_number', 'plate_number', 'chassis_number', 'model',
@@ -68,9 +69,9 @@ class Truck extends Model
     {
         return $this->belongsTo(User::class, 'transporter_id');
     }
-    public function pictures(): MorphMany
+    public function picture(): MorphOne
     {
-        return $this->morphMany(Document::class, 'documentable')->where('document_type', DocumentType::TRUCK_PICTURE['key']);
+        return $this->morphOne(Document::class, 'documentable')->where('document_type', DocumentType::TRUCK_PICTURE['key']);
     }
     public function proofOfOwnership(): MorphOne
     {

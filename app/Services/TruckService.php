@@ -32,7 +32,7 @@ class TruckService
     }
     public function syncTruckPictures(Truck $truck, $picture_id)
     {
-        $pictureDoc = $truck->pictures()->updateOrCreate(
+        $pictureDoc = $truck->picture()->updateOrCreate(
             [
                 'user_id' => $truck->transporter_id,
                 'document_type' => DocumentType::TRUCK_PICTURE['key'],

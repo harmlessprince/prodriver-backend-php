@@ -37,7 +37,7 @@ class TruckController extends Controller
     {
         $this->authorize('viewAny', Truck::class);
 
-        $truckQuery = Truck::query()->with(Truck::NON_DOCUMENT_RELATIONS);
+        $truckQuery = Truck::query()->with(Truck::RELATIONS);
         $truckQuery = $truckQuery->filter($request->all(), $truckQuery);
         $truckQuery = $truckQuery->search();
         $totalTrucksQuery = Truck::query();
@@ -46,7 +46,7 @@ class TruckController extends Controller
             $totalTrucksQuery = $totalTrucksQuery->where('transporter_id', $user->id);
             $truckQuery = $truckQuery->where('transporter_id', $user->id);
         }
-        $trucks = $truckQuery->paginate(request('per_page'));
+        $trucks = $truckQuery->latest('created_at')->paginate(request('per_page'));
         return $this->respondSuccess(['trucks' => $trucks, 'meta' => ['total_trucks' => $totalTrucksQuery->count()]], 'All trucks fetched successfully');
     }
 
@@ -163,7 +163,7 @@ class TruckController extends Controller
         if ($truckDto->license_id) {
             $this->truckService->syncTruckLicenseDoc($truck, $truckDto->license_id);
         }
-        if ($truckDto->license_id) {
+        if ($truckDto->insurance_id) {
             $this->truckService->syncTruckInsuranceDoc($truck, $truckDto->insurance_id);
         }
     }

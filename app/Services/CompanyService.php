@@ -113,7 +113,7 @@ class CompanyService
     public function createCacDocument(Company $company, $fileId): void
     {
         /** @var Document $document */
-        $document = $company->cacDocument()->create(
+        $document = $company->cacDocument()->updateOrCreate(
             [
                 'user_id' => $company->user_id,
                 'document_type' => DocumentType::CAC_DOCUMENT['key'],

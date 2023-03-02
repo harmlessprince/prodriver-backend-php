@@ -40,7 +40,7 @@ class TruckDto
             picture_id: $request->picture_id,
             proof_of_ownership_id: $request->proof_of_ownership_id,
             road_worthiness_id: $request->road_worthiness_id,
-            license_id: $request->validated('license_id'),
+            license_id: $request->license_id,
             insurance_id: $request->insurance_id
         );
     }

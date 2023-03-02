@@ -27,6 +27,8 @@ class Guarantor extends Model
 
     const MORPH_NAME = 'guarantor';
 
+    protected $with = ['idCard'];
+
     protected $guarded = [];
 
     public function user(): BelongsTo

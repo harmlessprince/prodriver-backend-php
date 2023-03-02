@@ -43,15 +43,32 @@ class UpdateCompanyRequest extends FormRequest
         $fileExists = Rule::exists(File::class, 'id')
         ->where('type', File::TYPE_IMAGE)
         ->where('creator_id', $user->id);
-        return [
-            'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
-            'name' => ['required', 'string', 'max:200'],
-            'email' => ['required', 'email'],
-            'phone_number' => ['required', 'string', 'min:11'],
-            'rc_number' => ['sometimes', 'string', 'max:200'],
-            'cac_document_id' => ['sometimes', 'integer', $fileExists],
-            'goods_in_transit_insurance_id' => ['sometimes', 'integer', $fileExists],
-            'fidelity_insurance_id' => ['sometimes', 'integer', $fileExists],
-        ];
+
+        if (request()->method() == 'POST') {
+            return [
+                'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
+                'name' => ['required', 'string', 'max:200'],
+                'email' => ['required', 'email'],
+                'phone_number' => ['required', 'string', 'min:11'],
+                'rc_number' => ['sometimes', 'string', 'max:200'],
+                'cac_document_id' => ['sometimes', 'integer', $fileExists],
+                'goods_in_transit_insurance_id' => ['sometimes', 'integer', $fileExists],
+                'fidelity_insurance_id' => ['sometimes', 'integer', $fileExists],
+            ];
+        }
+
+        if (request()->method() == 'PATCH') {
+            return [
+                'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
+                'name' => ['sometimes', 'string', 'max:200'],
+                'email' => ['sometimes', 'email'],
+                'phone_number' => ['sometimes', 'string', 'min:11'],
+                'rc_number' => ['sometimes', 'string', 'max:200'],
+                'cac_document_id' => ['sometimes', 'integer', $fileExists],
+                'goods_in_transit_insurance_id' => ['sometimes', 'integer', $fileExists],
+                'fidelity_insurance_id' => ['sometimes', 'integer', $fileExists],
+            ];
+        }
+        
     }
 }

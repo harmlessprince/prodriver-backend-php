@@ -1,75 +1,75 @@
-name: Deploy to Production
+# name: Deploy to Production
 
-on:
-  push:
-    branches:
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
 
-jobs:
-  deploy:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Archive application
-        run: tar -czf app.tar.gz *
-      - name: Move deployment archive
-        run: sudo -S <<< ${{ secrets.USER_PASS }} mv app.tar.gz /var/www/app.prodriversafrica.com
-      - name: Extract deployment archive
-        working-directory: /var/www/app.prodriversafrica.com
-        run: |
-          tar -xzf app.tar.gz
-      - name: Change ownership of /var/www
-        run: |
-          # set webserver as owner as files
-          sudo -S <<< ${{ secrets.USER_PASS }} chown -R www-data:www-data /var/www/app.prodriversafrica.com
-          # add user to webserver group
-          sudo -S <<< ${{ secrets.USER_PASS }} usermod -a -G www-data ubuntu
+# jobs:
+#   deploy:
+#     runs-on: self-hosted
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+#       - name: Archive application
+#         run: tar -czf app.tar.gz *
+#       - name: Move deployment archive
+#         run: sudo -S <<< ${{ secrets.USER_PASS }} mv app.tar.gz /var/www/app.prodriversafrica.com
+#       - name: Extract deployment archive
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: |
+#           tar -xzf app.tar.gz
+#       - name: Change ownership of /var/www
+#         run: |
+#           # set webserver as owner as files
+#           sudo -S <<< ${{ secrets.USER_PASS }} chown -R www-data:www-data /var/www/app.prodriversafrica.com
+#           # add user to webserver group
+#           sudo -S <<< ${{ secrets.USER_PASS }} usermod -a -G www-data ubuntu
 
-      - name: Set file permissions
-        working-directory: /var/www/app.prodriversafrica.com
-        run: |
-          chmod -R 755 /var/www/app.prodriversafrica.com
-          find /path/to/your/laravel/root/directory -type f -exec chmod 644 {} \;
-          find /path/to/your/laravel/root/directory -type d -exec chmod 755 {} \;
-          chgrp -R www-data storage bootstrap/cache
-          chmod -R ug+rwx storage bootstrap/cache
+#       - name: Set file permissions
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: |
+#           chmod -R 755 /var/www/app.prodriversafrica.com
+#           find /path/to/your/laravel/root/directory -type f -exec chmod 644 {} \;
+#           find /path/to/your/laravel/root/directory -type d -exec chmod 755 {} \;
+#           chgrp -R www-data storage bootstrap/cache
+#           chmod -R ug+rwx storage bootstrap/cache
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
+#       - name: Setup PHP
+#         uses: shivammathur/setup-php@v2
+#         with:
+#           php-version: '8.1'
 
-      - name: Install dependencies
-        working-directory: /var/www/app.prodriversafrica.com
-        run: |
-          composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+#       - name: Install dependencies
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: |
+#           composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
-      - name: Generate key
-        working-directory: /var/www/app.prodriversafrica.com
-        run: |
-          php artisan key:generate --force
+#       - name: Generate key
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: |
+#           php artisan key:generate --force
 
-      - name: Migrate database
-        working-directory: /var/www/app.prodriversafrica.com
-        run: |
-          php artisan migrate --force
+#       - name: Migrate database
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: |
+#           php artisan migrate --force
 
-      - name: Cache clear
-        working-directory: /var/www/app.prodriversafrica.com
-        run: |
-          php artisan cache:clear
+#       - name: Cache clear
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: |
+#           php artisan cache:clear
 
-      - name: Clear config cache
-        working-directory: /var/www/app.prodriversafrica.com
-        run: |
-          php artisan config:cache
+#       - name: Clear config cache
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: |
+#           php artisan config:cache
 
-      - name: Clear route cache
-        working-directory: /var/www/app.prodriversafrica.com
-        run: |
-          php artisan route:cache
+#       - name: Clear route cache
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: |
+#           php artisan route:cache
 
-      - name: Clear view cache
-        working-directory: /var/www/app.prodriversafrica.com
-        run: php artisan view:clear
+#       - name: Clear view cache
+#         working-directory: /var/www/app.prodriversafrica.com
+#         run: php artisan view:clear

@@ -57,7 +57,7 @@ class User extends Authenticatable
     const ALL_USER_TYPES = [self::USER_TYPE_ADMIN, self::USER_TYPE_TRANSPORTER, self::USER_TYPE_CARGO_OWNER, self::USER_TYPE_ACCOUNT_MANAGER];
 
     const CARGO_OWNER_PROFILE = ['spouse', 'nextOfKin', 'company'];
-    const TRANSPORTER_PROFILE = ['spouse', 'nextOfKin', 'bankAccount', 'guarantors', 'company'];
+    const TRANSPORTER_PROFILE = ['spouse', 'nextOfKin', 'bankAccount', 'guarantors'];
 
     public array $searchable = ['first_name', 'last_name', 'middle_name', 'email', 'phone_number'];
 

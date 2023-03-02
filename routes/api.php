@@ -37,9 +37,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 Route::prefix('auth')->group(function () {
     //Normal Login
     Route::post('/login', [AuthenticationController::class, 'login'])->name('login');
@@ -73,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('banks', [BankController::class, 'index']);
     //Onboarding
     Route::patch('update/profile', [UpdateProfileController::class, 'update']);
-    Route::patch('update/company', [CompanyController::class, 'update']);
+    Route::patch('update/company/{company}', [CompanyController::class, 'update']);
     Route::post('store/company', [CompanyController::class, 'store']);
     Route::post('store/guarantor', [GuarantorController::class, 'store']);
     Route::patch('update/guarantor/{guarantor}', [GuarantorController::class, 'update']);

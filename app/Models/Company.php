@@ -54,4 +54,6 @@ class Company extends Model
     {
         return $this->morphOne(Document::class, 'documentable')->where('document_type', DocumentType::FIDELITY_INSURANCE['key']);
     }
+
+
 }

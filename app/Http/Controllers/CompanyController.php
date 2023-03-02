@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
+
+    public function __construct(public readonly CompanyService $companyService) {
+        
+    }
     /**
      * @throws CompanyProfileExistsException
      */
@@ -48,6 +52,20 @@ class CompanyController extends Controller
 
     public function update(UpdateCompanyRequest $request, Company $company)
     {
-        $data = $request->validated();
+        $company = $this->companyService->createCompany(
+            name: $request->input('name', $company->name),
+            email: $request->input('email', $company->email),
+            phone_number: $request->input('phone_number', $company->phone_number),
+            user_id: $company->user_id,
+            rc_number: $request->input('rc_number', $company->rc_number),
+            description: $request->input('description', $company->description),
+            cac_document_id: $request->cac_document_id,
+            goods_in_transit_insurance_id: $request->goods_in_transit_insurance_id,
+            fidelity_insurance_id: $request->fidelity_insurance_id
+        );
+        // /** @var User $user */
+        // $user = $company->user;
+        // $user = $user->load($user->myRelations($user->user_type));
+        return $this->respondSuccess(['company' => $company->refresh()], 'Company profile updated successfully');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Filters;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 class OrderBuilder extends BaseModelBuilder
@@ -59,6 +60,15 @@ class OrderBuilder extends BaseModelBuilder
     {
         if ($value == null) return $this;
         $this->where('status', $value);
+        return $this;
+    }
+
+    public function whereNeededDate(string $value = null): static
+    {
+        if ($value == null) return $this;
+        $start_date  = request('date_needed_from', Carbon::now());
+        $end_date = request('date_needed_to', Carbon::now()->addRealMonth());
+        $this->whereBetween('date_needed', [$start_date, $end_date]);
         return $this;
     }
 }

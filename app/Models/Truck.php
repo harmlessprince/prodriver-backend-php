@@ -43,7 +43,7 @@ class Truck extends Model
     protected $guarded = [];
     const MORPH_NAME = 'truck';
     const DOCUMENT_RELATIONS   = ['picture', 'proofOfOwnership', 'roadWorthiness', 'license', 'insurance'];
-    const NON_DOCUMENT_RELATIONS = ['driver', 'tonnage:id,name', 'truckType:id,name', 'truckOwner:id,first_name,last_name,middle_name,user_type,phone_number'];
+    const NON_DOCUMENT_RELATIONS = ['driver', 'tonnage:id,name,value', 'truckType:id,name', 'truckOwner:id,first_name,last_name,middle_name,user_type,phone_number'];
     const RELATIONS = [...self::DOCUMENT_RELATIONS, ...self::NON_DOCUMENT_RELATIONS];
     public array $searchable = [
         'truckOwner.first_name', 'truckOwner.last_name', 'truckOwner.middle_name', 'truckOwner.email', 'truckOwner.phone_number',

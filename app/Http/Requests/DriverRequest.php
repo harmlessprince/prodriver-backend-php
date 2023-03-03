@@ -62,6 +62,7 @@ class DriverRequest extends FormRequest
                 'license_number' => ['sometimes', 'string', 'max:200',  Rule::unique('drivers', 'license_number')->ignore($this->driver)],
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'license_picture_id' => ['sometimes', 'integer', $fileExists],
+                "user_id" => ['sometimes', 'integer', 'exists:users,id']
             ];
         }
         return [];

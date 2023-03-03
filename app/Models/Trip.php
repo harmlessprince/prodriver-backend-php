@@ -39,6 +39,7 @@ class Trip extends Model
         'driver',
         'truck',
         'truck.truckType',
+        'truck.driver',
         'order',
         'cargoOwner',
         'transporter',

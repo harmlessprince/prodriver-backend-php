@@ -72,7 +72,7 @@ class Order extends Model
     ];
     const MORPH_NAME = 'order';
 
-    const RELATIONS = ['truckTypes', 'tonnage', 'pictures'];
+    const RELATIONS = ['truckTypes', 'tonnage', 'pictures','cargoOwner:id,first_name,last_name,middle_name,phone_number,email'];
 
     public function cargoOwner(): BelongsTo
     {

@@ -110,7 +110,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('tripStatuses', TripStatusController::class);
     Route::apiResource('waybillStatuses', WaybillStatusController::class);
     Route::apiResource('documents', DocumentController::class);
-
+    Route::patch('accept/document/{document}', [DocumentController::class, 'acceptDocument']);
+    Route::patch('decline/document/{document}', [DocumentController::class, 'declineDocument']);
 
     Route::get('admin/stats', [AnalyticsController::class, 'adminStats']);
 

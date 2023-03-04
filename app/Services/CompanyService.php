@@ -23,9 +23,9 @@ class CompanyService
      * @throws CompanyProfileExistsException
      */
     public function createCompany(
-        string $name,
-        string $email,
-        string $phone_number,
+        ?string $name,
+        ?string $email,
+        ?string $phone_number,
         int $user_id,
         string $rc_number = null,
         string $description = null,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Document;
 use Illuminate\Http\Request;
 
 class DocumentController extends Controller
@@ -13,7 +14,6 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        
     }
 
     /**
@@ -59,5 +59,22 @@ class DocumentController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function acceptDocument(Request $request, Document $document)
+    {
+        $document->status = Document::ACCEPTED;
+        $document->verified_by = $request->user()->id;
+        $document->update();
+        return $this->respondSuccess(['document' => $document->refresh()], 'Document verified successfully');
+    }
+
+    public function declineDocument(Request $request, Document $document)
+    {
+        $document->status = Document::DECLINED;
+        $document->verified_by = $request->user()->id;
+        $document->reason = $request->reason;
+        $document->update();
+        return $this->respondSuccess(['document' => $document->refresh()], 'Document declined successfully');
     }
 }

@@ -47,6 +47,11 @@ class TripRequest extends FormRequest
                 'advance_payout' => ['sometimes', 'numeric'],
                 'loading_date' => ['sometimes', 'date'],
                 'delivery_date' => ['sometimes', 'date'],
+                'way_bill_status_id' => ['sometimes', 'integer', 'exists:waybill_statuses,id'],
+                'trip_status_id' => ['sometimes', 'integer', 'exists:trip_statuses,id'],
+                'days_in_transit' => ['sometimes', 'integer'],
+                'days_delivered' => ['sometimes', 'integer'],
+                'payout_status' => ['sometimes', 'string']
             ];
         }
         return [];

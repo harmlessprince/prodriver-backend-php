@@ -34,10 +34,10 @@ class UserController extends Controller
         if (!in_array($request->query('user_type'), $userTypes) && $request->has('user_type')) {
             return $this->respondError('Please provide a valid user type in params');
         }
-        $users = $this->userRepository->filterUser($request->all())->orderBy('created_at')->paginate(request('per_page', 15));
-        if ($request->has('searchTerm')) {
-            $users = $this->userRepository->searchUser()->orderBy('created_at')->paginate(request('per_page', 15));
-        }
+        $users = $this->userRepository->searchAndFilter($request->all())->orderBy('created_at')->paginate(request('per_page', 15));
+        // if ($request->has('searchTerm')) {
+        //     $users = $this->userRepository->searchUser()->orderBy('created_at')->paginate(request('per_page', 15));
+        // }
 
         return $this->respondSuccess(['users' => $users, 'meta' => ['total_users' => $this->userRepository->totalNumberOfUser($request->query('user_type'))]], 'User fetched successfully');
     }

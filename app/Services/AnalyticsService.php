@@ -103,6 +103,12 @@ class AnalyticsService
     }
 
 
+    public function totalAmountPayable(EloquentBuilder | QueryBuilder $tripBuilder)
+    {
+        return  $tripBuilder->sum('total_payout') -  $tripBuilder->sum('advance_payout') - $tripBuilder->sum('balance_payout');
+    }
+
+
     public function totalPayout(EloquentBuilder | QueryBuilder $tripBuilder)
     {
         return  $tripBuilder->sum('total_payout');

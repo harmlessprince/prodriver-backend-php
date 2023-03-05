@@ -63,6 +63,12 @@ class UserBuilder extends BaseModelBuilder
     public function whereUserType(string $user_type = null): static
     {
         if ($user_type == null) return $this;
+        if ($user_type ==  User::USER_TYPE_CARGO_OWNER) {
+            $this->with(User::CARGO_OWNER_PROFILE);
+        }
+        if ($user_type ==  User::USER_TYPE_CARGO_OWNER) {
+            $this->with(User::TRANSPORTER_PROFILE);
+        }
         $this->where('user_type', $user_type);
         return $this;
     }

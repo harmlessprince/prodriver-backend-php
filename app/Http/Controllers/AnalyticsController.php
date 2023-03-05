@@ -22,6 +22,7 @@ class AnalyticsController extends Controller
         $driverQuery = Driver::query();
 
         return $this->respondSuccess([
+            'totalAmountPayable' => number_format($this->analyticsService->totalAmountPayable($tripQuery), 2, '.', ""),
             'totalNumberOfTrips' => $this->analyticsService->totalNumberOfTrips(clone $tripQuery, $user),
             'totalNumberOfOngoingTrips' => $this->analyticsService->totalNumberOfOngoingTrips(clone $tripQuery, $user),
             'totalNumberOfFlaggedTrips' => $this->analyticsService->totalNumberOfFlaggedTrips(clone  $tripQuery),
@@ -60,6 +61,19 @@ class AnalyticsController extends Controller
             'totalNumberOfDrivers' => $this->analyticsService->totalNumberOfDrivers(clone $driverQuery),
             'totalAmountOfPendingIncome' => "NGN " . number_format($this->analyticsService->totalAmountOfPendingIncome(clone $tripQuery, $user), 2),
             'totalNumberOfTrucks' => $this->analyticsService->totalNumberOfTrucks(clone $truckQuery, $user),
+        ]);
+    }
+    public function cargoOwnerStats(Request $request)
+    {
+        $user = $request->user();
+        $tripQuery = Trip::query();
+
+        return $this->respondSuccess([
+            'totalNumberOfTrips' => $this->analyticsService->totalNumberOfTrips(clone $tripQuery, $user),
+            'totalNumberOfOngoingTrips' => $this->analyticsService->totalNumberOfOngoingTrips(clone $tripQuery, $user),
+            'totalNumberOfFlaggedTrips' => $this->analyticsService->totalNumberOfFlaggedTrips(clone  $tripQuery),
+            'totalNumberOfCompletedTrips' => $this->analyticsService->totalNumberOfCompletedTrips(clone $tripQuery, $user),
+            'totalNumberOfCancelledTrips' => $this->analyticsService->totalNumberOfCancelledTrips(clone $tripQuery, $user),
         ]);
     }
 }

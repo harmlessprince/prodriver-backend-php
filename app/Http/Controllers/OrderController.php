@@ -305,4 +305,9 @@ class OrderController extends Controller
     {
         return $this->respondSuccess(['financialStatuses' => Order::FINANCIAL_STATUSES], 'All financial statuses fetched');
     }
+
+    public function orderStatus()
+    {
+        return $this->respondSuccess(['orderStatuses' => Order::ORDER_STATUSES], 'All  statuses fetched');
+    }
 }

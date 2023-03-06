@@ -74,7 +74,8 @@ class OrderRequest extends FormRequest
                 'pickup_address' => ['sometimes', 'string'],
                 'destination_address' => ['sometimes', 'string'],
                 'number_trucks' => ['sometimes', 'integer', 'min:1'],
-                'date_needed' => ['required', 'date', 'after:' . Carbon::now()],
+                'date_needed' => ['sometimes', 'date', 'after:' . Carbon::now()],
+                'financial_status' => ['sometimes', 'string']
             ];
         }
         return [];

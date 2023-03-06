@@ -62,10 +62,10 @@ class TripController extends Controller
         Excel::queueImport($import, $request->file('file'));
     }
 
-    public function updateWaybillStatus(Request $request, Trip $trip)
+    public function updateWaybillPicture(Request $request, Trip $trip)
     {
         $this->validate($request, [
-            'status' => ['required', 'integer', 'exists:waybill_statuses,id']
+            'waybile' => ['required', 'integer', 'exists:waybill_statuses,id']
         ]);
 
         $trip->way_bill_status_id =  $request->input('status');

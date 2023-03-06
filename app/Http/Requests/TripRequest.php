@@ -51,7 +51,9 @@ class TripRequest extends FormRequest
                 'trip_status_id' => ['sometimes', 'integer', 'exists:trip_statuses,id'],
                 'days_in_transit' => ['sometimes', 'integer'],
                 'days_delivered' => ['sometimes', 'integer'],
-                'payout_status' => ['sometimes', 'string']
+                'payout_status' => ['sometimes', 'string'],
+                'loading_tonnage_value' => ['sometimes', 'numeric'],
+                'offloading_tonnage_value' => ['sometimes', 'numeric']
             ];
         }
         return [];

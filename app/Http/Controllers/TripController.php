@@ -24,6 +24,15 @@ class TripController extends Controller
         $user = $request->user();
         $tripQuery = Trip::query()->search();
 
+        if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
+            $tripQuery = $tripQuery->where('transporter_id', $user->id);
+        }
+
+
+        if ($user->user_type === User::USER_TYPE_CARGO_OWNER) {
+            $tripQuery = $tripQuery->where('cargo_owner_id', $user->id);
+        }
+
         $tripQuery = $tripQuery->filter($request->all(), $tripQuery);
 
         $tripQuery = $tripQuery->with(Trip::RELATIONS)->latest('created_at');

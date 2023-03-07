@@ -24,6 +24,15 @@ class TripController extends Controller
         $user = $request->user();
         $tripQuery = Trip::query()->search();
 
+        if ($user->user_type === User::USER_TYPE_TRANSPORTER) {
+            $tripQuery = $tripQuery->where('transporter_id', $user->id);
+        }
+
+
+        if ($user->user_type === User::USER_TYPE_CARGO_OWNER) {
+            $tripQuery = $tripQuery->where('cargo_owner_id', $user->id);
+        }
+
         $tripQuery = $tripQuery->filter($request->all(), $tripQuery);
 
         $tripQuery = $tripQuery->with(Trip::RELATIONS)->latest('created_at');
@@ -62,10 +71,10 @@ class TripController extends Controller
         Excel::queueImport($import, $request->file('file'));
     }
 
-    public function updateWaybillStatus(Request $request, Trip $trip)
+    public function updateWaybillPicture(Request $request, Trip $trip)
     {
         $this->validate($request, [
-            'status' => ['required', 'integer', 'exists:waybill_statuses,id']
+            'waybile' => ['required', 'integer', 'exists:waybill_statuses,id']
         ]);
 
         $trip->way_bill_status_id =  $request->input('status');

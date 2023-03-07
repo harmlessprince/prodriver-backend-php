@@ -27,6 +27,13 @@ class TripBuilder extends BaseModelBuilder
         return $this;
     }
 
+    public function whereWayBillStatusId(int $value = null): static
+    {
+        if ($value == null) return $this;
+        $this->where('way_bill_status_id', $value);
+        return $this;
+    }
+
     public function wherePayoutStatus(string $value = null): static
     {
         if ($value == null) return $this;

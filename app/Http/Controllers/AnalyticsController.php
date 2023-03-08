@@ -22,7 +22,7 @@ class AnalyticsController extends Controller
         $driverQuery = Driver::query();
 
         return $this->respondSuccess([
-            'totalAmountPayable' => number_format($this->analyticsService->totalAmountPayable($tripQuery), 2, '.', ""),
+            'totalAmountPayable' => "NGN " .  number_format($this->analyticsService->totalAmountPayable(clone $tripQuery), 2),
             'totalNumberOfTrips' => $this->analyticsService->totalNumberOfTrips(clone $tripQuery, $user),
             'totalNumberOfOngoingTrips' => $this->analyticsService->totalNumberOfOngoingTrips(clone $tripQuery, $user),
             'totalNumberOfFlaggedTrips' => $this->analyticsService->totalNumberOfFlaggedTrips(clone  $tripQuery),
@@ -35,7 +35,7 @@ class AnalyticsController extends Controller
             'totalNumberOfDrivers' => $this->analyticsService->totalNumberOfDrivers(clone $driverQuery),
             'totalAmountOfPendingIncome' => "NGN " . number_format($this->analyticsService->totalAmountOfPendingIncome(clone $tripQuery, $user), 2),
             'totalNumberOfTrucks' => $this->analyticsService->totalNumberOfTrucks(clone $truckQuery, $user),
-            'totalLoadingTonnage' => number_format($this->analyticsService->totalLoadingTonnage(clone $tripQuery), 2, '.', ""),
+            'totalLoadingTonnage' => number_format($this->analyticsService->totalLoadingTonnage(clone $tripQuery), 2),
             'totalMarginProfit' => "NGN " . number_format($this->analyticsService->totalMarginProfit(clone $tripQuery), 2),
             'totalNetMarginProfit' => "NGN " . number_format($this->analyticsService->totalNetMarginProfit(clone $tripQuery), 2),
             'totalNumberOfDivertedTrips' => $this->analyticsService->totalNumberOfDivertedTrips(clone $tripQuery, $user),

@@ -88,10 +88,12 @@ class UpdateProfileRequest extends FormRequest
 
         if (request()->user()->user_type !== User::USER_TYPE_ADMIN) {
             $rules['user_id'] = ['nullable', 'integer', 'exists:users,id'];
+         
         }
 
         if (request()->has('user_id') && request()->user()->user_type == User::USER_TYPE_ADMIN) {
             $rules['user_id'] = ['required', 'integer', 'exists:users,id'];
+            $rules['email'] = ['sometimes', 'email', 'max:200', Rule::unique('users', 'email')->ignore($ignorePhoneNumberId)];
         }
         return $rules;
         // 'user_id' => [new RequiredIf(request()->user()->user_type === User::USER_TYPE_ADMIN && request('user_id') !=  $user->id) , 'integer', 'exists:users,id'],

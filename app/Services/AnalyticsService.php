@@ -28,14 +28,29 @@ class AnalyticsService
     }
 
 
-    public function totalNumberOfDrivers(EloquentBuilder | QueryBuilder $driverBuilder)
+    public function totalNumberOfDrivers(EloquentBuilder | QueryBuilder $driverBuilder, User $user)
     {
-        return $driverBuilder->count();
+        if ($user->isAdmin()) {
+            return $driverBuilder->count();
+        }
+        if ($user->isTransporter()) {
+            return $driverBuilder->where('user_id', $user->id)->count();
+        }
     }
 
-    public function totalNumberOfFlaggedTrips(EloquentBuilder | QueryBuilder $tripBuilder)
+    public function totalNumberOfFlaggedTrips(EloquentBuilder | QueryBuilder $tripBuilder, User $user)
     {
-        return  $tripBuilder->where('flagged', 1)->count();
+       $tripBuilder = $tripBuilder->where('flagged', 1);
+        if ($user->isAdmin()) {
+            return $tripBuilder->count();
+        }
+        if ($user->isTransporter()) {
+            return $tripBuilder->where('transporter_id', $user->id)->count();
+        }
+        if ($user->isCargoOwner()) {
+            return $tripBuilder->where('cargo_owner_id', $user->id)->count();
+        }
+        return  0;
     }
 
     public function totalNumberOfTrips(EloquentBuilder | QueryBuilder $tripBuilder, User $user)
@@ -63,7 +78,7 @@ class AnalyticsService
         }
 
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
-            return $tripBuilder->sum('total_payout');
+            return $tripBuilder->where('transporter_id', $user->id)->sum('total_payout');
         }
         return 0;
     }
@@ -93,10 +108,12 @@ class AnalyticsService
 
     public function totalAmountOfPendingIncome(EloquentBuilder | QueryBuilder $tripBuilder, $user)
     {
+
         if ($user->user_type == User::USER_TYPE_ADMIN) {
             return  $tripBuilder->sum('total_gtv') -  $tripBuilder->sum('advance_gtv') - $tripBuilder->sum('balance_gtv');;
         }
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {
+            $tripBuilder = $tripBuilder->where('transporter_id', $user->id);
             return  $tripBuilder->sum('total_payout') -  $tripBuilder->sum('advance_payout') - $tripBuilder->sum('balance_payout');
         }
         return 0;

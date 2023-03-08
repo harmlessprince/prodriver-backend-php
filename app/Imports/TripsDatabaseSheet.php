@@ -40,6 +40,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
      */
     public function array(array $rows)
     {
+        // php artisan migrate:fresh --seed && php artisan import:trips /home/harmlessprince/Downloads/database/
         $anonymousAdmin = User::where('first_name', 'Admin')->first();
         $anonymousTransporter = User::where('first_name', 'Truck')->first();
         $anonymousCargoOwner = User::where('first_name', 'Cargo')->first();

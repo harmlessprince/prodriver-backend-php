@@ -28,6 +28,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use App\DataTransferObjects\ApproveAcceptedOrderDto;
+use App\Models\TruckType;
 use Maatwebsite\Excel\Concerns\WithCalculatedFormulas;
 use Maatwebsite\Excel\Concerns\HasReferencesToOtherSheets;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -47,6 +48,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
         $anonymousDriver = Driver::where('user_id', $anonymousTransporter->id)->first();
         $tripStatusId =  TripStatus::query()->where('name', TripStatus::STATUS_COMPLETED)->first()->id;
         $wayBillStatusId = WaybillStatus::query()->where('name', WaybillStatus::STATUS_RECEIVED)->first()->id;
+        $truckType =  TruckType::where('name', 'Regular Truck')->first();
 
         foreach ($rows as $key => $row) {
 
@@ -139,6 +141,7 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
 
                             ],
                             [
+                                'truck_type_id' => $truckType->id,
                                 'driver_id' => $driver ? $driver->id : $anonymousDriver->id,
                                 'transporter_id' => $transporter ? $transporter->id : $anonymousTransporter->id,
                             ]
@@ -166,12 +169,15 @@ class TripsDatabaseSheet implements ToArray, HasReferencesToOtherSheets, WithCal
                         'tonnage_id' => $tonnage->id,
                         'amount_willing_to_pay' => $gtv,
                         'potential_payout' => $payable,
+                        'status' => 'completed',
+                        'financial_status' => $pay_out_status == 'completed' ? 'paid' : 'pending',
+                        'date_needed' => $loading_date,
                         'pickup_address' => $loading_site,
                         'destination_address' => $destination,
                         'description' => $goods,
                         'cargo_owner_id' => $cargoOwner ? $cargoOwner->id : $anonymousCargoOwner->id,
                     ]);
-
+                    $order->truckTypes()->sync([$truckType->id]);
                     //match the request
                     $acceptedOrder =   AcceptedOrder::query()->create([
                         'order_id' => $order->id,

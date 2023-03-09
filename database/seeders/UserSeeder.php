@@ -72,7 +72,7 @@ class UserSeeder extends Seeder
             ]
         );
         User::query()->updateOrCreate(
-            ['email' => 'victor.e@prodriver.com'],
+            ['email' => 'victor.e@accountmanager.com'],
             [
                 'first_name' => 'Victor',
                 'last_name' => 'Evboifo',
@@ -82,7 +82,7 @@ class UserSeeder extends Seeder
             ]
         );
         User::query()->updateOrCreate(
-            ['email' => 'tunde.a@prodriver.com'],
+            ['email' => 'tunde.a@accountmanager.com'],
             [
                 'first_name' => 'Tunde',
                 'last_name' => 'Adebayo',
@@ -93,7 +93,7 @@ class UserSeeder extends Seeder
         );
 
         User::query()->updateOrCreate(
-            ['email' => 'maximus.m@prodriver.com'],
+            ['email' => 'maximus.m@accountmanager.com'],
             [
                 'first_name' => 'Maximus',
                 'last_name' => 'Maxi',
@@ -104,7 +104,7 @@ class UserSeeder extends Seeder
         );
 
         User::query()->updateOrCreate(
-            ['email' => 'chidebere.u@prodriver.com'],
+            ['email' => 'chidebere.u@accountmanager.com'],
             [
                 'first_name' => 'Chidebere',
                 'last_name' => 'Ukoha',
@@ -115,7 +115,7 @@ class UserSeeder extends Seeder
         );
 
         User::query()->updateOrCreate(
-            ['email' => 'johnson.o@prodriver.com'],
+            ['email' => 'johnson.o@accountmanager.com'],
             [
                 'first_name' => 'Johnson',
                 'last_name' => 'Ojabulu',

@@ -40,7 +40,7 @@ class AnalyticsService
 
     public function totalNumberOfFlaggedTrips(EloquentBuilder | QueryBuilder $tripBuilder, User $user)
     {
-       $tripBuilder = $tripBuilder->where('flagged', 1);
+        $tripBuilder = $tripBuilder->where('flagged', 1);
         if ($user->isAdmin()) {
             return $tripBuilder->count();
         }
@@ -123,7 +123,7 @@ class AnalyticsService
     public function totalAmountPayable(EloquentBuilder | QueryBuilder $tripBuilder)
     {
         $status = TripStatus::query()->select('id')->whereIn('name', [TripStatus::STATUS_COMPLETED, TripStatus::STATUS_CANCELED, TripStatus::STATUS_DIVERTED])->get();
-        $tripBuilder =   $tripBuilder->whereNotIn('trip_status_id', $status->pluck('id'));
+        $tripBuilder =   $tripBuilder->where('id', '>', 3700)->whereNotIn('trip_status_id', $status->pluck('id'));
         return  $tripBuilder->sum('total_payout') -  $tripBuilder->sum('advance_payout') - $tripBuilder->sum('balance_payout');
     }
 

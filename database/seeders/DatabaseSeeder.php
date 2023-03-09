@@ -15,12 +15,12 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            // TonnageSeeder::class,
-            // TruckTypeSeeder::class,
+            TonnageSeeder::class,
+            TruckTypeSeeder::class,
 //            StateCountrySeeder::class,
-            // BankSeeder::class,
-            // TripStatusesSeeeder::class,
-            // WaybillStatusSeeeder::class,
+            BankSeeder::class,
+            TripStatusesSeeeder::class,
+            WaybillStatusSeeeder::class,
             UserSeeder::class,
             // DriverSeeder::class,
             // TruckSeeder::class,

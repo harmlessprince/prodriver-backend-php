@@ -71,6 +71,59 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        User::query()->updateOrCreate(
+            ['email' => 'victor.e@accountmanager.com'],
+            [
+                'first_name' => 'Victor',
+                'last_name' => 'Evboifo',
+                'password' => Hash::make('password'),
+                'user_type' => User::USER_TYPE_ACCOUNT_MANAGER,
+                'email_verified_at' => now(),
+            ]
+        );
+        User::query()->updateOrCreate(
+            ['email' => 'tunde.a@accountmanager.com'],
+            [
+                'first_name' => 'Tunde',
+                'last_name' => 'Adebayo',
+                'password' => Hash::make('password'),
+                'user_type' => User::USER_TYPE_ACCOUNT_MANAGER,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::query()->updateOrCreate(
+            ['email' => 'maximus.m@accountmanager.com'],
+            [
+                'first_name' => 'Maximus',
+                'last_name' => 'Maxi',
+                'password' => Hash::make('password'),
+                'user_type' => User::USER_TYPE_ACCOUNT_MANAGER,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::query()->updateOrCreate(
+            ['email' => 'chidebere.u@accountmanager.com'],
+            [
+                'first_name' => 'Chidebere',
+                'last_name' => 'Ukoha',
+                'password' => Hash::make('password'),
+                'user_type' => User::USER_TYPE_ACCOUNT_MANAGER,
+                'email_verified_at' => now(),
+            ]
+        );
+
+        User::query()->updateOrCreate(
+            ['email' => 'johnson.o@accountmanager.com'],
+            [
+                'first_name' => 'Johnson',
+                'last_name' => 'Ojabulu',
+                'password' => Hash::make('password'),
+                'user_type' => User::USER_TYPE_ACCOUNT_MANAGER,
+                'email_verified_at' => now(),
+            ]
+        );
         // if (User::query()->count() <  10) {
         //     \App\Models\User::factory(10)->create();
         // }

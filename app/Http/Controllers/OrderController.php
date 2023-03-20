@@ -276,6 +276,14 @@ class OrderController extends Controller
         $trip = $this->orderServices->convertApprovedOrderToTrip($approveAcceptedOrderDto)->load(Trip::RELATIONS);
         $trip->trip_id = 'TID' . str_pad($trip->id, 6, "0", STR_PAD_LEFT);
         $trip->save();
+        $acceptedOrder->approved_by  =  auth()->id();
+        $acceptedOrder->approved_at = Carbon::now();
+        $acceptedOrder->update();
+        $numberOfApprovedAcceptedRequest = $order->acceptedOrMatchedRequest()->where('approved_by', '<>', null)->count();
+        if ($order->number_of_trucks == $numberOfApprovedAcceptedRequest) {
+            $order->status =  Order::COMPLETED;
+            $order->update();
+        }
         return $this->respondSuccess(['trip' => $trip], 'Accepted Request Approved and Converted To Trip Successfully');
     }
 

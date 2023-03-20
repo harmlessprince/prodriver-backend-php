@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\File;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\RequiredIf;
 
@@ -46,7 +47,7 @@ class DriverRequest extends FormRequest
             return [
                 'first_name' => ['required', 'string', 'max:200'],
                 'last_name' => ['required', 'string', 'max:200'],
-                'phone_number' => ['required', 'string', 'min:11', 'max:200', Rule::unique('drivers', 'phone_number')],
+                'phone_number' => ['required', 'string', 'min:10', 'max:200', Rule::unique('drivers', 'phone_number')],
                 'license_number' => ['sometimes', 'string', 'max:200',  Rule::unique('drivers', 'license_number')],
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'license_picture_id' => ['sometimes', 'integer', $fileExists],
@@ -55,11 +56,12 @@ class DriverRequest extends FormRequest
             ];
         }
         if (request()->method() == 'PATCH') {
+            // Log::info($this->driver);
             return [
                 'first_name' => ['sometimes', 'string', 'max:200'],
                 'last_name' => ['sometimes', 'string', 'max:200'],
-                'phone_number' => ['sometimes', 'string', 'min:11', 'max:200', Rule::unique('drivers', 'phone_number')->ignore($this->driver)],
-                'license_number' => ['sometimes', 'string', 'max:200',  Rule::unique('drivers', 'license_number')->ignore($this->driver)],
+                'phone_number' => ['sometimes', 'string', 'min:10', 'max:200', Rule::unique('drivers', 'phone_number')->ignore(request('driver'))],
+                'license_number' => ['sometimes', 'string', 'max:200',  Rule::unique('drivers', 'license_number')->ignore(request('driver'))],
                 'picture_id' => ['sometimes', 'integer', $fileExists],
                 'license_picture_id' => ['sometimes', 'integer', $fileExists],
                 "user_id" => ['sometimes', 'integer', 'exists:users,id']

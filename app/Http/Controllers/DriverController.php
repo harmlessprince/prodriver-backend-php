@@ -38,7 +38,7 @@ class DriverController extends Controller
             $totalDriversQuery = $totalDriversQuery->where('user_id', $user->id);
             $driversQuery = $driversQuery->where('user_id', $user->id);
         }
-        $drivers = $driversQuery->paginate();
+        $drivers = $driversQuery->latest()->paginate();
         return $this->respondSuccess(['drivers' => $drivers, 'meta' => ['total_drivers' => $totalDriversQuery->count()]], 'Drivers retrieved successfully');
     }
 

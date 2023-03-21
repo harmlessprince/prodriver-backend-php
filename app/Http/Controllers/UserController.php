@@ -57,7 +57,7 @@ class UserController extends Controller
     public function getAllTransporters(): JsonResponse
     {
         $this->authorize('viewAny', User::class);
-        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type', 'email')->where('user_type', User::USER_TYPE_TRANSPORTER)->get();
+        $users = User::query()->select('id', 'first_name', 'middle_name', 'last_name', 'phone_number', 'user_type', 'email')->where('user_type', User::USER_TYPE_TRANSPORTER)->orderByRaw("concat(first_name, ' ', last_name) ASC")->get();
         return $this->respondSuccess(['users' => $users], 'Transporters fetched successfully');
     }
 

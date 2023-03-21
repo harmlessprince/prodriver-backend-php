@@ -16,6 +16,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TonnageController;
 use App\Http\Controllers\TransporterDriverController;
+use App\Http\Controllers\TransporterTruckController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\TripStatusController;
 use App\Http\Controllers\TruckController;
@@ -92,7 +93,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('change/driver/picture/{driver}', [DriverController::class, 'changeDriverPicture']);
     Route::patch('change/driver/license/picture/{driver}', [DriverController::class, 'changeDriverLicensePicture']);
     Route::patch('change/driver/owner/{driver}', [DriverController::class, 'changeDriverOwner']);
+
+
     Route::apiResource('trucks', TruckController::class);
+    Route::get('transporters/{transporter}/trucks', [TransporterTruckController::class, 'index']);
+
 
     Route::apiResource('trips', TripController::class)->only('index', 'update');
     Route::patch('updateWaybillStatus/{trip}', [TripController::class, 'updateWaybillStatus']);

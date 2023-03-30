@@ -187,6 +187,9 @@ class OrderController extends Controller
         $truckIsOnTrip = $this->truckRepository->truckIsOnTrip($request->truck_id);
 
         $truck = $this->checkTruckStatus($request->input('truck_id'));
+        if(is_string($truck)){
+            return $this->respondError($truck, 400);
+        }
         $acceptOrder = new AcceptOrderDto(
             $order->id,
             $request->input('truck_id'),

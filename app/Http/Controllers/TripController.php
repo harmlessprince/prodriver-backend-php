@@ -74,7 +74,7 @@ class TripController extends Controller
     public function updateWaybillPicture(Request $request, Trip $trip)
     {
         $this->validate($request, [
-            'waybile' => ['required', 'integer', 'exists:waybill_statuses,id']
+            'status' => ['required', 'integer', 'exists:waybill_statuses,id']
         ]);
 
         $trip->way_bill_status_id =  $request->input('status');

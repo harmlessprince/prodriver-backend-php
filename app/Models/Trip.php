@@ -42,7 +42,9 @@ class Trip extends Model
         'truck.driver',
         'order',
         'cargoOwner',
+        'cargoOwner.company',
         'transporter',
+        'transporter.company',
         'waybillPicture'
     ];
 

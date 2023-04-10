@@ -17,7 +17,7 @@ class TripStatusesSeeeder extends Seeder
     {
         $statuses = TripStatus::STATUSES;
         
-
+        // php artisan db:seed --class=TripStatusesSeeeder
         foreach ($statuses as $key => $status) {
             TripStatus::query()->updateOrCreate([
                 'name' => $status,

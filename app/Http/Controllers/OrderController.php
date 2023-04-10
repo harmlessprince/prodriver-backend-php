@@ -59,7 +59,7 @@ class OrderController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $orders = $this->orderRepository->paginatedOrders($user, ['*'], ['tonnage', 'truckTypes', 'cargoOwner:id,first_name,last_name,middle_name,phone_number,email']);
+        $orders = $this->orderRepository->paginatedOrders($user, ['*'], ['tonnage', 'truckTypes', 'acceptedRequests','cargoOwner:id,first_name,last_name,middle_name,phone_number,email']);
         return $this->respondSuccess(['requests' => $orders], 'Truck requests fetched');
     }
 

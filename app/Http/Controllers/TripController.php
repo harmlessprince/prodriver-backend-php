@@ -35,7 +35,7 @@ class TripController extends Controller
 
         $tripQuery = $tripQuery->filter($request->all(), $tripQuery);
 
-        $tripQuery = $tripQuery->with(Trip::RELATIONS)->latest('created_at');
+        $tripQuery = $tripQuery->with(Trip::RELATIONS)->orderBy('trip_id', 'ASC');
 
         return $this->respondSuccess([
             'trips' => $tripQuery->paginate(request('per_page', 15)),
@@ -56,6 +56,7 @@ class TripController extends Controller
 
     public function update(TripRequest $request, Trip $trip)
     {
+        
         $trip->update($request->validated());
         return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip updated');
     }
@@ -74,7 +75,7 @@ class TripController extends Controller
     public function updateWaybillPicture(Request $request, Trip $trip)
     {
         $this->validate($request, [
-            'waybile' => ['required', 'integer', 'exists:waybill_statuses,id']
+            'status' => ['required', 'integer', 'exists:waybill_statuses,id']
         ]);
 
         $trip->way_bill_status_id =  $request->input('status');

@@ -59,7 +59,7 @@ class OrderController extends Controller
         /** @var User $user */
         $user = $request->user();
 
-        $orders = $this->orderRepository->paginatedOrders($user, ['*'], ['tonnage', 'truckTypes', 'acceptedRequests','cargoOwner:id,first_name,last_name,middle_name,phone_number,email']);
+        $orders = $this->orderRepository->paginatedOrders($user, ['*'], ['tonnage', 'pictures', 'truckTypes', 'acceptedRequests', 'cargoOwner:id,first_name,last_name,middle_name,phone_number,email']);
         return $this->respondSuccess(['requests' => $orders], 'Truck requests fetched');
     }
 
@@ -187,7 +187,7 @@ class OrderController extends Controller
         $truckIsOnTrip = $this->truckRepository->truckIsOnTrip($request->truck_id);
 
         $truck = $this->checkTruckStatus($request->input('truck_id'));
-        if(is_string($truck)){
+        if (is_string($truck)) {
             return $this->respondError($truck, 400);
         }
         $acceptOrder = new AcceptOrderDto(
@@ -227,7 +227,7 @@ class OrderController extends Controller
     public function allAcceptedRequest(Request $request, Order $order)
     {
         $this->authorize('match', $order);
-        $acceptedRequests = $order->acceptedOrMatchedRequest()->with(['order', 'truck','truck.truckType', 'truck.driver' ,'acceptedBy', 'matchedBy', 'approvedBy', 'cancelledBy'])->get();
+        $acceptedRequests = $order->acceptedOrMatchedRequest()->with(['order', 'truck', 'truck.truckType', 'truck.driver', 'acceptedBy', 'matchedBy', 'approvedBy', 'cancelledBy'])->get();
         return $this->respondSuccess(['accepted_requests' => $acceptedRequests], 'Fetched accepted requests');
     }
 
@@ -282,6 +282,7 @@ class OrderController extends Controller
         $acceptedOrder->approved_by  =  auth()->id();
         $acceptedOrder->approved_at = Carbon::now();
         $acceptedOrder->update();
+        $truck->update(['on_trip' => true]);
         $numberOfApprovedAcceptedRequest = $order->acceptedOrMatchedRequest()->where('approved_by', '<>', null)->count();
         if ($order->number_of_trucks == $numberOfApprovedAcceptedRequest) {
             $order->status =  Order::COMPLETED;

@@ -245,7 +245,13 @@ class OrderController extends Controller
             'loading_date' => ['required', 'date'],
             'delivery_date' => ['required', 'date'],
         ]);
+
         $acceptedOrderDto = AcceptOrderDto::fromModel($acceptedOrder);
+
+        $acceptedOrderIsApproved = Trip::where('accepted_order_id', $acceptedOrderDto->id)->where('truck_id', $acceptedOrderDto->truck_id)->where('transporter_id', $acceptedOrderDto->accepted_by)->exists();
+        if ($acceptedOrderIsApproved) {
+            return $this->respondError('This submitted request has already been approved');
+        }
         /** @var Truck|string $truckStatus */
         $truck = $this->checkTruckStatus($acceptedOrderDto->truck_id);
         if (is_string($truck)) {

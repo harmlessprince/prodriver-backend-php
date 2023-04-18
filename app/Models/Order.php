@@ -118,7 +118,11 @@ class Order extends Model
     {
         return $this->morphMany(File::class, 'owner');
     }
-
+ 
+    public function acceptedRequests()
+    {
+       return $this->hasMany(AcceptedOrder::class, 'order_id');
+    }
     public function newEloquentBuilder($query): OrderBuilder
     {
         return new OrderBuilder($query);

@@ -17,6 +17,9 @@ class TripStatus extends Model
     const STATUS_DELIVERED = 'delivered';
     const STATUS_COMPLETED = 'completed';
     const STATUS_CANCELED = 'cancelled';
+    const STATUS_LOADING = 'loading';
+    const STATUS_IN_PREMISE = 'in-premise';
+    const STATUS_GATED_OUT = 'gated_out';
     const INACTIVE_TRIP_STATUSES = [self::STATUS_CANCELED, self::STATUS_DELIVERED];
     const STATUSES = [
         self::STATUS_PENDING,
@@ -27,6 +30,9 @@ class TripStatus extends Model
         self::STATUS_DELIVERED,
         self::STATUS_CANCELED,
         self::STATUS_COMPLETED,
+        self::STATUS_LOADING,
+        self::STATUS_IN_PREMISE,
+        self::STATUS_GATED_OUT
     ];
 
 

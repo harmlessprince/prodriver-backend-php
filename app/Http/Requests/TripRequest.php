@@ -44,6 +44,7 @@ class TripRequest extends FormRequest
             return [
                 'way_bill_picture_id' => ['sometimes', 'integer', $fileExists],
                 'total_payout' => ['sometimes', 'numeric'],
+                'incidental_cost' => ['sometimes', 'numeric'],
                 'advance_payout' => ['sometimes', 'numeric'],
                 'loading_date' => ['sometimes', 'date'],
                 'delivery_date' => ['sometimes', 'date'],

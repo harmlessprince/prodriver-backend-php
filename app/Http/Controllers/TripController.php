@@ -10,8 +10,10 @@ use App\Imports\TripsImport;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\TripRequest;
+use App\Models\File;
 use App\Services\AnalyticsService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TripController extends Controller
@@ -56,8 +58,18 @@ class TripController extends Controller
 
     public function update(TripRequest $request, Trip $trip)
     {
-        
-        $trip->update($request->validated());
+        $data = $request->validated();
+        $incidental_cost = $request->input('incidental_cost', 0.00);
+        if (in_array('incidental_cost', $data)) {
+            //    unset($data['incidental_cost']);
+            if ($incidental_cost > $trip->incidental_cost) {
+                $costToDeduct = $incidental_cost - $trip->incidental_cost;
+                $data['incidental_cost']  = $costToDeduct;
+                $data['balance_payout'] = $trip->balance_payout - $costToDeduct;
+            }
+        }
+
+        $trip->update($data);
         return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip updated');
     }
 
@@ -72,15 +84,24 @@ class TripController extends Controller
         Excel::queueImport($import, $request->file('file'));
     }
 
-    public function updateWaybillPicture(Request $request, Trip $trip)
+    public function uploadWaybillPicture(Request $request, Trip $trip)
     {
+
+        $user = request()->user();
+        $fileExists = Rule::exists(File::class, 'id')
+            ->where('type', File::TYPE_IMAGE)
+            ->where('creator_id', $user->id);
+
         $this->validate($request, [
-            'status' => ['required', 'integer', 'exists:waybill_statuses,id']
+            'picture_id' => ['required', 'integer',  $fileExists]
         ]);
 
-        $trip->way_bill_status_id =  $request->input('status');
-        $trip->save();
-        return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip waybill status updated');
+        $waybillPicture =  $trip->tripWaybillPictures()->create([
+            'picture_id' => $request->input('picture_id'),
+            'uploaded_by' => auth()->id(),
+        ]);
+
+        return $this->respondSuccess(['waybill_picture' =>  $waybillPicture], 'Trip waybill status updated');
     }
 
 

@@ -58,8 +58,18 @@ class TripController extends Controller
 
     public function update(TripRequest $request, Trip $trip)
     {
-        
-        $trip->update($request->validated());
+        $data = $request->validated();
+        $incidental_cost = $request->input('incidental_cost', 0.00);
+        if (in_array('incidental_cost', $data)) {
+            //    unset($data['incidental_cost']);
+            if ($incidental_cost > $trip->incidental_cost) {
+                $costToDeduct = $incidental_cost - $trip->incidental_cost;
+                $data['incidental_cost']  = $costToDeduct;
+                $data['balance_payout'] = $trip->balance_payout - $costToDeduct;
+            }
+        }
+
+        $trip->update($data);
         return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip updated');
     }
 
@@ -81,7 +91,7 @@ class TripController extends Controller
         $fileExists = Rule::exists(File::class, 'id')
             ->where('type', File::TYPE_IMAGE)
             ->where('creator_id', $user->id);
-            
+
         $this->validate($request, [
             'picture_id' => ['required', 'integer',  $fileExists]
         ]);

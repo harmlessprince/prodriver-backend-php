@@ -102,6 +102,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('trips', TripController::class)->only('index', 'update');
     Route::patch('updateWaybillStatus/{trip}', [TripController::class, 'updateWaybillStatus']);
     Route::patch('updateTripStatus/{trip}', [TripController::class, 'updateTripStatus']);
+
+    Route::patch('updateTripWaybillPicture/{trip}', [TripController::class, 'uploadWaybillPicture']);
     //users
     Route::apiResource('users', UserController::class);
     Route::get('/cargo-owners', [UserController::class, 'getAllCargoOwners']);

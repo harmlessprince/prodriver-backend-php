@@ -7,6 +7,7 @@ use App\Traits\SearchableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Trip extends Model
@@ -45,7 +46,8 @@ class Trip extends Model
         'cargoOwner.company',
         'transporter',
         'transporter.company',
-        'waybillPicture'
+        'waybillPicture',
+        'tripWaybillPictures'
     ];
 
     public function tripStatus(): BelongsTo
@@ -107,6 +109,11 @@ class Trip extends Model
     public function waybillPicture(): BelongsTo
     {
         return $this->belongsTo(File::class, 'way_bill_picture_id');
+    }
+
+    public function tripWaybillPictures(): HasMany
+    {
+        return $this->hasMany(TripWaybillPicture::class);
     }
 
     public function newEloquentBuilder($query): TripBuilder

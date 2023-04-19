@@ -10,8 +10,10 @@ use App\Imports\TripsImport;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\TripRequest;
+use App\Models\File;
 use App\Services\AnalyticsService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TripController extends Controller
@@ -72,15 +74,24 @@ class TripController extends Controller
         Excel::queueImport($import, $request->file('file'));
     }
 
-    public function updateWaybillPicture(Request $request, Trip $trip)
+    public function uploadWaybillPicture(Request $request, Trip $trip)
     {
+
+        $user = request()->user();
+        $fileExists = Rule::exists(File::class, 'id')
+            ->where('type', File::TYPE_IMAGE)
+            ->where('creator_id', $user->id);
+            
         $this->validate($request, [
-            'status' => ['required', 'integer', 'exists:waybill_statuses,id']
+            'picture_id' => ['required', 'integer',  $fileExists]
         ]);
 
-        $trip->way_bill_status_id =  $request->input('status');
-        $trip->save();
-        return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip waybill status updated');
+        $waybillPicture =  $trip->tripWaybillPictures()->create([
+            'picture_id' => $request->input('picture_id'),
+            'uploaded_by' => auth()->id(),
+        ]);
+
+        return $this->respondSuccess(['waybill_picture' =>  $waybillPicture], 'Trip waybill status updated');
     }
 
 

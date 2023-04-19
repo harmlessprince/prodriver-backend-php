@@ -279,6 +279,7 @@ class OrderController extends Controller
         );
         $approveAcceptedOrderDto->margin_profit_amount = $order->amount_willing_to_pay - $approveAcceptedOrderDto->total_payout;
         $approveAcceptedOrderDto->margin_profit_percentage = ($approveAcceptedOrderDto->margin_profit_amount / $order->amount_willing_to_pay) * 100;
+        $approveAcceptedOrderDto->total_gtv = $order->amount_willing_to_pay;
         $approveAcceptedOrderDto->trip_status_id = TripStatus::query()->where('name', TripStatus::STATUS_PENDING)->first()->id;
         $approveAcceptedOrderDto->way_bill_status_id = WaybillStatus::query()->where('name', WaybillStatus::STATUS_PENDING)->first()->id;
         $approveAcceptedOrderDto->balance_payout = $approveAcceptedOrderDto->total_payout - $approveAcceptedOrderDto->advance_payout;

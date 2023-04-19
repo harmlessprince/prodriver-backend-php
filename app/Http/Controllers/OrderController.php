@@ -181,10 +181,10 @@ class OrderController extends Controller
         ]);
         /** @var User $user */
         $user = $request->user();
-        if ($this->orderServices->hasAcceptedOrder($order->id, $user->id, $request->input('truck_id'))) {
-            return $this->respondForbidden('You can not accept a order more than once');
+        if ($this->orderServices->hasAcceptedOrderWithSameTruck($order->id, $user->id, $request->input('truck_id'))) {
+            return $this->respondError('You can not accept an order with same truck more than once');
         }
-        $truckIsOnTrip = $this->truckRepository->truckIsOnTrip($request->truck_id);
+        // $truckIsOnTrip = $this->truckRepository->truckIsOnTrip($request->truck_id);
 
         $truck = $this->checkTruckStatus($request->input('truck_id'));
         if (is_string($truck)) {
@@ -214,7 +214,7 @@ class OrderController extends Controller
         ]);
         /** @var User $user */
         $user = $request->user();
-        if ($this->orderServices->hasAcceptedOrder($order->id, $request->input('transporter_id'), $request->input('truck_id'))) {
+        if ($this->orderServices->hasAcceptedOrderWithSameTruck($order->id, $request->input('transporter_id'), $request->input('truck_id'))) {
             return $this->respondForbidden('The supplied transporter has already been matched with the supplied order');
         }
         $this->checkTruckStatus($request->input('truck_id'));
@@ -259,6 +259,13 @@ class OrderController extends Controller
         }
         /** @var Order $order */
         $order = Order::query()->where('id', $acceptedOrderDto->order_id)->first();
+
+        //get total number of approved requests trips
+        $totalNumberOfApprovedRequests = $acceptedOrder->trips()->count();
+        if ($totalNumberOfApprovedRequests >= $order->number_of_trucks) {
+            return $this->respondError('The number approved request can not exceed number of trucks required');
+        }
+
         $tripID = $this->generateTripID($acceptedOrderDto);
         $loadingDate = $request->input('loading_date') ? Carbon::parse($request->input('loading_date'))->toDate() : null;
         $deliveryDate = $request->input('delivery_date') ? Carbon::parse($request->input('delivery_date'))->toDate() : null;

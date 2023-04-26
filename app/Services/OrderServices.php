@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderServices
 {
-    public function hasAcceptedOrder(int $order_id, int $transporter_id, int $truck_id): bool
+    public function hasAcceptedOrderWithSameTruck(int $order_id, int $transporter_id, int $truck_id): bool
     {
         return AcceptedOrder::query()->where('order_id', $order_id)->where('accepted_by', $transporter_id)->where('truck_id', $truck_id)->exists();
     }

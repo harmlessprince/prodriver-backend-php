@@ -246,6 +246,9 @@ class OrderController extends Controller
             'delivery_date' => ['required', 'date'],
         ]);
 
+        if ($acceptedOrder->declinedBy()->exists()) {
+            return $this->respondError('You can now not approve a request that has been declined');
+        }
         $acceptedOrderDto = AcceptOrderDto::fromModel($acceptedOrder);
 
         $acceptedOrderIsApproved = Trip::where('accepted_order_id', $acceptedOrderDto->id)->where('truck_id', $acceptedOrderDto->truck_id)->where('transporter_id', $acceptedOrderDto->accepted_by)->exists();

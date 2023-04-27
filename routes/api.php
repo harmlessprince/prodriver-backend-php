@@ -13,6 +13,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GuarantorController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RejectAcceptedRequestController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TonnageController;
 use App\Http\Controllers\TransporterDriverController;
@@ -88,6 +89,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('approve/accepted/{acceptedOrder}', [OrderController::class, 'approveRequest']);
     Route::get('accepted/request/{order}', [OrderController::class, 'allAcceptedRequest']);
     Route::get('cancel/request/{order}', [OrderController::class, 'cancelRequest']);
+
+    //Accepted OR Matched Request
+    Route::patch('decline/accepted/order/{acceptedOrder}', [RejectAcceptedRequestController::class, 'update']);
     //driver endpoints
     Route::apiResource('drivers', DriverController::class);
     Route::patch('change/driver/picture/{driver}', [DriverController::class, 'changeDriverPicture']);

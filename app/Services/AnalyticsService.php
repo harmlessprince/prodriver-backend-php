@@ -126,6 +126,7 @@ class AnalyticsService
         $statusIds = $status->pluck('id')->toArray();
         // dd($statusIds);
         $tripBuilder =   $tripBuilder->where('id', '>', 3700)->whereNotIn('trip_status_id', $statusIds);
+        return  $tripBuilder->sum('balance_payout');
         return  $tripBuilder->sum('total_payout') -  $tripBuilder->sum('advance_payout') - $tripBuilder->sum('balance_payout');
     }
 

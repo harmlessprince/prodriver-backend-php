@@ -97,7 +97,7 @@ class AnalyticsService
     public function totalIncomeForTheMonth(EloquentBuilder | QueryBuilder $tripBuilder, $user)
     {
         if ($user->user_type == User::USER_TYPE_ADMIN) {
-            return  $tripBuilder->whereBetween('loading_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('total_gtv');
+            return  $tripBuilder->whereBetween('loading_date', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->sum('margin_profit_amount');
         }
 
         if ($user->user_type == User::USER_TYPE_TRANSPORTER) {

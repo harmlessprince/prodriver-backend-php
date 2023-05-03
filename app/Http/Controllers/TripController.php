@@ -66,6 +66,7 @@ class TripController extends Controller
                 $costToDeduct = $incidental_cost - $trip->incidental_cost;
                 $data['incidental_cost']  = $costToDeduct;
                 $data['balance_payout'] = $trip->balance_payout - $costToDeduct;
+                $trip->net_margin_profit_amount = $trip->margin_profit_amount - $incidental_cost;
             }
         }
 

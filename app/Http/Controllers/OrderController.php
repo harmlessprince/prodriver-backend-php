@@ -288,6 +288,7 @@ class OrderController extends Controller
             delivery_date: $deliveryDate,
         );
         $approveAcceptedOrderDto->margin_profit_amount = $order->amount_willing_to_pay - $approveAcceptedOrderDto->total_payout;
+        $approveAcceptedOrderDto->net_margin_profit_amount = $approveAcceptedOrderDto->margin_profit_amount;
         $approveAcceptedOrderDto->margin_profit_percentage = ($approveAcceptedOrderDto->margin_profit_amount / $order->amount_willing_to_pay) * 100;
         $approveAcceptedOrderDto->total_gtv = $order->amount_willing_to_pay;
         $approveAcceptedOrderDto->trip_status_id = TripStatus::query()->where('name', TripStatus::STATUS_PENDING)->first()->id;

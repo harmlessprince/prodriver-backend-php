@@ -69,8 +69,11 @@ class TripController extends Controller
                 $trip->net_margin_profit_amount = $trip->margin_profit_amount - $incidental_cost;
             }
         }
-
         $trip->update($data);
+        $trip = $trip->refresh();
+        if ($trip->tripStatus->name == TripStatus::STATUS_COMPLETED) {
+            $trip->truck()->update(['on_trip' => false]);
+        }
         return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip updated');
     }
 

@@ -47,6 +47,7 @@ class TripRequest extends FormRequest
                 'incidental_cost' => ['sometimes', 'numeric'],
                 'remark' => ['sometimes', 'string'],
                 'visibility_status' => ['sometimes', 'string'],
+                'advance_gtv' => ['sometimes', 'numeric'],
                 'advance_payout' => ['sometimes', 'numeric'],
                 'balance_payout' => ['sometimes', 'numeric'],
                 'loading_date' => ['sometimes', 'date'],

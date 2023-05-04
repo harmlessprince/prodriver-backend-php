@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Requests\TripRequest;
 use App\Models\File;
 use App\Services\AnalyticsService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
@@ -73,6 +74,8 @@ class TripController extends Controller
         $trip = $trip->refresh();
         if ($trip->tripStatus->name == TripStatus::STATUS_COMPLETED) {
             $trip->truck()->update(['on_trip' => false]);
+            $trip->completed_at = Carbon::now();
+            $trip->save();
         }
         return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip updated');
     }

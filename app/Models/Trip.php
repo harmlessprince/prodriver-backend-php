@@ -27,7 +27,7 @@ class Trip extends Model
         'accountManager.phone_number',
         'cargoOwner.first_name', 'cargoOwner.last_name', 'cargoOwner.middle_name',  'cargoOwner.phone_number',
         'transporter.first_name', 'transporter.last_name', 'transporter.middle_name',  'transporter.phone_number',
-        'order.pickup_address', 'order.destination_address',
+        'order.pickup_address', 'order.destination_address', 'truck.plate_number'
     ];
 
     const RELATIONS = [

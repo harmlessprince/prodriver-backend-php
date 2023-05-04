@@ -247,7 +247,7 @@ class OrderController extends Controller
         ]);
 
         if ($acceptedOrder->declinedBy()->exists()) {
-            return $this->respondError('You can now not approve a request that has been declined');
+            return $this->respondError('You can not approve a request that has been declined');
         }
         $acceptedOrderDto = AcceptOrderDto::fromModel($acceptedOrder);
 

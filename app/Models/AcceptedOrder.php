@@ -33,7 +33,7 @@ class AcceptedOrder extends Model
 
     public function declinedBy()
     {
-        return $this->belongsTo(User::class, 'matched_by');
+        return $this->belongsTo(User::class, 'declined_by');
     }
     public function cancelledBy()
     {

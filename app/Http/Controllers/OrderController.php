@@ -241,6 +241,7 @@ class OrderController extends Controller
         $this->validate($request, [
             'account_manager_id' => ['required', 'integer', Rule::exists('users', 'id')->where('user_type', User::USER_TYPE_ACCOUNT_MANAGER)],
             'total_payout' => ['required', 'numeric'],
+            'advance_gtv' => ['required', 'numeric'],
             'advance_payout' => ['required', 'numeric'],
             'loading_date' => ['required', 'date'],
             'delivery_date' => ['required', 'date'],
@@ -290,7 +291,12 @@ class OrderController extends Controller
         $approveAcceptedOrderDto->margin_profit_amount = $order->amount_willing_to_pay - $approveAcceptedOrderDto->total_payout;
         $approveAcceptedOrderDto->net_margin_profit_amount = $approveAcceptedOrderDto->margin_profit_amount;
         $approveAcceptedOrderDto->margin_profit_percentage = ($approveAcceptedOrderDto->margin_profit_amount / $order->amount_willing_to_pay) * 100;
+        //GTV'S
         $approveAcceptedOrderDto->total_gtv = $order->amount_willing_to_pay;
+        $approveAcceptedOrderDto->advance_gtv = $request->advance_gtv;
+        $approveAcceptedOrderDto->balance_gtv = $approveAcceptedOrderDto->total_gtv - $approveAcceptedOrderDto->advance_gtv;
+
+        //Statuses
         $approveAcceptedOrderDto->trip_status_id = TripStatus::query()->where('name', TripStatus::STATUS_PENDING)->first()->id;
         $approveAcceptedOrderDto->way_bill_status_id = WaybillStatus::query()->where('name', WaybillStatus::STATUS_PENDING)->first()->id;
         $approveAcceptedOrderDto->balance_payout = $approveAcceptedOrderDto->total_payout - $approveAcceptedOrderDto->advance_payout;

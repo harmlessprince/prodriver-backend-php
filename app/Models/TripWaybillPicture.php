@@ -10,7 +10,7 @@ class TripWaybillPicture extends Model
 {
     use HasFactory;
 
-    protected $with = ['picture'];
+    protected $with = ['picture', 'uploadedBy:id,first_name,last_name',  'reviewedBy:id,first_name,last_name', 'waybillStatus'];
 
     protected $guarded = [];
 
@@ -27,6 +27,11 @@ class TripWaybillPicture extends Model
     public function reviewedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function waybillStatus()
+    {
+        return $this->belongsTo(WaybillStatus::class, 'way_bill_status_id');
     }
 
     public function trip()

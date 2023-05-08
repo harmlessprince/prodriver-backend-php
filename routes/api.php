@@ -20,6 +20,7 @@ use App\Http\Controllers\TransporterDriverController;
 use App\Http\Controllers\TransporterTruckController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\TripStatusController;
+use App\Http\Controllers\TripWaybillPictureController;
 use App\Http\Controllers\TruckController;
 use App\Http\Controllers\TruckTypeController;
 use App\Http\Controllers\UpdateProfileController;
@@ -107,7 +108,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('updateWaybillStatus/{trip}', [TripController::class, 'updateWaybillStatus']);
     Route::patch('updateTripStatus/{trip}', [TripController::class, 'updateTripStatus']);
 
-    Route::patch('updateTripWaybillPicture/{trip}', [TripController::class, 'uploadWaybillPicture']);
+    Route::post('upload/waybill-picture/{trip}', [TripWaybillPictureController::class, 'store']);
+    Route::post('update/waybill-picture/{tripWaybillPicture}', [TripWaybillPictureController::class, 'update']);
     //users
     Route::apiResource('users', UserController::class);
     Route::get('/cargo-owners', [UserController::class, 'getAllCargoOwners']);

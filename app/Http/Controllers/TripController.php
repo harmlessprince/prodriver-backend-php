@@ -72,9 +72,9 @@ class TripController extends Controller
         }
         $trip->update($data);
         $trip = $trip->refresh();
-        if ($trip->tripStatus->name == TripStatus::STATUS_COMPLETED) {
+        if ($trip->tripStatus->name == TripStatus::STATUS_COMPLETED && $trip->isDirty('trip_status_id')) {
             $trip->truck()->update(['on_trip' => false]);
-            $trip->completed_at = Carbon::now();
+            $trip->completed_date = Carbon::now();
             $trip->save();
         }
         return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip updated');
@@ -91,25 +91,7 @@ class TripController extends Controller
         Excel::queueImport($import, $request->file('file'));
     }
 
-    public function uploadWaybillPicture(Request $request, Trip $trip)
-    {
-
-        $user = request()->user();
-        $fileExists = Rule::exists(File::class, 'id')
-            ->where('type', File::TYPE_IMAGE)
-            ->where('creator_id', $user->id);
-
-        $this->validate($request, [
-            'picture_id' => ['required', 'integer',  $fileExists]
-        ]);
-
-        $waybillPicture =  $trip->tripWaybillPictures()->create([
-            'picture_id' => $request->input('picture_id'),
-            'uploaded_by' => auth()->id(),
-        ]);
-
-        return $this->respondSuccess(['waybill_picture' =>  $waybillPicture], 'Trip waybill status updated');
-    }
+    
 
 
 

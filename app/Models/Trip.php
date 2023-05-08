@@ -48,6 +48,7 @@ class Trip extends Model
         'transporter.company',
         'waybillPicture',
         'tripWaybillPictures'
+        
     ];
 
     public function tripStatus(): BelongsTo

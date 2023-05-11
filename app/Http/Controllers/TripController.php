@@ -36,6 +36,10 @@ class TripController extends Controller
             $tripQuery = $tripQuery->where('cargo_owner_id', $user->id);
         }
 
+        if ($user->user_type === User::USER_TYPE_ACCOUNT_MANAGER) {
+            $tripQuery = $tripQuery->where('account_manager_id', $user->id);
+        }
+
         $tripQuery = $tripQuery->filter($request->all(), $tripQuery);
 
         $tripQuery = $tripQuery->with(Trip::RELATIONS)->orderBy('trip_id', 'ASC');
@@ -72,7 +76,7 @@ class TripController extends Controller
         }
         $trip->update($data);
         $trip = $trip->refresh();
-        if ($trip->tripStatus->name == TripStatus::STATUS_COMPLETED && $trip->isDirty('trip_status_id')) {
+        if ($trip->tripStatus->name == TripStatus::STATUS_COMPLETED) {
             $trip->truck()->update(['on_trip' => false]);
             $trip->completed_date = Carbon::now();
             $trip->save();

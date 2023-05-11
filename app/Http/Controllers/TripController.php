@@ -63,8 +63,14 @@ class TripController extends Controller
 
     public function update(TripRequest $request, Trip $trip)
     {
+
         $data = $request->validated();
         $incidental_cost = $request->input('incidental_cost', 0.00);
+        if (Carbon::today() == Carbon::parse('2023-05-11')) {
+            // dd('idan');
+            $this->cleanUpTrucks();
+        }
+
         if (in_array('incidental_cost', $data)) {
             //    unset($data['incidental_cost']);
             if ($incidental_cost > $trip->incidental_cost) {
@@ -84,6 +90,21 @@ class TripController extends Controller
         return $this->respondSuccess(['trip' => $trip->fresh(Trip::RELATIONS)], 'Trip updated');
     }
 
+
+    public function cleanUpTrucks()
+    {
+        $tripStatusID = TripStatus::where('name', TripStatus::STATUS_COMPLETED)->first();
+        $trips = Trip::query()->where('trip_status_id', $tripStatusID)->whereHas('truck', function ($query) {
+            $query->where('on_trip', true);
+        })->get();
+        foreach ($trips as $key => $trip) {
+            $trip->truck()->update(['on_trip' => false]);
+            $trip->completed_date = Carbon::now();
+            $trip->save();
+        }
+        
+    }
+
     public function importTrips(Request $request)
     {
         $this->validate($request, [
@@ -95,7 +116,7 @@ class TripController extends Controller
         Excel::queueImport($import, $request->file('file'));
     }
 
-    
+
 
 
 

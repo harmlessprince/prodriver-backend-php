@@ -6,6 +6,7 @@ use App\DataTransferObjects\TripDto;
 use App\Models\Driver;
 use App\Models\Trip;
 use App\Models\Truck;
+use App\Models\User;
 use App\Services\AnalyticsService;
 use Illuminate\Http\Request;
 
@@ -18,9 +19,9 @@ class AnalyticsController extends Controller
     {
         $user = $request->user();
         $truckQuery = Truck::query();
-        $tripQuery = Trip::query();
+        $tripQuery = Trip::query()->when($user->user_type === User::USER_TYPE_ACCOUNT_MANAGER, fn ($query) => $query->where('account_manager_id', $user->id));
         $driverQuery = Driver::query();
-
+        
         return $this->respondSuccess([
             'totalAmountPayable' => "NGN " .  number_format($this->analyticsService->totalAmountPayable(clone $tripQuery), 2),
             'totalNumberOfTrips' => $this->analyticsService->totalNumberOfTrips(clone $tripQuery, $user),

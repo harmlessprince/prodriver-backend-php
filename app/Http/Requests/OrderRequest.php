@@ -56,7 +56,7 @@ class OrderRequest extends FormRequest
                 'description' => ['required', 'string'],
                 'pickup_address' => ['required', 'string'],
                 'destination_address' => ['required', 'string'],
-                'number_trucks' => ['sometimes', 'integer', 'min:1'],
+                'number_of_trucks' => ['sometimes', 'integer', 'min:1'],
                 'date_needed' => ['required', 'date'],
                 'product_pictures' => ['nullable', 'array', 'min:1', 'max:4'],
                 'product_pictures.*' => ['integer', $fileExists],
@@ -73,7 +73,7 @@ class OrderRequest extends FormRequest
                 'description' => ['sometimes', 'string'],
                 'pickup_address' => ['sometimes', 'string'],
                 'destination_address' => ['sometimes', 'string'],
-                'number_trucks' => ['sometimes', 'integer', 'min:1'],
+                'number_of_trucks' => ['sometimes', 'integer', 'min:1'],
                 'date_needed' => ['sometimes', 'date'],
                 'financial_status' => ['sometimes', 'string']
             ];

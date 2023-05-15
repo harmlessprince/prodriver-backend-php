@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreDocumentRequest;
+use App\Http\Requests\UploadDocumentRequest;
 use App\Models\Document;
 use Illuminate\Http\Request;
 
@@ -22,9 +24,9 @@ class DocumentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreDocumentRequest $request)
     {
-        //
+         
     }
 
     /**

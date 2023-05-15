@@ -80,6 +80,7 @@ class TruckRequest extends FormRequest
                 "transporter_id" => [new RequiredIf($user->user_type === User::USER_TYPE_ADMIN), 'integer', 'exists:users,id'],
                 "truck_type_id" => ['sometimes', 'integer', 'exists:truck_types,id'],
                 "tonnage_id" => ['sometimes', 'integer', 'exists:tonnages,id'],
+                "driver_id" => ['sometimes', 'integer', 'exists:drivers,id'],
             ];
         }
         return [];

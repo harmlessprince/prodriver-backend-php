@@ -46,6 +46,7 @@ class OrderServices
 
     public function convertApprovedOrderToTrip(ApproveAcceptedOrderDto $dto): Model|Builder
     {
+        // dd((array)$dto);
         return Trip::query()->create((array)$dto);
     }
 

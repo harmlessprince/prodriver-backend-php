@@ -15,7 +15,7 @@ class TransporterDriverController extends Controller
         if ($transporter->user_type !== User::USER_TYPE_TRANSPORTER) {
             return $this->respondSuccess([], 'Invalid transporter id supplied');
         }
-        $drivers = $transporter->drivers()->where('on_trip', false)->get();
+        $drivers = $transporter->drivers()->latest()->where('on_trip', false)->get();
         return $this->respondSuccess(['drivers' => $drivers], 'Transporter drivers fetched successfully');
     }
 }

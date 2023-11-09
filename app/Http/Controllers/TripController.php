@@ -42,10 +42,10 @@ class TripController extends Controller
 
         $tripQuery = $tripQuery->filter($request->all(), $tripQuery);
 
-        $tripQuery = $tripQuery->with(Trip::RELATIONS)->orderBy('trip_id', 'ASC');
+        $tripQuery = $tripQuery->with(Trip::RELATIONS)->latest();
 
         return $this->respondSuccess([
-            'trips' => $tripQuery->latest()->paginate(request('per_page', 15)),
+            'trips' => $tripQuery->paginate(request('per_page', 15)),
 
             'meta' => [
                 'totalNumberOfCompletedTrips' => $analyticsService->totalNumberOfCompletedTrips(clone $tripQuery, $user),
